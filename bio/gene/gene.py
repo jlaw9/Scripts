@@ -1,8 +1,9 @@
 ## @package Gene
 #
 # This class is responsible for managing a gene object
-
 import unittest
+
+__author__ = 'mattdyer'
 
 class Gene:
 
@@ -47,6 +48,12 @@ class Gene:
     def getName(self):
         return(self.name)
 
+    ## Get the size of the gene
+    # @param self The object pointer
+    # @return Returns the size of the gene
+    def getSize(self):
+        return(self.endPosition - self.startPosition)
+
     ## Get the transcript ID
     # @param self The object pointer
     # @return Returns the transcript ID of the gene
@@ -77,6 +84,12 @@ class Gene:
     def getEndPosition(self):
         return(self.endPosition)
 
+    ## Get the number of exons
+    # @param self The object pointer
+    # @return Returns the number of exons in the gene
+    def getNumberOfExons(self):
+        return(len(self.exonStarts))
+
     ## Add exons to the gene 
     # @param self The object pointer
     # @param starts A comma-separated string of start coordinates    
@@ -92,8 +105,9 @@ class Gene:
         else:
             #add the coordinates
             for i in range(0, len(startCoordinates)):
-                self.exonStarts.append(int(startCoordinates[i]))
-                self.exonEnds.append(int(endCoordinates[i]))
+                if(startCoordinates[i] != "" and endCoordinates[i] != ""):
+                    self.exonStarts.append(int(startCoordinates[i]))
+                    self.exonEnds.append(int(endCoordinates[i]))
             
     ## Given a coordinate position this will return the location of the coordinate 
     # (upstream, downstream, exon, or intron) and the distance from the gene. If the 
@@ -105,7 +119,7 @@ class Gene:
         #set up the two variables we will return
         distance = 0
         location = "upstream"
-                
+
         #if position is less than gene start
         if(position < self.startPosition):
             #find the difference
@@ -165,8 +179,12 @@ class GeneTest(unittest.TestCase):
     #set up a dummy gene object
     geneForward = Gene("test", "chr1", "F", 500, 1000)
     geneReverse = Gene("test", "chr1", "R", 1500, 2000)
-    geneForward.addExonsToGene("500,700,900", "600,800,1000")
-    geneReverse.addExonsToGene("1500,1700,1900", "1600,1800,2000")
+    geneForward.addExonsToGene("500,700,900,", "600,800,1000,")
+    geneReverse.addExonsToGene("1500,1700,1900,", "1600,1800,2000,")
+
+    def test_number_of_exons(self):
+        self.assertEqual(self.geneForward.getNumberOfExons(), 3)
+        self.assertEqual(self.geneReverse.getNumberOfExons(), 3)
 
     def test_location_exon_forward(self):
         location, distance = self.geneForward.getLocation(550)
@@ -216,5 +234,6 @@ class GeneTest(unittest.TestCase):
         self.assertEqual(location, "upstream")
         self.assertEqual(distance, 50)
 
+#if run directly from command-line, just execute test cases
 if (__name__ == "__main__"):
     unittest.main()
