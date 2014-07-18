@@ -10,18 +10,17 @@ if (__name__ == '__main__'):
     parser = OptionParser()
 
     #add the options to parse
-    parser.add_option('-i', '--in', dest='infile', help='Input JSON file')
-    parser.add_option('-o', '--out', dest='outfile', help='The output JSON file')
+    parser.add_option('-j', '--in', dest='json', help='The JSON file')
     parser.add_option('-s', '--status', dest='status', help='The status to update it to')
     (options, args) = parser.parse_args()
 
     #read in the json file
-    jsonData = open(options.infile)
+    jsonData = open(options.json)
     fileData = json.load(jsonData)
 
     #set the status
     fileData['status'] = options.status
 
     #dump the file
-    with open(options.outfile, 'w') as newJSONFile:
+    with open(options.json, 'w') as newJSONFile:
             json.dump(fileData, newJSONFile, sort_keys=True, indent=4)

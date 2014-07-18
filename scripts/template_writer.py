@@ -25,9 +25,9 @@ class TemplateWriter:
         if job['analysis']['type'] == 'qc_tvc':
             #we want to merge, QC, then call variants
             self.__writeHeader(job, fileHandle)
-            self.__writeStatusChange('running', fileHandle)
+            self.__writeStatusChange('running', job['jsonFile'], fileHandle)
             self.__writeQCTCVTemplate(job, fileHandle)
-            self.__writeStatusChange('finished', fileHandle)
+            self.__writeStatusChange('finished', job['jsonFile'], fileHandle)
 
         #close the file handle
         fileHandle.close()
@@ -58,10 +58,11 @@ class TemplateWriter:
     ## Write the code for updating the status in the JSON file
     # @param self The object pointer
     # @param status The json job object
+    # @param jsonFile The json file to update the status in
     # @param file The file handle
-    def __writeStatusChange(self, status, fileHandle):
+    def __writeStatusChange(self, status, jsonFile, fileHandle):
         #create a seperate job for each file in the directory
-        fileHandle.write('python %s/scripts/update_json.py -i %s -o %s -s %s\n' % (self.__softwareDirectory, '', '', status))
+        fileHandle.write('python %s/scripts/update_json.py -j %s -s %s\n' % (self.__softwareDirectory, jsonFile, status))
 
     ## Write the code for running coverage analysis and tvc
     # @param self The object pointer

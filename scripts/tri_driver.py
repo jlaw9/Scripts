@@ -65,6 +65,7 @@ class JobManager:
         logging.info('%s - Starting %s' % (getTimestamp(), analysisFile))
         fileData['status'] = 'submitted'
         fileData['output_folder'] = outputFolder
+        fileData['json_file'] = jobFile
 
         #update the json
         self.__updateJSON(jobFile, fileData)
