@@ -8,15 +8,15 @@ __author__ = 'mattdyer'
 class Gene:
 
     #set up some class variables
-    name = ""
-    transcriptID = ""
-    chromosome = ""
-    strand = ""
-    startPosition = 0
-    endPosition = 0
-    exonStarts = []
-    exonEnds = []
-    sequence = ""
+    __name = ""
+    __transcriptID = ""
+    __chromosome = ""
+    __strand = ""
+    __startPosition = 0
+    __endPosition = 0
+    __exonStarts = []
+    __exonEnds = []
+    __sequence = ""
 
     ## The constructor
     # @param self The object pointer
@@ -27,14 +27,14 @@ class Gene:
     # @param endPosition The end position
     def __init__(self, name, chromosome, strand, startPosition, endPosition):
         #set up the new object
-        self.name = name
-        self.chromosome = chromosome
-        self.strand = strand
-        self.startPosition = startPosition
-        self.endPosition = endPosition
-        self.exonStarts = []
-        self.exonEnds = []
-        self.sequence = ""
+        self.__name = name
+        self.__chromosome = chromosome
+        self.__strand = strand
+        self.__startPosition = startPosition
+        self.__endPosition = endPosition
+        self.__exonStarts = []
+        self.__exonEnds = []
+        self.__sequence = ""
 
     ## Add a transcript ID
     # @param self The object pointer
@@ -46,13 +46,13 @@ class Gene:
     # @param self The object pointer
     # @return Returns the name of the gene
     def getName(self):
-        return(self.name)
+        return(self.__name)
 
     ## Get the size of the gene
     # @param self The object pointer
     # @return Returns the size of the gene
     def getSize(self):
-        return(self.endPosition - self.startPosition)
+        return(self.__endPosition - self.__startPosition)
 
     ## Get the transcript ID
     # @param self The object pointer
@@ -64,31 +64,31 @@ class Gene:
     # @param self The object pointer
     # @return Returns the chromosome of the gene
     def getChromosome(self):
-        return(self.chromosome)
+        return(self.__chromosome)
 
     ## Get the strand
     # @param self The object pointer
     # @return Returns the strand of the gene
     def getStrand(self):
-        return(self.strand)
+        return(self.__strand)
 
     ## Get the start position
     # @param self The object pointer
     # @return Returns the start position of the gene
     def getStartPosition(self):
-        return(self.startPosition)
+        return(self.__startPosition)
 
     ## Get the end position
     # @param self The object pointer
     # @return Returns the end position of the gene
     def getEndPosition(self):
-        return(self.endPosition)
+        return(self.__endPosition)
 
     ## Get the number of exons
     # @param self The object pointer
     # @return Returns the number of exons in the gene
     def getNumberOfExons(self):
-        return(len(self.exonStarts))
+        return(len(self.__exonStarts))
 
     ## Add exons to the gene 
     # @param self The object pointer
@@ -101,13 +101,13 @@ class Gene:
 
         #the two lists should always be the same length
         if(len(startCoordinates) != len(endCoordinates)):
-            print "WARNING: ", self.gene, " has a different number of start and stop coordinates - skipping"
+            print "WARNING: " , self.__name , " has a different number of start and stop coordinates - skipping"
         else:
             #add the coordinates
             for i in range(0, len(startCoordinates)):
                 if(startCoordinates[i] != "" and endCoordinates[i] != ""):
-                    self.exonStarts.append(int(startCoordinates[i]))
-                    self.exonEnds.append(int(endCoordinates[i]))
+                    self.__exonStarts.append(int(startCoordinates[i]))
+                    self.__exonEnds.append(int(endCoordinates[i]))
             
     ## Given a coordinate position this will return the location of the coordinate 
     # (upstream, downstream, exon, or intron) and the distance from the gene. If the 
@@ -121,30 +121,30 @@ class Gene:
         location = "upstream"
 
         #if position is less than gene start
-        if(position < self.startPosition):
+        if(position < self.__startPosition):
             #find the difference
-            distance = self.startPosition - position
+            distance = self.__startPosition - position
             
             #if the gene was on the reverse strand then it would be downstream so update location
-            if(self.strand == "R"):
+            if(self.__strand == "R"):
                 location = "downstream"
 
         #if position is greater than gene start
-        elif (position > self.endPosition):
+        elif (position > self.__endPosition):
             #find the difference
-            distance = position - self.endPosition
+            distance = position - self.__endPosition
 
             #if the gene was on the forward strand then it would be downstream so update location
-            if(self.strand == "F"):
+            if(self.__strand == "F"):
                 location = "downstream"
 
         #the position is somewhere in the gene itself
         else:
             #loop over each exon and see if we are in an exon or intron
-            for i in range(0, len(self.exonStarts)):
+            for i in range(0, len(self.__exonStarts)):
                 #grab the coordinate for this exon
-                start = self.exonStarts[i]
-                end = self.exonEnds[i]
+                start = self.__exonStarts[i]
+                end = self.__exonEnds[i]
 
                 #check if in exon
                 if (position >= start and position <= end):
@@ -152,8 +152,8 @@ class Gene:
                     distance = i + 1
 
                     #see if on the reverse strand then we need to switch the numbering
-                    if(self.strand == "R"):
-                        distance = len(self.exonStarts) - i
+                    if(self.__strand == "R"):
+                        distance = len(self.__exonStarts) - i
 
                     #break the for loop
                     break
@@ -163,8 +163,8 @@ class Gene:
                     distance = i
 
                     #see if on the reverse strand then we need to switch the numbering
-                    if(self.strand == "R"):
-                        distance = len(self.exonStarts) - i
+                    if(self.__strand == "R"):
+                        distance = len(self.__exonStarts) - i
 
                     #break the for loop
                     break

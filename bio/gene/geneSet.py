@@ -9,15 +9,13 @@ __author__ = 'mattdyer'
 
 class GeneSet:
     #set up some class variables
-    file = ""
-    genes = {}
+    __genes = {}
 
     ## The constructor
     # @param self The object pointer
     def __init__(self):
         #set up the new object
-        file = ""
-        genes = {}
+        __genes = {}
 
     ## Load a RefSeq gene model file (UCSC format) and build the gene models
     # @param self The object pointer
@@ -50,7 +48,7 @@ class GeneSet:
             #see if gene exists
             if(self.hasGene(geneName)):
                 #grab the gene
-                gene = self.genes[geneName]
+                gene = self.__genes[geneName]
 
                 #see if the new model has a larger coding seqeunce, we take the largest model
                 if(endPosition - startPosition > gene.getSize()):
@@ -69,13 +67,19 @@ class GeneSet:
     # @return Returns true if the gene exist, false if it does not
     def hasGene(self, gene):
         #return true if the gene exists
-        return(self.genes.has_key(gene))
+        return(self.__genes.has_key(gene))
 
     ## Count the number of genes in the gene set
     # @param self The object pointer
     # @return Returns the number of genes in the gene set
     def getNumberOfGenes(self):
-        return(len(self.genes.keys()))
+        return(len(self.__genes.keys()))
+
+    ## Get the set of genes
+    # @param self The object pointer
+    # @returns The has of Gene objects
+    def getGeneSet(self):
+        return(self.__genes)
 
     ## Add a gene to the gene set
     # @param self The object pointer
@@ -94,14 +98,14 @@ class GeneSet:
         gene.addExonsToGene(exonStarts, exonEnds)
 
         #add the gene to the hash
-        self.genes[geneName] = gene
+        self.__genes[geneName] = gene
 
 ## @package GeneSetTest
 #
 # This class is responsible for unit testing the GeneSet class
 class GeneSetTest(unittest.TestCase):
     #load the file
-    geneSet = GeneSet();
+    geneSet = GeneSet()
     geneSet.loadGeneModels("test.txt")
 
     def test_number_of_genes(self):
