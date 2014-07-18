@@ -25,9 +25,9 @@ class TemplateWriter:
         if job['analysis']['type'] == 'qc_tvc':
             #we want to merge, QC, then call variants
             self.__writeHeader(job, fileHandle)
-            self.__writeStatusChange('running', job['jsonFile'], fileHandle)
+            self.__writeStatusChange('running', job['json_file'], fileHandle)
             self.__writeQCTCVTemplate(job, fileHandle)
-            self.__writeStatusChange('finished', job['jsonFile'], fileHandle)
+            self.__writeStatusChange('finished', job['json_file'], fileHandle)
 
         #close the file handle
         fileHandle.close()
