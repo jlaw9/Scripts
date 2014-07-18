@@ -70,7 +70,7 @@ class JobManager:
         self.__updateJSON(jobFile, fileData)
 
         #submit the job to SGE
-        sgeJobID = 1#runner.submitToSGE('qsub %s/job.sh' % (outputFolder))
+        sgeJobID = runner.submitToSGE('%s/job.sh' % (outputFolder), fileData)
         fileData['status'] = 'queued'
         fileData['sge_job_id'] = sgeJobID
         logging.info('%s - Submitted to SGE (%i)' % (getTimestamp(), sgeJobID))
@@ -94,6 +94,7 @@ class JobManager:
         #get all the json files that are in in the sample directories
         logging.debug("%s - Looking for JSON job files in %s/*/*/" % (getTimestamp(), self.__sampleDirectory))
         files = []
+        jobsToProcess = []
 
         #recurse through and find the json files
         for root, dirnames, filenames in os.walk(self.__sampleDirectory):

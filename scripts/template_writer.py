@@ -75,6 +75,7 @@ class TemplateWriter:
         if 'mark_dups' in job['analysis']['settings']:
             #if it is set to true, then we change the flag
             if job['analysis']['settings']['mark_dups'] == 'true':
+                print 'here'
                 dupFlag = '--flag_dups'
 
         #default is AmpliSeq for coverage analysis
@@ -87,7 +88,7 @@ class TemplateWriter:
                 coverageAnalysisFlag = '--cov_targetseq'
 
         for file in job['analysis']['files']:
-            fileHandle.write('bash %s/scripts/runTVC_and_CovAnalysis.sh --cleanup %s %s --cov %s %s --tvc %s --tvc_json %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, job['analysis']['settings']['qc_merged_bed'], dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
+            fileHandle.write('bash %s/scripts/runTVC_and_CovAnalysis.sh --cleanup %s %s --cov %s %s --tvc %s --tvc_json %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
 
     ## Write the code for running TVC
     # @param self The object pointer

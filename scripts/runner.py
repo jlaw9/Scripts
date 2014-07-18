@@ -15,6 +15,11 @@ class Runner:
     def __init__(self, mode):
         self.__mode = mode
 
+        # these are the default ones
+        self.__emails = ['mdyer@4combinator.com']
+        self.__queue = 'all.q'
+        self.__priority = '0'
+
     ## Run a job on the command-line
     # @param self The object pointer
     # @param systemCall The system call to executed
@@ -26,9 +31,25 @@ class Runner:
 
     ## Run a job on via SGE
     # @param self The object pointer
-    # @param systemCall The system call to executed
+    # @param file The the shell script to run
+    # @param fileData The dictionary of file data
     # @returns The SGE job number
-    def submitToSGE(self, systemCall):
+    def submitToSGE(self, file, fileData):
+        #see if there were other emails address provided
+        if 'emails' in fileData:
+            self.__emails = self.__emails + fileData['emails']
+
+        #see if another queue has been provided
+        if 'queue' in fileData['analysis']['settings']:
+            self.__queue = fileData['analysis']['settings']['queue']
+
+        #see if a different priority has been give
+        if 'priority' in fileData['analysis']['settings']:
+            self.__priority = fileData['analysis']['settings']['priority']
+
+        #build the command call
+        systemCall = 'qsub -m e -M \'%s\' -p $s -q %s %s' % (','.join(self.__emails), self.__priority, self.__queue, file)
+
         #submit to SGE and grab the job id
         jobString = subprocess.check_output(systemCall, shell=True)
         tokens = jobString.split(' ')
