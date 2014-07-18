@@ -2,32 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3c8540c3-ad8d-47f4-b2a3-fa675b272961" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/add_story_to_jira.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/add_tasks_jira.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/api_post_example.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/cleanProjectDir.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/create_master_drug_list.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/driver.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/drug_network.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/ftp_file.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/graph_network.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/heatmap.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/minion_anlaysis.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/database/pg_database.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/pull_metrics_from_ts_api.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/machine-learning/scikit_test.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/template_writer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bio/transposon/transposonSite.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bio/transposon/transposonSiteSet.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/tri_driver.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/truevault_test.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/system/update_json.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bio/variant/variant.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bio/variant/variantSet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bio/gene/gene.py" afterPath="$PROJECT_DIR$/bio/gene/gene.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bio/gene/geneSet.py" afterPath="$PROJECT_DIR$/bio/gene/geneSet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/system/runner.py" afterPath="$PROJECT_DIR$/system/runner.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/add_story_to_jira.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/add_tasks_jira.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/api_post_example.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/cleanProjectDir.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/create_master_drug_list.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/driver.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/drug_network.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/ftp_file.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/graph_network.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/heatmap.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/minion_anlaysis.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/pull_metrics_from_ts_api.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/runner.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/template_writer.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/tri_driver.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/truevault_test.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/system/update_json.py" afterPath="" />
     </list>
     <ignored path="legos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -53,106 +44,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="add_story_to_jira.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/add_story_to_jira.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4110">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="add_tasks_jira.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/add_tasks_jira.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="5025">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="heatmap.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/heatmap.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
-              <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="template_writer.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/template_writer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="828" max-vertical-offset="1545">
-              <caret line="97" column="16" selection-start-line="97" selection-start-column="16" selection-end-line="97" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ftp_file.py" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/system/ftp_file.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5958904" vertical-offset="0" max-vertical-offset="730">
-              <caret line="29" column="12" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="scikit_test.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/machine-learning/scikit_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="2055">
+            <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="1935">
               <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="graph_network.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/graph_network.py">
+      <file leaf-file-name="driver.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/scripts/driver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="1410">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tri_driver.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/tri_driver.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1575" max-vertical-offset="2310">
-              <caret line="105" column="58" selection-start-line="105" selection-start-column="58" selection-end-line="105" selection-end-column="58" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cleanProjectDir.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/cleanProjectDir.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="1905">
-              <caret line="48" column="75" selection-start-line="48" selection-start-column="75" selection-end-line="48" selection-end-column="75" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="update_json.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/system/update_json.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2190">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+              <folding>
+                <marker date="1402008144000" expanded="true" signature="3831:3897" placeholder="UPDATE analy..." />
+                <marker date="1402008144000" expanded="true" signature="3970:4028" placeholder="UPDATE analy..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -202,11 +112,11 @@
         <option value="$PROJECT_DIR$/system/add_story_to_jira.py" />
         <option value="$PROJECT_DIR$/system/test.py" />
         <option value="$PROJECT_DIR$/machine-learning/scikit_test.py" />
-        <option value="$PROJECT_DIR$/system/tri_driver.py" />
         <option value="$PROJECT_DIR$/system/cleanProjectDir.py" />
         <option value="$PROJECT_DIR$/system/heatmap.py" />
         <option value="$PROJECT_DIR$/system/template_writer.py" />
         <option value="$PROJECT_DIR$/system/ftp_file.py" />
+        <option value="$PROJECT_DIR$/system/tri_driver.py" />
       </list>
     </option>
   </component>
@@ -288,7 +198,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="system" />
+              <option name="myItemId" value="scripts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -578,7 +488,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="48" y="493" width="1832" height="1199" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -586,7 +496,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32920355" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.10534935" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.10534935" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32920355" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -628,13 +538,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/system/driver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utilities/database/pg_database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
@@ -643,13 +546,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bio/gene/geneSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -699,13 +595,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bio/gene/gene.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
@@ -735,7 +624,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
+    <entry file="file://$PROJECT_DIR$/bio/gene/gene.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bio/gene/geneSet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -756,42 +652,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bio/gene/gene.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bio/gene/geneSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bio/gene/gene.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -840,103 +701,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/api_post_example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/pull_metrics_from_ts_api.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/driver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/drug_network.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/truevault_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/runner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/create_master_drug_list.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/minion_anlaysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/machine-learning/scikit_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="2055">
-          <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/graph_network.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="1410">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/update_json.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/tri_driver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1575" max-vertical-offset="2310">
-          <caret line="105" column="58" selection-start-line="105" selection-start-column="58" selection-end-line="105" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/cleanProjectDir.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="1905">
-          <caret line="48" column="75" selection-start-line="48" selection-start-column="75" selection-end-line="48" selection-end-column="75" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bio/transposon/transposonSite.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.51369864" vertical-offset="0" max-vertical-offset="2805">
@@ -953,46 +717,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/add_tasks_jira.py">
+    <entry file="file://$PROJECT_DIR$/machine-learning/scikit_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="5025">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="2055">
+          <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/system/add_story_to_jira.py">
+    <entry file="file://$PROJECT_DIR$/scripts/driver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2190">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/heatmap.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
-          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/template_writer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="828" max-vertical-offset="1545">
-          <caret line="97" column="16" selection-start-line="97" selection-start-column="16" selection-end-line="97" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/system/ftp_file.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5958904" vertical-offset="0" max-vertical-offset="730">
-          <caret line="29" column="12" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <marker date="1402008144000" expanded="true" signature="3831:3897" placeholder="UPDATE analy..." />
+            <marker date="1402008144000" expanded="true" signature="3970:4028" placeholder="UPDATE analy..." />
           </folding>
         </state>
       </provider>

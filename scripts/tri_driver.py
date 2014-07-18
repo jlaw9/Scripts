@@ -14,7 +14,7 @@ from template_writer import TemplateWriter
 __author__ = 'mattdyer'
 
 #a couple of global variables that we will use
-BASE_SAMPLE_DIRECTORY = "/Volumes/HD/mattdyer/Desktop/in"
+BASE_SAMPLE_DIRECTORY = "/Volumes/HD/mattdyer/Desktop/temp"
 BASE_SOFTWARE_DIRECTORY = "/rawdata/software"
 
 class JobManager:
@@ -70,7 +70,7 @@ class JobManager:
         self.__updateJSON(jobFile, fileData)
 
         #submit the job to SGE
-        sgeJobID = runner.submitToSGE('qsub %s/job.sh' % (outputFolder))
+        sgeJobID = 1#runner.submitToSGE('qsub %s/job.sh' % (outputFolder))
         fileData['status'] = 'queued'
         fileData['sge_job_id'] = sgeJobID
         logging.info('%s - Submitted to SGE (%i)' % (getTimestamp(), sgeJobID))
