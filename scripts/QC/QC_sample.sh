@@ -14,8 +14,8 @@
 
 
 # Default file paths:
-SOFTWARE_DIR="/rawdata/software"
-QC_SCRIPTS="${SOFTWARE_DIR}/scripts/QC"
+SOFTWARE_ROOT="/rawdata/legos"
+QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
 BED_DIR="/rawdata/software/BED"
 # PROJECT_BED="$BED_DIR/AmpliSeq-Exome.bed"
 # CDS_BED='/home/ionadmin/jeff/QC/BED/Wales_CDS.bed'
@@ -291,7 +291,7 @@ function QC_2Runs {
 		status="$?"
 		if [ $status -eq 1 ]; then
 			echo "$QCd QC_2Runs.sh had an error!! moving it to ${QCd}_Error" 1>&2
-			mv $QCd ${QCd}_Error
+#			mv $QCd ${QCd}_Error
 		elif [ $status -eq 4 ]; then
 			echo "$QCd got a file not found error..." 1>&2
 		elif [ $status -eq 8 ]; then

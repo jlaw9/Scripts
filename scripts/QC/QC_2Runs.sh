@@ -18,8 +18,8 @@
 #$ -V
 
 
-SOFTWARE_DIR="/rawdata/software"
-QC_SCRIPTS="${SOFTWARE_DIR}/scripts/QC"
+SOFTWARE_ROOT="/rawdata/legos"
+QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
 QC_MASTER_OUT="$QC_SCRIPTS/QC_Out_Files/multiple_runs.csv"
 BAM_INDEXER='/opt/picard/picard-tools-current/BuildBamIndex.jar'
 VARIANT_CALLER_DIR='/results/plugins/variantCaller'
@@ -67,6 +67,8 @@ function setupBAMs {
 		fi
 		RUN1_BAM="${1}/${CHR}_subset/${CHR}_${run1_bam_name}"
 		RUN2_BAM="${2}/${CHR}_subset/${CHR}_${run2_bam_name}"
+		checkBamIndex $RUN1_BAM
+		checkBamIndex $RUN2_BAM
 	fi
 }
 
@@ -103,6 +105,22 @@ function setupVCF {
 	fi
 }
 
+# gets only the chromosome and positions from the bed file to make bedtools coverage faster and the ouptut organized how we want it.
+function setupBED {
+	#python ${SOFTWARE_ROOT}/scripts/Remove_Overlap.py $BED 
+	if [ "$CHR" != "" ]; then
+		# get only the specified chromosome, and cut the other info so bedtools coverage will run faster , the output files will be smaller, and the number of columns in the output file will match for every project
+		bed_name=`basename $1`
+		grep -P "^chr1\t" $1 | cut -f 1,2,3 | bedtools sort -i | bedtools merge -i > ${TEMP_DIR}/${CHR}_pos_${bed_name}
+		intersected_bed="${CHR}_pos_${bed_name}"
+	else
+		# Cut the other information in the bed file so bedtools coverage will run faster, the output files will be smaller, and the number of columns in the output file will match for every project.
+		bed_name=`basename $1`
+		cut -f 1,2,3 $1 | bedtools sort -i | bedtools merge -i > ${TEMP_DIR}/chr_pos_${bed_name}
+		intersected_bed="chr_pos_${bed_name}"
+	fi
+}
+
 # $1: RUN1_DIR $2: run_num
 function subset_low_cov {
 	if [ "`find ${1}/cov_full -maxdepth 0 -type d 2>/dev/null`" ]; then
@@ -127,7 +145,7 @@ function checkBamIndex {
 
 # Run GATK depth of coverage on a PTRIM.bam file in order to get total bases covered.
 # $1: the RUN_BAM file, $2: the Overlap_subset.bed file $3: the run_number
-function runGATK {
+function getDepths {
 	bam_file=$1
 	checkBamIndex $bam_file
 	mkdir ${TEMP_DIR}/gatk${3}_out 2>/dev/null
@@ -136,7 +154,7 @@ function runGATK {
 		--analysis_type DepthOfCoverage \
 		--reference_sequence $REF_FASTA \
 		--intervals $2 \
-		-o ${TEMP_DIR}/gatk${3}_out/Run${3}_Depths \
+		-o ${TEMP_DIR}/gatk${3}_out/Run${3}_depths \
 		>> $log 2>&1 \
 		&
 }
@@ -153,7 +171,7 @@ function runTVC {
 		--output-dir ${TEMP_DIR}/tvc${3}_out \
 		--region-bed $BED \
 		--parameters-file $2 \
-		--hotspot-vcf ${TEMP_DIR}/final_Hotspot.vcf.gz \
+		--hotspot-vcf ${TEMP_DIR}/final_Hotspot.vcf \
 		--postprocessed-bam=${TEMP_DIR}/tvc${3}_out/PTRIM.bam \
 		--primer-trim-bed ${BED} \
 		--bin-dir ${VARIANT_CALLER_DIR}  \
@@ -312,7 +330,7 @@ done
 echo "$RUNNING"
 
 # Check to make sure the files actually exist
-# Add the .amplicon.cov.xls files to check they are available for each run. Otherwise exit.
+# Add the other files to check they are available for each run. Otherwise exit.
 files=("$RUN1_DIR" "$RUN2_DIR" "${RUN1_DIR}/*.bam" "${RUN2_DIR}/*.bam" \
 	"$BED" "$CDS_BED" "$SUBSET_BED" "$JSON_PARAS1" "$JSON_PARAS2" "$GATK" "$REF_FASTA" "$BAM_INDEXER" "$VARIANT_CALLER_DIR")
 checkFiles $files
@@ -328,7 +346,7 @@ log="${OUTPUT_DIR}/log.txt"
 
 # If QC has already been run using the options specified, then no need to re-run it.
 if [ "`find ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf -type f 2>/dev/null`" \
-	-a "`find ${OUTPUT_DIR}/Run1${CHR}_Depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_Depths -maxdepth 0 -type f 2>/dev/null`" ]; then
+	-a "`find ${OUTPUT_DIR}/Run1${CHR}_depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_depths -maxdepth 0 -type f 2>/dev/null`" ]; then
 	echo "$OUTPUT_DIR has already been QCd. Skipping QC and running QC_Match_VCFs.py"
 else
 	echo "$OUTPUT_DIR Creating QC tables at `date`"
@@ -383,7 +401,10 @@ else
 		bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${SUBSET_BED} -u -f 0.99> ${TEMP_DIR}/intersect2_${subset2_name} 2>>$log
 		intersected_bed="intersect2_${subset2_name}"
 	fi
-	
+
+	# This fuction gets only the chr and pos from the project bed file (to save time and make the output better for bedtools coverage).
+	setupBED ${TEMP_DIR}/${intersected_bed}
+
 	# And then intersect that bed file with the merged vcf file to get only the variants that have > 30x coverage and that are found in the bed files specified.
 	bedtools intersect -a ${TEMP_DIR}/merged.vcf -b ${TEMP_DIR}/${intersected_bed} > ${TEMP_DIR}/merged_intersect.vcf 2>>$log
 	
@@ -415,7 +436,7 @@ else
 		#because TVC is actually run twice (1) as though there were no hotspot files defined (2) only using hotspot file. The final TSVC_variants.vcf reported is a combination of (1) and (2)  
 		
 		# wait for TVC to finish. Exit if TVC has a problem
-		waitForJobsToFinish "TVC${CHR}"
+		waitForJobsToFinish "TVC ${CHR}"
 	
 		# Now, intersect the variants to the hotspot file used as input in generating the final round of TSVC_variants.vcf. 
 		# This way, we will match the no of variants in both runs and we will be able to proceed with generating the QC table (if the no of variants differed in the 2 runs, we would not be able to compare apples to apples)
@@ -435,13 +456,14 @@ else
 		python ${QC_SCRIPTS}/QC_Filter_Var.py ${TEMP_DIR}/VCF2_Intersect_Hotspot.vcf $VCF2_FINAL --single $DEPTH_CUTOFF2 >>$log 2>&1
 	fi
 
+
 	# No need for another if statement here. If both TVC and GATK files already existed, then this part would've already been skipped
 	# Run GATK. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
-	runGATK ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
-	runGATK ${TEMP_DIR}/tvc2${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
+	getDepths ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
+	getDepths ${TEMP_DIR}/tvc2${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
 	
-	waitForJobsToFinish "GATK${CHR}"
-	mv ${TEMP_DIR}/gatk1${CHR}_out/Run1${CHR}_Depths ${TEMP_DIR}/gatk2${CHR}_out/Run2${CHR}_Depths ${OUTPUT_DIR}
+	waitForJobsToFinish "GATK ${CHR}"
+	mv ${TEMP_DIR}/gatk1${CHR}_out/Run1${CHR}_depths ${TEMP_DIR}/gatk2${CHR}_out/Run2${CHR}_depths ${OUTPUT_DIR}
 
 fi
 
@@ -450,7 +472,7 @@ fi
 		 	# ------------------------------------------------------------------
 if [ "$RUN_GATK_CDS" == "True" ]; then
 	if [ "`find ${OUTPUT_DIR}/VCF1${CHR}_CDS_Final.vcf -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/VCF2${CHR}_CDS_Final.vcf -type f 2>/dev/null`" \
-		-a "`find ${OUTPUT_DIR}/Run1${CHR}_CDS_Depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_CDS_Depths -maxdepth 0 -type f 2>/dev/null`" ]; then
+		-a "`find ${OUTPUT_DIR}/Run1${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" ]; then
 		echo "$OUTPUT_DIR CDS region has already been QCd. Skipping QC and running QC_Match_VCFs.py"
 	elif [ ! "`find ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam -maxdepth 0 2>/dev/null`" -o ! "`find ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam -maxdepth 0 2>/dev/null`" ]; then
 		echo "${TEMP_DIR} does not have the necessary PTRIM.bam files. QC would have to be restarted (i.e. delete $OUTPUT_DIR and start over)."
@@ -488,24 +510,28 @@ if [ "$RUN_GATK_CDS" == "True" ]; then
 
 		# Now intersect the available bed file with the CDS bed.
 		bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${CDS_BED} > ${TEMP_DIR}/CDS_subset.bed 2>>$log
-		
-		# Run GATK. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
-		runGATK ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
-		runGATK ${TEMP_DIR}/tvc2${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
+		intersected_bed="CDS_subset.bed"
+			
+		# This fuction gets only the chr and pos from the project bed file (to save time and make the output better for bedtools coverage.
+		setupBED ${TEMP_DIR}/${intersected_bed}
 	
-		waitForJobsToFinish "CDS_GATK${CHR}"
-		mv ${TEMP_DIR}/gatk1${CHR}_CDS_out/Run1${CHR}_CDS_Depths ${TEMP_DIR}/gatk2${CHR}_CDS_out/Run2${CHR}_CDS_Depths ${OUTPUT_DIR}
+		# Run GATK. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
+		getDepths ${TEMP_DIR}/tvc1${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
+		getDepths ${TEMP_DIR}/tvc2${CHR}_out/PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
+	
+		waitForJobsToFinish "CDS GATK ${CHR}"
+		mv ${TEMP_DIR}/gatk1${CHR}_CDS_out/Run1${CHR}_CDS_depths ${TEMP_DIR}/gatk2${CHR}_CDS_out/Run2${CHR}_CDS_depths ${OUTPUT_DIR}
 	
 		# And then intersect that bed file with the merged vcf file to get only the variants that have > 30x coverage.
-		bedtools intersect -a ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf -b ${TEMP_DIR}/CDS_subset.bed > ${OUTPUT_DIR}/VCF1${CHR}_CDS_Final.vcf 2>>$log
-		bedtools intersect -a ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf -b ${TEMP_DIR}/CDS_subset.bed > ${OUTPUT_DIR}/VCF2${CHR}_CDS_Final.vcf 2>>$log
+		bedtools intersect -a ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf -b ${TEMP_DIR}/${intersected_bed} > ${OUTPUT_DIR}/VCF1${CHR}_CDS_Final.vcf 2>>$log
+		bedtools intersect -a ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf -b ${TEMP_DIR}/${intersected_bed} > ${OUTPUT_DIR}/VCF2${CHR}_CDS_Final.vcf 2>>$log
 		# get only the variants that are listed in the Hotspot file
 	fi
 	
-	total_elibigle_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_CDS_Depths ${OUTPUT_DIR}/Run2${CHR}_CDS_Depths | \
+	total_elibigle_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_CDS_depths ${OUTPUT_DIR}/Run2${CHR}_CDS_depths | \
 		awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($2 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
 	if [ "$total_eligible_bases" == "0" ]; then
-		echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1_Depths probably not found"
+		echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1_depths probably not found"
 		exit 1
 	else
 		# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the two csvs.
@@ -525,10 +551,10 @@ fi
 
 
 # Use awk to get the total_eligible_bases by getting only the base positions from both GATK outputs that have greater than the cutoff depth.
-total_elibigle_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_Depths ${OUTPUT_DIR}/Run2${CHR}_Depths | \
+total_elibigle_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
 	awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($2 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
 if [ "$total_eligible_bases" == "0" ]; then
-	echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1${CHR}_Depths probably not found"
+	echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1${CHR}_depths probably not found"
 	exit 1
 else
 	# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the two csvs.
@@ -547,6 +573,8 @@ fi
 # Cleanup and done.
 if [ "$CLEANUP" == "True" ]; then
 	rm -rf ${TEMP_DIR}
+	# Remove the chr subset if it was created.
+	rm -rf ${RUN1_DIR}/${CHR}_subset ${RUN2_DIR}/${CHR}_subset 2>/dev/null
 fi
 
 echo "$OUTPUT_DIR Finished QC." 
