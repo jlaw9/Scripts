@@ -26,7 +26,13 @@ class TemplateWriter:
             #we want to merge, QC, then call variants
             self.__writeHeader(job, fileHandle)
             self.__writeStatusChange('running', job['json_file'], fileHandle)
-            self.__writeQCTCVTemplate(job, fileHandle)
+            self.__writeQCTVCTemplate(job, fileHandle)
+            self.__writeStatusChange('finished', job['json_file'], fileHandle)
+        elif job['analysis']['type'] == 'qc_compare':
+            print 'hit'
+            self.__writeHeader(job, fileHandle)
+            self.__writeStatusChange('running', job['json_file'], fileHandle)
+            self.__writeQCCompareTemplate(job, fileHandle)
             self.__writeStatusChange('finished', job['json_file'], fileHandle)
 
         #close the file handle
@@ -68,7 +74,7 @@ class TemplateWriter:
     # @param self The object pointer
     # @param job The json job object
     # @param file The file handle
-    def __writeQCTCVTemplate(self, job, fileHandle):
+    def __writeQCTVCTemplate(self, job, fileHandle):
         #default is to not flag dups
         dupFlag = '--remove_dup_flags'
 
@@ -90,6 +96,25 @@ class TemplateWriter:
 
         for file in job['analysis']['files']:
             fileHandle.write('bash %s/scripts/runTVC_and_CovAnalysis.sh --cleanup %s %s --cov %s %s --tvc %s --tvc_json %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
+
+    ## Write the code for running qc comparisons
+    # @param self The object pointer
+    # @param job The json job object
+    # @param file The file handle
+    def __writeQCCompareTemplate(self, job, fileHandle):
+        #default is to analyze all chromsomes
+        chrFlag = '-chr chr1'
+
+        if job['analysis']['settings']['analyze_all_chromosomes'] == 'true':
+            chrFlag = ''
+
+        #let's check the type
+        if job['analysis']['settings']['type'] == 'germline':
+            #germline run
+            fileHandle.write('bash %s/scripts/QC/QC_sample.sh -nr -cl -s %s/%s/%s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['sample_folder'], job['project'], job['sample'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
+        #add other types later
+
+
 
     ## Write the code for running TVC
     # @param self The object pointer

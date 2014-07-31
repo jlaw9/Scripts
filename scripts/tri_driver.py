@@ -49,6 +49,7 @@ class JobManager:
 
         #create the output folder
         outputFolder = '%s/%s/%s/%s' %(self.__sampleDirectory, fileData['project'], fileData['sample'], fileData['name'])
+
         logging.debug('%s - Creating output folder %s' % (getTimestamp(), outputFolder))
         fileData['output_folder'] = outputFolder
 
@@ -57,6 +58,7 @@ class JobManager:
             os.makedirs(outputFolder)
 
         #write the job template
+        fileData['json_file'] = jobFile
         templateWriter = TemplateWriter(outputFolder, self.__softwareDirectory)
         analysisFile = templateWriter.writeTemplate(fileData)
 
@@ -65,7 +67,6 @@ class JobManager:
         logging.info('%s - Starting %s' % (getTimestamp(), analysisFile))
         fileData['status'] = 'submitted'
         fileData['output_folder'] = outputFolder
-        fileData['json_file'] = jobFile
 
         #update the json
         self.__updateJSON(jobFile, fileData)

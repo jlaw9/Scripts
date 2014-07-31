@@ -9,6 +9,9 @@ if (__name__ == '__main__'):
     #set up the option parser
     parser = OptionParser()
 
+    #set up the logging
+    logging.basicConfig(level=logging.DEBUG)
+
     #add the options to parse
     parser.add_option('-j', '--in', dest='json', help='The JSON file')
     parser.add_option('-s', '--status', dest='status', help='The status to update it to')
