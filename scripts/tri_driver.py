@@ -112,6 +112,7 @@ class JobManager:
                 for root, dirnames, filenames in os.walk(directory):
                     for filename in fnmatch.filter(filenames, '*.json'):
                         #see if it is the right type
+                        logging.debug('%s - Looking at %s' % (getTimestamp(), os.path.join(root, filename)))
                         jsonData = open(os.path.join(root, filename))
                         fileData = json.load(jsonData)
                     
