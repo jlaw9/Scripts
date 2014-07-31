@@ -52,7 +52,7 @@ class Runner:
 
         #submit to SGE and grab the job id
         #print systemCall
-        #jobString = subprocess.check_output(systemCall, shell=True)
-        #tokens = jobString.split(' ')
-        #return(int(tokens[2]))
-        return(1)
+        jobString = subprocess.check_output(systemCall, shell=True)
+        tokens = jobString.split(' ')
+        return(int(tokens[2]))
+        #return(1)

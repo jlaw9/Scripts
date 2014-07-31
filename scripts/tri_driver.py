@@ -17,7 +17,7 @@ __author__ = 'mattdyer'
 #a couple of global variables that we will use, add command-line overrides later
 BASE_SAMPLE_DIRECTORIES = ["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]
 BASE_SOFTWARE_DIRECTORY = "/rawdata/legos"
-JOB_FILTERS = ['qc_compare']
+JOB_FILTERS = ['qc_compare']#qc_tvc, qc_compare
 
 class JobManager:
     ## The constructor

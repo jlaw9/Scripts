@@ -16,23 +16,6 @@
 # Default file paths:
 SOFTWARE_ROOT="/rawdata/legos"
 QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
-BED_DIR="/rawdata/software/BED"
-# PROJECT_BED="$BED_DIR/AmpliSeq-Exome.bed"
-# CDS_BED='/home/ionadmin/jeff/QC/BED/Wales_CDS.bed'
-# PLUS10_BED='/home/ionadmin/jeff/QC/BED/Wales_plus10.bed'
-# MINUS10_BED='/home/ionadmin/jeff/QC/BED/Wales_minus10.bed'
-
-function checkFiles {
-	files=$1
-	for file in ${files[@]}; 
-	do
-		if [ ! -r ${file} ];
-		then
-			echo "-- ERROR -- '${file}' not found or not readable" 1>&2
-			exit 4
-		fi
-	done
-}
 
 function usage {
 cat << EOF
@@ -50,12 +33,26 @@ USAGE: bash QC_sample.sh
 	-a | --amp_cov_cutoff (Cutoff for # of amplicon reads.) 
 	-rgc | --run_gatk_cds (Normally, GATK is run using the subset of the beds specified above. If the cds_bed is specified, and this option is specified, GATK will be run twice.)
 	-chr | --subset_chr <chr#> (The chromosome specified here (for example: chr1) will be used to subset the VCF and BAM files)
-	-nr | --no_run_info (If this option is specified, no need to supply the plus and minus 10 beds)
-	-pb | --plus10bed (bed file with only the 10th pos of the amplicons)
-	-mb | --minus10bed (bed file with only the 10th pos from the end of the amplicons)
-	-cl | --cleanup (This option is not yet available. Will delete temporary files used to generate the QC metrics)
+	-nr | --no_run_info (If this option is specified, no need to supply the plus and minus 10 beds.)
+	-bb | --beg_bed <path/to/startLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos of the amplicons)
+	-eb | --end_bed <path/to/endLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos from the end of the amplicons)
+	-cl | --cleanup (Will delete temporary files used to generate the QC metrics)
 EOF
 exit 8
+}
+
+# Checks to ensure that the files provided exist and are readable. 
+# @param $1 should be a list of files.
+function checkFiles {
+	files=$1
+	for file in ${files[@]}; do
+		if [ "$file" != "" ]; then
+			if [ ! "`find ${file} -maxdepth 0 2>/dev/null`" ]; then
+				echo "-- ERROR -- '${file}' not found or not readable" 1>&2
+				exit 4
+			fi
+		fi
+	done
 }
 
 #for arguments
@@ -68,13 +65,22 @@ GERMLINE="False" # Treat the file system as germline and generate QC tables for 
 TUMOR_NORMAL="False" # Treat the file system as Tumor / Normal pairs and generate QC tables for them. 
 TUMOR_TUMOR="False" # Treat the file system as Tumor / Tumor pairs and generate QC tables for them. 
 NORMAL_NORMAL="False" # Treat the file system as Normal / Normal pairs and generate QC tables for them. 
-RUN_INFO="True" # Option to generate run information about each sample
+GET_RUN_INFO="True" # Option to generate run information about each sample
 CLEANUP="False" # Option to delete the temporary files. Not yet implemented.
+NO_ERRS="True" # used for cleanup
 AMP_COV_CUTOFF=30 # The minimum amount of coverage each amplicon needs to have. Default is 30
 
 RUNNING="Starting QC using these option: "
+counter=0
 while :
 do
+	let "counter+=1"
+	# If not enough inputs were given for an option, the while loop will just keep going. Stop it and print this error if it loops more than 100 times
+	if [ $counter -gt 100 ]; then
+		echo "USAGE: not all required inputs were given for options." 1>&2
+		echo "$RUNNING"
+		exit 8
+	fi
 	case $1 in
 		-h | --help)
 			usage
@@ -161,7 +167,7 @@ do
 			;;
 
 		-nr | --no_run_info)
-			RUN_INFO="False"
+			GET_RUN_INFO="False"
 			RUNNING="$RUNNING --no_run_info, "
 			shift
 			;;
@@ -175,13 +181,13 @@ do
 			RUNNING="$RUNNING --cds_bed: $2, "
 			shift 2
 			;;
-		-pb | --plus10)
-			PLUS10_BED=$2
+		-bb | --beg_bed)
+			BEG_BED=$2
 			RUNNING="$RUNNING --plus10: $2, "
 			shift 2
 			;;
-		-mb | --minus10)
-			MINUS10_BED=$2
+		-eb | --end_bed)
+			END_BED=$2
 			RUNNING="$RUNNING --minus10: $2, "
 			shift 2
 			;;
@@ -211,10 +217,12 @@ do
 			shift
 			;;
 		-*)
+			# If an unkown option was given, then give a warning
 			printf >&2 'WARNING: Unknown option (ignored): %s\n' "$1"
 			shift
 			;;
 		*)  # no more options. Stop while loop
+			# If an unkown option was given, then give a warning
 			if [ "$1" != "" ]; then
 				printf >&2 'WARNING: Unknown argument (ignored): %s\n' "$1"
 				shift
@@ -226,10 +234,23 @@ do
 done
 
 # RUNNING contains all of the specified options
-echo "$RUNNING"
+echo "$RUNNING at `date`"
 
-#files=("$SAMPLE_DIR" "$PROJECT_BED" "$PLUS10_BED" "$MINUS10_BED" "$CDS_BED")
-#checkFiles $files
+files=("$SAMPLE_DIR" "$PROJECT_BED" "$BEG_BED" "$END_BED" "$CDS_BED")
+checkFiles $files
+
+if [ "$CDS_BED" == "" -a "$RUN_GATK_CDS" == "True" ]; then
+	echo "ERROR: No CDS bed was given. Cannot run gatk using the CDS bed!!"
+	exit 8
+fi
+
+if [ "$GET_RUN_INFO" == "True" ]; then
+	if [ "$BEG_BED" == "" -o "$END_BED" == "" ]; then
+		echo "USAGE ERROR: --plus10bed and --minus10bed options are required." 
+		echo "Use --no_run_info to skip gathering each run's info"
+		exit 8
+	fi
+fi
 
 
 # ----------------------------------------------------
@@ -239,22 +260,26 @@ echo "$RUNNING"
 # THIS FUNCTION IS NOT YET IMPLEMENTED
 # $1: Run_Dir $2: The output dir $3 the depth cutoff $4 the WT_Cutoff $5 the HOM_Cutoff
 function QC_getRunInfo {
-	if [ ! "`find ${1}/*.bam -maxdepth 0 2>/dev/null`" ]
-	then
-		echo "$1 has no BAM file :("
-	elif [ ! "`find ${1}/*.vcf -maxdepth 0 2>/dev/null`" ]
-	then
-		echo "$1 has no VCF file :("
-	else
-	# ----- There should be only one .bam in this directory. Otherwise there could be problems. ----------
-		# QC_getCoverageInfo runs GATK 3 times using the three different BED files specified to get the three different QC metrics wanted
-		#Ts/Tv	# Total variants (single allele)	# HET variants (single allele rates)	# HOM variants (single allele rates)
-		BAM="`find ${1}/*.bam -maxdepth 0 2>/dev/null`"
-		VCF="`find ${1}/4.0*.vcf -maxdepth 0 2>/dev/null`"
-		if [ "$VCF" == "" ]; then
-			VCF="`find ${1}/*.vcf -maxdepth 0 2>/dev/null`"
-		fi
-		bash ${QC_SCRIPTS}/QC_getRunInfo.sh $BAM $VCF $PLUS10_BED $MINUS10_BED $CDS_BED $2 $AMP_COV_CUTOFF $3 $4 $5
+	# QC_getRunInfo.sh gets the following metrics: % amps covered at the beg and end, Ts/Tv ratio,	# Total variants,	# HET variants, 	# HOM variants
+	# It also gets the metrics from the backupPDF.pdf if it is available.
+	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --beg_bed $BEG_BED --end_bed $END_BED"
+	if [ "$CDS_BED" != "" ]; then
+		qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
+	fi
+	if [ "$CLEANUP" == "True" ]; then
+		qcgetruninfo="$qcgetruninfo --cleanup "
+	fi
+	$qcgetruninfo
+	status="$?"
+	if [ $status -eq 1 ]; then
+		echo "$QCd QC_getRunInfo.sh had an error!! " 1>&2
+		NO_ERRS="False"
+	elif [ $status -eq 4 ]; then
+		echo "$QCd got a file not found error..." 1>&2
+		NO_ERRS="False"
+	elif [ $status -eq 8 ]; then
+		echo "$QCd got a usage error..." 1>&2
+		NO_ERRS="False"
 	fi
 }
 
@@ -264,12 +289,20 @@ function QC_getRunInfo {
 # $5: Depth1, $6: Depth2, $7: WT1, $8: HOM1, $9: WT2, $10: HOM2
 # Output will be put into a dir like: sample1/QC/Run1vsRun2
 function QC_2Runs {
+	# This if statement is not needed, it's just an extra catch
 	if [ "$1" != "$2" ]; then
 		run1_name="`find $1 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
 		run2_name="`find $2 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
 		QCd="${SAMPLE_DIR}/QC/${run1_name}vs${run2_name}"
+		if [ "`find ${SAMPLE_DIR}/QC/*_QC.json -type f 2>/dev/null`" ]; then
+			json="`find ${SAMPLE_DIR}/QC/*_QC.json -type f 2>/dev/null`"
+		else
+			json="${SAMPLE_DIR}/QC/results_QC.json"
+		fi
 		# QC these two runs. QC_2Runs.sh takes the two run dirs and finds a .bam, .vcf, and .cov.xls file in the same dir as the .bam file
-		qc2runs="bash ${QC_SCRIPTS}/QC_2Runs.sh --run_dirs $1 $2 --output_dir $QCd --project_bed $PROJECT_BED -a $AMP_COV_CUTOFF -j $3 $4 -d $5 $6 -gt $7 $8 $9 ${10} "
+		# If there is a PRITM.bam, it uses that. If there is not, it uses the other .bam file available.
+		# I need to fix the parameters still... Should the user specify a .cov.xls and .vcf file? or just a bam file?
+		qc2runs="bash ${QC_SCRIPTS}/QC_2Runs.sh --run_dirs $1 $2 --output_dir $QCd --json_out $json --project_bed $PROJECT_BED -a $AMP_COV_CUTOFF -jp $3 $4 -d $5 $6 -gt $7 $8 $9 ${10} "
 		if [ "$CDS_BED" != "" ]; then
 			qc2runs="$qc2runs -cb $CDS_BED "
 		fi
@@ -282,20 +315,24 @@ function QC_2Runs {
 		if [ "$CHR" != "" ]; then
 			qc2runs="$qc2runs --subset_chr $CHR "
 		fi
-		if [ "$CLEANUP" == "True" ]; then
-			qc2runs="$qc2runs --cleanup "
-		fi
+		# The cleanup will be done at the end of this script because the PTRIM.bam is needed for QC_getRunInfo.sh, and the chr_subset is needed for each run comparison
+#		if [ "$CLEANUP" == "True" ]; then
+#			qc2runs="$qc2runs --cleanup "
+#		fi
 
 		# now run QC_2Runs
 		$qc2runs
 		status="$?"
 		if [ $status -eq 1 ]; then
 			echo "$QCd QC_2Runs.sh had an error!! moving it to ${QCd}_Error" 1>&2
+			NO_ERRS="False"
 #			mv $QCd ${QCd}_Error
 		elif [ $status -eq 4 ]; then
 			echo "$QCd got a file not found error..." 1>&2
+			NO_ERRS="False"
 		elif [ $status -eq 8 ]; then
 			echo "$QCd got a usage error..." 1>&2
+			NO_ERRS="False"
 		fi
 	fi
 }
@@ -313,11 +350,6 @@ if [ "$GERMLINE" == "True" ]; then
 	# QC the Multiple Runs
 	for run1 in $runs; do
 		run1_num=`echo "$run1" | grep -Eo "[0-9]$"`
-		# If the user did not specify to get this run's info, then get this run's info.
-#		if [ "$RUN_INFO" == "True" ]; then
-	#		get_Run_Info $sample ${sample}/Analysis_files/gatk_out
-#			QC_getRunInfo $run1
-#		fi
 		# If there are more than two run_bams for this sample, then QC them with each other.
 		for run2 in $runs; do
 			run2_num=`echo "$run2" | grep -Eo "[0-9]$"`
@@ -330,6 +362,12 @@ if [ "$GERMLINE" == "True" ]; then
 					$WT_CUTOFF $HOM_CUTOFF
 			fi
 		done
+		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+		# If the user did not specify to get this run's info, then get this run's info.
+		if [ "$GET_RUN_INFO" == "True" ]; then
+			#get_Run_Info $sample ${sample}/Analysis_files/gatk_out
+			QC_getRunInfo $run1 ${run1}/Analysis_Files/temp_files $DEPTH_CUTOFF $WT_CUTOFF $HOM_CUTOFF
+		fi
 	done
 fi
 # ---------------------------------- END GERMLINE ---------------------------------------
@@ -351,7 +389,17 @@ if [ "$TUMOR_NORMAL" == "True" ]; then
 				$DEPTH_CUTOFF_NORMAL $DEPTH_CUTOFF_TUMOR \
 				$WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL \
 				$WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+
+			# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+			# If the user did not specify to get this run's info, then get this run's info.
+			if [ "$GET_RUN_INFO" == "True" ]; then
+				QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+			fi
 		done		
+		# also get the Run Info for the normal runs.
+		if [ "$GET_RUN_INFO" == "True" ]; then
+			QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
+		fi
 	done
 fi
 
@@ -371,6 +419,11 @@ if [ "$TUMOR_TUMOR" == "True" ]; then
 					$WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
 			fi
 		done		
+		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+		# If the user did not specify to get this run's info, then get this run's info.
+		if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_NORMAL" != "True" ]; then
+			QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+		fi
 	done
 fi
 
@@ -390,14 +443,44 @@ if [ "$NORMAL_NORMAL" == "True" ]; then
 					$WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 			fi
 		done		
+		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+		# If the user did not specify to get this run's info, then get this run's info.
+		if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_NORMAL" != "True" ]; then
+			QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
+		fi
+		done
+	fi
+	
+	# ---------------------------------- END Somatic ---------------------------------------
+
+if [ "$NO_ERRS" == "False" ]; then
+	echo "Not cleaning up. There was an error"
+	echo "$SAMPLE_DIR Finished WITH ERRORS at `date`"
+	echo "----------------------------------------------"
+	exit 1
+fi
+	
+# Cleanup and done.
+if [ "$CLEANUP" == "True" ]; then
+	# remove the temp files. (Mainly the PTRIM.bam because it takes up more space)
+	temp_dirs=`find ${SAMPLE_DIR}/QC -name "temp_files" -type d 2>/dev/null`
+	for temp_dir in $temp_dirs; do
+		rm -rf $temp_dir
+	done
+	if [ "$CHR" != "" ]; then
+		# Remove the chr subsets if they were created.
+		chr_subsets=`find ${SAMPLE_DIR} -name "${CHR}" -type d 2>/dev/null`
+		for chr_subset in $chr_subsets; do
+			rm -rf $chr_subset
+		done
+	fi
+	# Remove the PTRIM.bams
+	ptrims=`find ${SAMPLE_DIR} -name "PTRIM.bam*" -type f 2>/dev/null`
+	for ptrim in $ptrims; do
+		rm $ptrim
 	done
 fi
-# ---------------------------------- END Somatic ---------------------------------------
 
-# Now generate the QC spreadsheet.
-het_to_hom_cutoff=6
-wt_to_hom_cutoff=3
-#python2.7 QC_stats.py QC_Coverage_Info.csv
-#python2.7 QC_generateSheets.py master.csv master.xlsx -mr $het_to_hom_cutoff $wt_to_hom_cutoff 
-echo "$SAMPLE_DIR Finished QC"
+echo "$SAMPLE_DIR Finished QC at `date`"
+echo "----------------------------------------------"
 
