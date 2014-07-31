@@ -1,6 +1,7 @@
 
 from optparse import OptionParser
 import json
+import logging
 
 __author__ = 'mattdyer'
 
