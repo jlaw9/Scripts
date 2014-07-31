@@ -25,15 +25,15 @@ class TemplateWriter:
         if job['analysis']['type'] == 'qc_tvc':
             #we want to merge, QC, then call variants
             self.__writeHeader(job, fileHandle)
-            self.__writeStatusChange('running', job['json_file'], fileHandle)
-            self.__writeQCTVCTemplate(job, fileHandle)
-            self.__writeStatusChange('finished', job['json_file'], fileHandle)
+            self.__writeStatusChange('running', job['json_file'], fileHandle, False)
+            self.__writeCovTVCTemplate(job, fileHandle)
+            self.__writeStatusChange('finished', job['json_file'], fileHandle, True)
         elif job['analysis']['type'] == 'qc_compare':
             print 'hit'
             self.__writeHeader(job, fileHandle)
-            self.__writeStatusChange('running', job['json_file'], fileHandle)
+            self.__writeStatusChange('running', job['json_file'], fileHandle, False)
             self.__writeQCCompareTemplate(job, fileHandle)
-            self.__writeStatusChange('finished', job['json_file'], fileHandle)
+            self.__writeStatusChange('finished', job['json_file'], fileHandle, True)
 
         #close the file handle
         fileHandle.close()
@@ -66,15 +66,24 @@ class TemplateWriter:
     # @param status The json job object
     # @param jsonFile The json file to update the status in
     # @param file The file handle
-    def __writeStatusChange(self, status, jsonFile, fileHandle):
-        #create a seperate job for each file in the directory
-        fileHandle.write('python %s/scripts/update_json.py -j %s -s %s\n' % (self.__softwareDirectory, jsonFile, status))
+    # @param wrap Boolean of whether or not to wrap the status
+    def __writeStatusChange(self, status, jsonFile, fileHandle, wrap):
+        #set the status and wrap if requested
+        if not wrap:
+            fileHandle.write('python %s/scripts/update_json.py -j %s -s %s\n' % (self.__softwareDirectory, jsonFile, status))
+        else:
+            fileHandle.write('if [ $? -ne 0 ]; then\n')
+            fileHandle.write('\tpython %s/scripts/update_json.py -j %s -s %s\n' % (self.__softwareDirectory, jsonFile, "failed"))
+            fileHandle.write('else\n')
+            fileHandle.write('\tpython %s/scripts/update_json.py -j %s -s %s\n' % (self.__softwareDirectory, jsonFile, status))
+            fileHandle.write('fi\n')
+
 
     ## Write the code for running coverage analysis and tvc
     # @param self The object pointer
     # @param job The json job object
     # @param file The file handle
-    def __writeQCTVCTemplate(self, job, fileHandle):
+    def __writeCovTVCTemplate(self, job, fileHandle):
         #default is to not flag dups
         dupFlag = '--remove_dup_flags'
 
@@ -95,7 +104,7 @@ class TemplateWriter:
                 coverageAnalysisFlag = '--cov_targetseq'
 
         for file in job['analysis']['files']:
-            fileHandle.write('bash %s/scripts/runTVC_and_CovAnalysis.sh --cleanup %s %s --cov %s %s --tvc %s --tvc_json %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
+            fileHandle.write('bash %s/scripts/runTVC_COV.sh --ptrim PTRIM.bam --cleanup %s %s --cov %s %s --tvc %s --tvc %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
 
     ## Write the code for running qc comparisons
     # @param self The object pointer
@@ -111,7 +120,7 @@ class TemplateWriter:
         #let's check the type
         if job['analysis']['settings']['type'] == 'germline':
             #germline run
-            fileHandle.write('bash %s/scripts/QC/QC_sample.sh -nr -cl -s %s/%s/%s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['sample_folder'], job['project'], job['sample'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
+            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -cl -s %s/%s/%s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['project'], job['sample'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
         #add other types later
 
 

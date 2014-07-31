@@ -17,7 +17,7 @@ __author__ = 'mattdyer'
 #a couple of global variables that we will use, add command-line overrides later
 BASE_SAMPLE_DIRECTORIES = ["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]
 BASE_SOFTWARE_DIRECTORY = "/rawdata/legos"
-JOB_FILTERS = ['qc_tvc'] 
+JOB_FILTERS = ['qc_compare']
 
 class JobManager:
     ## The constructor
@@ -56,12 +56,7 @@ class JobManager:
         logging.debug('%s - %s' % (getTimestamp(), fileData))
 
         #create the output folder
-<<<<<<< HEAD
-        outputFolder = '%s/%s/%s/%s' %(self.__sampleDirectory, fileData['project'], fileData['sample'], fileData['name'])
-
-=======
         outputFolder = '%s/%s/%s/%s' %(baseDir, fileData['project'], fileData['sample'], fileData['name'])
->>>>>>> FETCH_HEAD
         logging.debug('%s - Creating output folder %s' % (getTimestamp(), outputFolder))
         fileData['output_folder'] = outputFolder
 
