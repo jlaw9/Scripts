@@ -120,7 +120,7 @@ class TemplateWriter:
         #let's check the type
         if job['analysis']['settings']['type'] == 'germline':
             #germline run
-            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -cl -s %s/%s/%s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['project'], job['sample'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
+            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -cl -s %s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
         #add other types later
 
 

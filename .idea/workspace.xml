@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3c8540c3-ad8d-47f4-b2a3-fa675b272961" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/update_json.py" afterPath="$PROJECT_DIR$/scripts/update_json.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/template_writer.py" afterPath="$PROJECT_DIR$/scripts/template_writer.py" />
     </list>
     <ignored path="legos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -50,21 +50,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="template_writer.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="template_writer.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/template_writer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2085">
-              <caret line="46" column="22" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.8150289" vertical-offset="1125" max-vertical-offset="2085">
+              <caret line="122" column="261" selection-start-line="122" selection-start-column="261" selection-end-line="122" selection-end-column="261" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="update_json.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="update_json.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/update_json.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.49544418" vertical-offset="0" max-vertical-offset="878">
-              <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
+              <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="70" />
               <folding>
                 <element signature="e#1#34#0" expanded="true" />
               </folding>
@@ -149,8 +149,8 @@
         <option value="$PROJECT_DIR$/scripts/graph_network.py" />
         <option value="$PROJECT_DIR$/marketing/hyperfine_marketing_plots.py" />
         <option value="$PROJECT_DIR$/scripts/tri_driver.py" />
-        <option value="$PROJECT_DIR$/scripts/template_writer.py" />
         <option value="$PROJECT_DIR$/scripts/update_json.py" />
+        <option value="$PROJECT_DIR$/scripts/template_writer.py" />
       </list>
     </option>
   </component>
@@ -914,14 +914,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/template_writer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2085">
-          <caret line="46" column="22" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/tri_driver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="411" max-vertical-offset="2565">
@@ -932,11 +924,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/update_json.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49544418" vertical-offset="0" max-vertical-offset="878">
-          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
+          <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="70" />
           <folding>
             <element signature="e#1#34#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/template_writer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8150289" vertical-offset="1125" max-vertical-offset="2085">
+          <caret line="122" column="261" selection-start-line="122" selection-start-column="261" selection-end-line="122" selection-end-column="261" />
+          <folding />
         </state>
       </provider>
     </entry>
