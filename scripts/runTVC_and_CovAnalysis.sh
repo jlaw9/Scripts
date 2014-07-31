@@ -11,7 +11,7 @@
 #$ -cwd
 #$ -V
 
-SOFTWARE_ROOT="/home/ionadmin/software"
+SOFTWARE_ROOT="/rawdata/legos"
 PICARD_TOOLS_DIR="/opt/picard/picard-tools-current"
 COV_ANALYSIS_DIR="/results/plugins/coverageAnalysis"
 VARIANT_CALLER_DIR="/results/plugins/variantCaller"
@@ -300,7 +300,7 @@ if [ "$CLEANUP" == "True" ]
 then
 	#echo "Copying the output files and removing the temporary files."
 	# Copy the output files we want and remove the temporary files.
-	mv ${OUTPUT_DIR}/cov_full/*.cov.xls ${OUTPUT_DIR}/ 2>/dev/null
+	mv ${OUTPUT_DIR}/cov_full/*.amplicon.cov.xls ${OUTPUT_DIR}/ 2>/dev/null
 	mv ${OUTPUT_DIR}/tvc${TVC_VERSION}_out/TSVC_variants.vcf ${OUTPUT_DIR}/${TVC_VERSION}_TSVC_variants.vcf 2>/dev/null 
 
 	rm -rf ${OUTPUT_DIR}/cov_full 2>/dev/null

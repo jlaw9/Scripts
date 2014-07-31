@@ -10,35 +10,43 @@ import datetime
 import fnmatch
 from runner import Runner
 from template_writer import TemplateWriter
+import sys
 
 __author__ = 'mattdyer'
 
-#a couple of global variables that we will use
-BASE_SAMPLE_DIRECTORY = "/Volumes/HD/mattdyer/Desktop/temp"
-BASE_SOFTWARE_DIRECTORY = "/rawdata/software"
+#a couple of global variables that we will use, add command-line overrides later
+BASE_SAMPLE_DIRECTORIES = ["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]
+BASE_SOFTWARE_DIRECTORY = "/rawdata/legos"
+JOB_FILTERS = ['qc_tvc'] 
 
 class JobManager:
-
     ## The constructor
     # @param self The object pointer
     # @param outputDirectory The output directory path
     # @param sampleDirectory The sample directory path
-    def __init__(self, softwareDirectory, sampleDirectory):
+    # @param jobFilters The type of jobs we want to launch
+    def __init__(self, softwareDirectory, sampleDirectory, jobFilters):
         if(softwareDirectory == ''):
             self.__softwareDirectory = BASE_SOFTWARE_DIRECTORY
         else:
             self.__softwareDirectory = softwareDirectory
 
         if(sampleDirectory == ''):
-            self.__sampleDirectory = BASE_SAMPLE_DIRECTORY
+            self.__sampleDirectories = BASE_SAMPLE_DIRECTORIES
         else:
-            self.__sampleDirectory = sampleDirectory
+            self.__sampleDirectories = sampleDirectory
+
+        if(jobFilters == ''):
+            self.__jobFilters = JOB_FILTERS
+        else:
+            self.__jobFilters = jobFilters
 
     ## Manage the job by parsing the json and finding which analysis to kick off
     # @param self The object pointer
     # @param json The json analysis string pulled from the database
+    # @param baseDir The sample base directory to use
     # @returns The SGE job id
-    def manageJob(self, jobFile):
+    def manageJob(self, jobFile, baseDir):
         #we will want to capture the process exit code and SGE number
         jobNumberSGE = -1
 
@@ -48,8 +56,12 @@ class JobManager:
         logging.debug('%s - %s' % (getTimestamp(), fileData))
 
         #create the output folder
+<<<<<<< HEAD
         outputFolder = '%s/%s/%s/%s' %(self.__sampleDirectory, fileData['project'], fileData['sample'], fileData['name'])
 
+=======
+        outputFolder = '%s/%s/%s/%s' %(baseDir, fileData['project'], fileData['sample'], fileData['name'])
+>>>>>>> FETCH_HEAD
         logging.debug('%s - Creating output folder %s' % (getTimestamp(), outputFolder))
         fileData['output_folder'] = outputFolder
 
@@ -94,24 +106,41 @@ class JobManager:
     # @returns An array of pending job json files
     def getPendingJobs(self):
         #get all the json files that are in in the sample directories
-        logging.debug("%s - Looking for JSON job files in %s/*/*/" % (getTimestamp(), self.__sampleDirectory))
-        files = []
-        jobsToProcess = []
+        logging.debug("%s - Looking for JSON job files in %s" % (getTimestamp(), self.__sampleDirectories))
+        files = {}
+        jobsToProcess = {}
 
         #recurse through and find the json files
-        for root, dirnames, filenames in os.walk(self.__sampleDirectory):
-            for filename in fnmatch.filter(filenames, '*.json'):
-                files.append(os.path.join(root, filename))
-
+        for directory in self.__sampleDirectories:
+            #see if this directory exists
+            if os.path.isdir(directory):
+                for root, dirnames, filenames in os.walk(directory):
+                    for filename in fnmatch.filter(filenames, '*.json'):
+                        #see if it is the right type
+                        jsonData = open(os.path.join(root, filename))
+                        fileData = json.load(jsonData)
+                    
+                        #since other json files may be around, let's be sure they have the analysis type flag
+                        #can use this to filter things too
+                        if 'analysis' in fileData:
+                            if 'type' in fileData['analysis']:
+                                if fileData['analysis']['type'] in self.__jobFilters:
+                                    #job was the right type so we can add to list
+                                    files[os.path.join(root, filename)] = directory
+                                    
+                                elif len(self.__jobFilters) == 0:
+                                    #no filters on job type were given so just let them all go through
+                                    files[os.path.join(root, filename)] = directory
+                                    
         #process each of the json files
         for file in files:
             #rename the json file so it won't get picked up by the next thread
             logging.debug('%s - Found %s' % (getTimestamp(), file))
-            #shutil.move(file, '%s_read' % file)
-            shutil.copy(file, '%s_read' % (file))
-
+            shutil.move(file, '%s_read' % file)
+            #shutil.copy(file, '%s_read' % (file))
+                                    
             #add the file to the array
-            jobsToProcess.append('%s_read' % (file))
+            jobsToProcess['%s_read' % (file)] = files[file]
 
         #return the array
         return(jobsToProcess)
@@ -132,7 +161,7 @@ if (__name__ == "__main__"):
     logging.basicConfig(level=logging.DEBUG)
 
     #create the job manager
-    jobManager = JobManager('', '')
+    jobManager = JobManager('', '', '')
 
     #find the pending jobs
     jobsToProcess = jobManager.getPendingJobs()
@@ -143,7 +172,7 @@ if (__name__ == "__main__"):
         logging.info('%s - Working on %s' % (getTimestamp(), job))
 
         #process the job
-        jobManager.manageJob(job)
+        jobManager.manageJob(job, jobsToProcess[job])
 
         #send an email?
 
