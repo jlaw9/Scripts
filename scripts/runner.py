@@ -48,7 +48,7 @@ class Runner:
             self.__priority = fileData['analysis']['settings']['priority']
 
         #build the command call
-        systemCall = 'qsub -m e -M \'%s\' -p %s -q %s %s' % (','.join(self.__emails), self.__priority, self.__queue, file)
+        systemCall = 'qsub -m e -M \'%s\' -p %s -q %s -e %s/sge.log -o %s/sge.log %s' % (','.join(self.__emails), self.__priority, self.__queue, fileData['output_folder'], fileData['output_folder'], file)
 
         #submit to SGE and grab the job id
         #print systemCall
