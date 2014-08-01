@@ -20,17 +20,16 @@ QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
 #QC_MASTER_OUT="$QC_SCRIPTS/QC_Out_Files/multiple_runs.csv"
 BAM_INDEXER='/opt/picard/picard-tools-current/BuildBamIndex.jar'
 VARIANT_CALLER_DIR='/results/plugins/variantCaller'
-GATK="${VARIANT_CALLER_DIR}/TVC/jar/GenomeAnalysisTK.jar"
 REF_FASTA='/results/referenceLibrary/tmap-f3/hg19/hg19.fasta'
 # Default Options
 AMP_COV_CUTOFF=30 # The minimum amount of coverage each amplicon needs to have. Default is 30
-RUN_GATK_CDS="False"
+GET_CDS_DEPTHS="False" # Variable to get depths of cds and the project bed.
 CLEANUP="False"
 
 function usage {
 cat << EOF
 USAGE: bash QC_2Runs.sh 
-If the output_dir specified already has the vcf files generated from QC, running TVC and GATK will be skipped. 
+If the output_dir specified already has the vcf files generated from QC, running TVC and samtools depth will be skipped. 
 All options up to --gt_cutoffs are required.
 	-h | --help
 	-r | --run_dirs <path/to/run1_dir> <path/to/run2_dir> (Normal_Dir should always come before Tumor_Dir) (PTRIM.bam is generated. *amplicon.cov.xls is used, and if the .vcf file is not in the run_dir, this script checks in the tvc_out dir)
@@ -43,7 +42,7 @@ All options up to --gt_cutoffs are required.
 	-gt | --gt_cutoffs <WT_Cutoff1> <HOM1_Cutoff1> <WT_Cutoff2> <HOM1_Cutoff2>
 	-cb | --cds_bed <path/to/CDS_bed> (This option should only be used if the user wants to run TVC using the Project bed, and then intersect the results with the CDS bed.)
 	-sb | --subset_bed <path/to/subset_bed> (If the user want to subset out certain genes from the Project_Bed)
-	-rgc | --run_gatk_cds (Normally, GATK is run using the subset of the beds specified above. If the cds_bed is specified, and this option is specified, GATK will be run twice.)
+	-cd | --get_cds_depths (Normally, samtools depth is run using the subset of the beds specified above. If the cds_bed is specified, and this option is specified, samtools depth will be run twice.)
 	-chr | --subset_chr <chr#> (The chromosome specified here (for example: chr1) will be used to subset the VCF and BAM files)
 	-cl | --cleanup (If calling QC_getRunInfo.sh after this script, the PRTIM.bam is needed so DO NOT CALL CLEANUP. Delete temp_files used to create the two Output VCF files, the PTRIM.bam the chr_subset bam files if they were created.)
 	-cle | --cleanup_everything (Option not yet implemented: Delete everything but the log and the matched_variants.csv)
@@ -216,7 +215,7 @@ function runTVC {
 			--bin-dir ${VARIANT_CALLER_DIR}  \
 			>> $log 2>&1 \
 			&
-	# Generate the PTRIM.bam as it will be used to run GATK in this script, and in QC_getRunInfo.sh
+	# Generate the PTRIM.bam as it will be used to run samtools in this script
 	else
 		# TVC uses the REF_FASTA file to call the variants first, and then intersects that with the --region-bed specified. Using the intersected_bed here would make no time saving difference
 		${VARIANT_CALLER_DIR}/variant_caller_pipeline.py  \
@@ -329,9 +328,9 @@ do
 			RUNNING="$RUNNING --cds_bed: $2 "
 			shift 2
 			;;
-		-rgc | --run_gatk_cds)
-			RUN_GATK_CDS="True"
-			RUNNING="$RUNNING --run_gatk_cds "
+		-cd | --get_cds_depths)
+			GET_CDS_DEPTHS="True"
+			RUNNING="$RUNNING --get_cds_depths "
 			shift 
 			;;
 		-chr | --subset_chr)
@@ -364,7 +363,7 @@ echo "$RUNNING at `date`"
 
 # Check to make sure the files actually exist
 files=("$RUN1_DIR" "$RUN2_DIR" "${RUN1_DIR}/*.bam" "${RUN2_DIR}/*.bam" \
-	"$BED" "$CDS_BED" "$SUBSET_BED" "$JSON_PARAS1" "$JSON_PARAS2" "$GATK" "$REF_FASTA" "$BAM_INDEXER" "$VARIANT_CALLER_DIR")
+	"$BED" "$CDS_BED" "$SUBSET_BED" "$JSON_PARAS1" "$JSON_PARAS2" "$REF_FASTA" "$BAM_INDEXER" "$VARIANT_CALLER_DIR")
 checkFiles $files
 
 # ------------------------------------------------------------------------
@@ -435,8 +434,8 @@ else
 	intersected_bed="intersect_${bed_name}"
 
 	# interstect the subset.bed file with the specified subset bed files
-	# if RUN_GATK_CDS is true, then the cds bed will not be subset out here so that all of the variants will be available, and  GATK can be run twice.
-	if [ "$CDS_BED" != "" -a "$RUN_GATK_CDS" != "True" ]; then
+	# if GET_CDS_DEPTHS is true, then the cds bed will not be subset out here so that all of the variants will be available, and  samtools depth can be run twice.
+	if [ "$CDS_BED" != "" -a "$GET_CDS_DEPTHS" != "True" ]; then
 		subset1_name=`basename $CDS_BED`
 		# -f .99 option is not used here because the begin and end pos of the CDS region will not match up with the project bed file (it has intronic regions)
 		bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${CDS_BED} > ${TEMP_DIR}/intersect1_${subset1_name} 2>>$log
@@ -505,11 +504,11 @@ else
 
 
 	# No need for another if statement here. If both TVC and GATK files already existed, then this part would've already been skipped
-	# Run GATK. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
+	# get Depths. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
 	getDepths ${RUN1_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
 	getDepths ${RUN2_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
 	
-	waitForJobsToFinish "GATK ${CHR}"
+	waitForJobsToFinish "samtools depths ${CHR}"
 	# Move the depths to the Output dir in case the script is interrupted in the middle of running samtools
 	mv ${TEMP_DIR}/Run1${CHR}_depths ${TEMP_DIR}/Run2${CHR}_depths ${OUTPUT_DIR}
 
@@ -518,7 +517,7 @@ fi
 		 	# ------------------------------------------------------------------
 		 	# ----------------------- FIX FOR CDS REGION -----------------------
 		 	# ------------------------------------------------------------------
-if [ "$RUN_GATK_CDS" == "True" ]; then
+if [ "$GET_CDS_DEPTHS" == "True" ]; then
 	if [ "`find ${OUTPUT_DIR}/VCF1${CHR}_CDS_Final.vcf -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/VCF2${CHR}_CDS_Final.vcf -type f 2>/dev/null`" \
 		-a "`find ${OUTPUT_DIR}/Run1${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" ]; then
 		echo "	$OUTPUT_DIR CDS region has already been QCd. Skipping QC and running QC_Compare_VCFs.py"
@@ -567,7 +566,7 @@ if [ "$RUN_GATK_CDS" == "True" ]; then
 		getDepths ${RUN1_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
 		getDepths ${RUN2_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
 	
-		waitForJobsToFinish "CDS GATK ${CHR}"
+		waitForJobsToFinish "CDS samtools depth ${CHR}"
 		mv ${TEMP_DIR}/Run1${CHR}_CDS_depths ${TEMP_DIR}/Run2${CHR}_CDS_depths ${OUTPUT_DIR}
 	
 		# And then intersect that bed file with the merged vcf file to get only the variants that have > 30x coverage.

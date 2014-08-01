@@ -448,8 +448,8 @@ if [ "$NORMAL_NORMAL" == "True" ]; then
 		if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_NORMAL" != "True" ]; then
 			QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 		fi
-		done
-	fi
+	done
+fi
 	
 	# ---------------------------------- END Somatic ---------------------------------------
 
