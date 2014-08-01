@@ -1,2 +1,2 @@
-TRI_Scripts
+Scripts
 ===========
