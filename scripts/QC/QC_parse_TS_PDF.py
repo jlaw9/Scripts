@@ -81,7 +81,8 @@ else:
 	returnCode = subprocess.call(command, shell=True)
 	
 	if returnCode == 0:
-		print '%s converted to %s successfully!'%(pdfFile, pdfText)
+		pass
+		#print '%s converted to %s successfully!'%(pdfFile, pdfText)
 	else:
 		print "Could not convert to PDF... check file path given."
 		#sys.exit(1)
@@ -229,8 +230,6 @@ else:
 runData['run_data']['polyclonality'] = polyclonality
 runData['run_data']['run_date'] = date
 
-
-print "Finished"
 
 txtFile.close()
 

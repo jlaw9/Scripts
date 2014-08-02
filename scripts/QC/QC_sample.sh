@@ -392,12 +392,12 @@ if [ "$TUMOR_NORMAL" == "True" ]; then
 
 			# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
 			# If the user did not specify to get this run's info, then get this run's info.
-			if [ "$GET_RUN_INFO" == "True" ]; then
+			if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_TUMOR" != "True" ]; then
 				QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
 			fi
 		done		
 		# also get the Run Info for the normal runs.
-		if [ "$GET_RUN_INFO" == "True" ]; then
+		if [ "$GET_RUN_INFO" == "True" -a "$NORMAL_NORMAL" != "True" ]; then
 			QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 		fi
 	done
@@ -421,7 +421,7 @@ if [ "$TUMOR_TUMOR" == "True" ]; then
 		done		
 		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
 		# If the user did not specify to get this run's info, then get this run's info.
-		if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_NORMAL" != "True" ]; then
+		if [ "$GET_RUN_INFO" == "True" ]; then
 			QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
 		fi
 	done
@@ -445,7 +445,7 @@ if [ "$NORMAL_NORMAL" == "True" ]; then
 		done		
 		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
 		# If the user did not specify to get this run's info, then get this run's info.
-		if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_NORMAL" != "True" ]; then
+		if [ "$GET_RUN_INFO" == "True" ]; then
 			QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 		fi
 	done
