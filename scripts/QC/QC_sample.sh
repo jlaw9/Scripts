@@ -294,10 +294,10 @@ function QC_2Runs {
 		run1_name="`find $1 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
 		run2_name="`find $2 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
 		QCd="${SAMPLE_DIR}/QC/${run1_name}vs${run2_name}"
-		if [ "`find ${SAMPLE_DIR}/QC/*_QC.json -type f 2>/dev/null`" ]; then
-			json="`find ${SAMPLE_DIR}/QC/*_QC.json -type f 2>/dev/null`"
+		if [ "`find ${SAMPLE_DIR}/QC/*_QC.json* -type f 2>/dev/null`" ]; then
+			json="`find ${SAMPLE_DIR}/QC/*_QC.json* -type f 2>/dev/null`"
 		else
-			json="${SAMPLE_DIR}/QC/results_QC.json"
+			json="${SAMPLE_DIR}/QC/results_QC.json_read"
 		fi
 		# QC these two runs. QC_2Runs.sh takes the two run dirs and finds a .bam, .vcf, and .cov.xls file in the same dir as the .bam file
 		# If there is a PRITM.bam, it uses that. If there is not, it uses the other .bam file available.
