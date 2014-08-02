@@ -14,14 +14,14 @@ DEPTH_CUTOFF=$3
 
 
 #cd $SAMPLE_DIR
-if [ "`find ${SAMPLE_DIR}/tvc_out/*.vcf 2>/dev/null`" -a "`find ${SAMPLE_DIR}/*.amplicon.cov.xls 2>/dev/null`" ]
+if [ "`find ${SAMPLE_DIR}/tvc_out/TSVC_variants.vcf 2>/dev/null`" -a "`find ${SAMPLE_DIR}/*.amplicon.cov.xls 2>/dev/null`" ]
 then
 	# If there is are differnt vcf files from different TVC versions, then use 4.0 otherwise, use whatever's there.
 	if [ "`find ${SAMPLE_DIR}/tvc_out/4.0*.vcf 2>/dev/null`" ]
 	then
 		VCF=`find ${SAMPLE_DIR}/tvc_out/4.0*.vcf -maxdepth 0`
 	else
-		VCF=`find ${SAMPLE_DIR}/tvc_out/*.vcf -maxdepth 0`
+		VCF=`find ${SAMPLE_DIR}/tvc_out/TSVC_variants.vcf -maxdepth 0`
 	fi
 	AMP=`find ${SAMPLE_DIR}/*.amplicon.cov.xls -maxdepth 0`
 else
