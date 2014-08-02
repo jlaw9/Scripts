@@ -95,16 +95,16 @@ class TemplateWriter:
                 dupFlag = '--flag_dups'
 
         #default is AmpliSeq for coverage analysis
-        coverageAnalysisFlag = '--cov_ampliseq'
+        coverageAnalysisFlag = '--ampliseq'
 
         #see if the settings say targetseq
         if 'capture_type' in job['analysis']['settings']:
             #if it is set to true, then we change the flag
             if job['analysis']['settings']['capture_type'].lower() == 'targetseq' or job['analysis']['settings']['capture_type'].lower() == 'target_seq':
-                coverageAnalysisFlag = '--cov_targetseq'
+                coverageAnalysisFlag = '--targetseq'
 
         for file in job['analysis']['files']:
-            fileHandle.write('bash %s/scripts/runTVC_COV.sh --ptrim PTRIM.bam --cleanup %s %s --cov %s %s --tvc %s --tvc %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
+            fileHandle.write('bash %s/scripts/runTVC_COV.sh --ptrim PTRIM.bam --cleanup %s %s --cov %s %s --tvc %s %s --output_dir %s %s/%s\n' % (self.__softwareDirectory, dupFlag, coverageAnalysisFlag, job['analysis']['settings']['qc_merged_bed'], job['analysis']['settings']['qc_unmerged_bed'], job['analysis']['settings']['tvc_bed'], job['analysis']['settings']['tvc_parameter_json'], job['output_folder'], job['output_folder'], file))
 
     ## Write the code for running qc comparisons
     # @param self The object pointer
@@ -120,7 +120,7 @@ class TemplateWriter:
         #let's check the type
         if job['analysis']['settings']['type'] == 'germline':
             #germline run
-            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -cl -s %s -g %s %s %s %s -a %s -b %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['cds_bed'], chrFlag))
+            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -cl -s %s -g %s %s %s %s -a %s -b %s -cb %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['project_bed'], job['analysis']['settings']['cds_bed'], chrFlag))
         #add other types later
 
 
