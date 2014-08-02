@@ -12,15 +12,16 @@ SAMPLE_DIR=$1
 AMP_COV_CUTOFF=$2
 DEPTH_CUTOFF=$3
 
+
 #cd $SAMPLE_DIR
-if [ "`find ${SAMPLE_DIR}/*.vcf 2>/dev/null`" -a "`find ${SAMPLE_DIR}/*.amplicon.cov.xls 2>/dev/null`" ]
+if [ "`find ${SAMPLE_DIR}/tvc_out/*.vcf 2>/dev/null`" -a "`find ${SAMPLE_DIR}/*.amplicon.cov.xls 2>/dev/null`" ]
 then
 	# If there is are differnt vcf files from different TVC versions, then use 4.0 otherwise, use whatever's there.
-	if [ "`find ${SAMPLE_DIR}/4.0*.vcf 2>/dev/null`" ]
+	if [ "`find ${SAMPLE_DIR}/tvc_out/4.0*.vcf 2>/dev/null`" ]
 	then
-		VCF=`find ${SAMPLE_DIR}/4.0*.vcf -maxdepth 0`
+		VCF=`find ${SAMPLE_DIR}/tvc_out/4.0*.vcf -maxdepth 0`
 	else
-		VCF=`find ${SAMPLE_DIR}/*.vcf -maxdepth 0`
+		VCF=`find ${SAMPLE_DIR}/tvc_out/*.vcf -maxdepth 0`
 	fi
 	AMP=`find ${SAMPLE_DIR}/*.amplicon.cov.xls -maxdepth 0`
 else
@@ -47,7 +48,7 @@ bedtools intersect -a $VCF -b ${TEMP_DIR}/sample_subset.bed > ${TEMP_DIR}/inters
 
 # Remove duplicate entries, also filter multi-allelic calls
 # if FAO + FRO is < Depth_Cutoff, that variant is removed
-python ${SOFTWARE_ROOT}/scripts/QC/QC_Filter_Var.py ${TEMP_DIR}/intersect.vcf ${TEMP_DIR}/filtered.vcf $DEPTH_CUTOFF >> $log 2>>errors.txt
+python ${SOFTWARE_ROOT}/scripts/QC/QC_Filter_Var.py ${TEMP_DIR}/intersect.vcf ${TEMP_DIR}/filtered.vcf --single $DEPTH_CUTOFF >> $log 2>>errors.txt
 if [ "$?" != "0" ]
 then
 	echo "ERROR: $sample_dir had a problem filtering variants with QC_Filter_Var.py... See $log for details" >> errors.txt
@@ -56,23 +57,21 @@ fi
 
 echo "--- Beginning Annovar for $SAMPLE_DIR ---" >>${log}
 
+#echo $TEMP_DIR
+
 # First convert the vcf file so it's annovar usable
 # Update in v2: using vcf4old together with snpqual 0 option. Noticed that with vcf4 format(used in v1) resulted in eliminating some of the variant calls during annotation 
-/home/ionadmin/software/annovar/convert2annovar.pl \
-	--format vcf4old \
-	--snpqual 0
-	${TEMP_DIR}/filtered.vcf \
-	> ${TEMP_DIR}/annovar_input.vcf 2>>$log
+/home/ionadmin/software/annovar/convert2annovar.pl --format vcf4old --snpqual 0 ${TEMP_DIR}/filtered.vcf > ${TEMP_DIR}/annovar_input.vcf 2>>$log
 
 # Now run Annovar to annotate the variants.
 # Update in v2: use table_annovar.pl & add dbSNP, COSMIC, nonsynonymous info 
 /home/ionadmin/software/annovar/table_annovar.pl \
 	 ${TEMP_DIR}/annovar_input.vcf \
 	 /home/ionadmin/software/annovar/humandb_ucsc/ \
-	--outfile somatic.table \
+	--outfile ${TEMP_DIR}/annovar.table \
 	--buildver hg19 \
 	--protocol refGene,snp129NonFlagged,snp137NonFlagged,cosmic68,ljb23_all  --operation g,f,f,f,f \
 	-nastring . \
-	--remove 
+	--remove \
 	>>$log 2>&1
 
