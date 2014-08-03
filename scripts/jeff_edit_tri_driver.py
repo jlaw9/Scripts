@@ -1,3 +1,4 @@
+#! /usr/bin/env python2.7
 #this script is responsible for managing / driving the execution of jobs for Atlas
 
 import glob
@@ -41,7 +42,7 @@ class JobManager:
         logging.debug('%s - %s' % (getTimestamp(), fileData))
 
         #create the output folder
-        outputFolder = '%s/%s/%s/%s' %(baseDir, fileData['project'], fileData['sample'], fileData['name'])
+        outputFolder = '%s/%s' %(fileData['sample_folder'], fileData['name'])
         logging.debug('%s - Creating output folder %s' % (getTimestamp(), outputFolder))
         fileData['output_folder'] = outputFolder
 
@@ -152,11 +153,14 @@ if (__name__ == "__main__"):
 	if not options.sample_dir:
 		options.sample_dir = ["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]
 
+	# Check the job_filters
+	if not options.job_filters:
+		print "USAGE ERROR: -j (--job_filters) is required. Available choices: 'qc_tvc', 'qc_compare'. Use -h for help."
+		sys.exit(8)
+
 	for job_filter in options.job_filters:
 		if job_filter != "qc_tvc" and job_filter != "qc_compare":
-			print "USAGE ERROR: -j (--job_filters) is required. Available choices: 'qc_tvc', 'qc_compare'"
-			print "Choices given: %s"%options.job_filters
-			print "Use -h for help"
+			print "USAGE ERROR: %s is not an available job filter. Use -h for help"%job_filter
 			sys.exit(8)
 
 	#set up the logging
@@ -177,6 +181,4 @@ if (__name__ == "__main__"):
 		jobManager.manageJob(job, jobsToProcess[job])
 
 		#send an email?
-
-
 
