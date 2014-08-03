@@ -11,6 +11,7 @@ import fnmatch
 from runner import Runner
 from template_writer import TemplateWriter
 import sys
+from optparse import OptionParser
 
 __author__ = 'mattdyer'
 
@@ -96,7 +97,7 @@ class JobManager:
                 for root, dirnames, filenames in os.walk(directory):
                     for filename in fnmatch.filter(filenames, '*.json'):
                         #see if it is the right type
-                        logging.debug('%s - Looking at %s' % (getTimestamp(), os.path.join(root, filename)))
+                        #logging.debug('%s - Looking at %s' % (getTimestamp(), os.path.join(root, filename)))
                         jsonData = open(os.path.join(root, filename))
                         fileData = json.load(jsonData)
                     
@@ -141,31 +142,41 @@ if (__name__ == "__main__"):
 	parser = OptionParser()
 
 	# add the arguments
-	parser.add_option('-s', '--sample_dir', dest='sample_dir', default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"], help='Recurse through the given directory and look for *.json jobs. [default: %default]')
+	parser.add_option('-s', '--sample_dir', dest='sample_dir', action='append', help='Recurse through the given directory and look for *.json jobs. [default: , default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]]')
 	parser.add_option('-S', '--software_dir', dest='software_dir', default="/rawdata/legos", help='The software root directory. [default: %default]')
-	parser.add_option('-j', '--job_filters', dest="job_filters", default='', action="append", choices=['qc_tvc', 'qc_compare'], help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
+	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
 	
 	#parse the arguments
 	(options, args) = parser.parse_args()
 
-    #set up the logging
-    logging.basicConfig(level=logging.DEBUG)
+	if not options.sample_dir:
+		options.sample_dir = ["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]
 
-    #create the job manager
-    jobManager = JobManager(options.sample_dir, options.software_dir, options.job_filters)
+	for job_filter in options.job_filters:
+		if job_filter != "qc_tvc" and job_filter != "qc_compare":
+			print "USAGE ERROR: -j (--job_filters) is required. Available choices: 'qc_tvc', 'qc_compare'"
+			print "Choices given: %s"%options.job_filters
+			print "Use -h for help"
+			sys.exit(8)
 
-    #find the pending jobs
-    jobsToProcess = jobManager.getPendingJobs()
-    logging.info('%s - Found %i analyses to process' % (getTimestamp(), len(jobsToProcess)))
+	#set up the logging
+	logging.basicConfig(level=logging.DEBUG)
 
-    #process the jobs now
-    for job in jobsToProcess:
-        logging.info('%s - Working on %s' % (getTimestamp(), job))
+	#create the job manager
+	jobManager = JobManager(options.software_dir, options.sample_dir, options.job_filters)
 
-        #process the job
-        jobManager.manageJob(job, jobsToProcess[job])
+	#find the pending jobs
+	jobsToProcess = jobManager.getPendingJobs()
+	logging.info('%s - Found %i analyses to process' % (getTimestamp(), len(jobsToProcess)))
 
-        #send an email?
+	#process the jobs now
+	for job in jobsToProcess:
+		logging.info('%s - Working on %s' % (getTimestamp(), job))
+
+		#process the job
+		jobManager.manageJob(job, jobsToProcess[job])
+
+		#send an email?
 
 
 
