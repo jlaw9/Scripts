@@ -13,7 +13,7 @@ if __name__ == "__main__":
 	json_files = []
 	# first, find all of the sample's json files
 	for root, dirnames, filenames in os.walk(project_dir):
-		for filename in fnmatch.filter(filenames, "*_QC.json*"):
+		for filename in fnmatch.filter(filenames, "*.json"):
 			json_files.append(os.path.join(root, filename))
 
 	# loop through the files, and fix the different metrics
@@ -21,8 +21,41 @@ if __name__ == "__main__":
 
 		# load the json_data
 		json_data = json.load(open(json_file))
-#		# for each run's json
-#		json_data['project'] = 'Einstein'
+
+## METHUSELAH FIX
+		# for each run's json
+		if 'project' in json_data and json_data['project'] == 'Methuselah':
+			if 'sample_folder' in json_data:
+				sample_path = json_data['sample_folder'].split("/")
+				if sample_path[5] != json_data['sample']:
+					print "ERROR: %s sample_path: %s does not match sample: %s"%(json_file, sample_path[4], json_data['sample'])
+					sys.exit(1)
+				if len(sample_path) > 6:
+					json_data['sample_folder'] = "/".join(sample_path[:6])
+	
+			if 'report_name' in json_data:
+				if 'proton' not in json_data:
+					if re.search("PLU", json_data['report_name']):
+						json_data['proton'] = "PLU"
+					if re.search("NEP", json_data['report_name']):
+						json_data['proton'] = "NEP"
+					if re.search("MER", json_data['report_name']):
+						json_data['proton'] = "MER"
+
+			json_data['analysis']['settings']['qc_merged_bed'] = "/rawdata/support_files/BED/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12_mergedDetail.bed"
+			json_data['analysis']['settings']['qc_unmerged_bed'] = "/rawdata/support_files/BED/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12_unmergedDetail.bed"
+			json_data['analysis']['settings']['tvc_bed'] = "/rawdata/support_files/BED/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12.bed"
+#			json_data['analysis']['settings'].pop('tvc_json')
+			json_data['analysis']['settings']['tvc_parameter_json'] = "/rawdata/support_files/parameter_files/targetseq_germline_highstringency_p1_parameters_highAF.json"
+			json_data['run_type'] = "germline"
+			# dump the json file
+			with open(json_file, 'w') as newJSONFile:
+				json.dump(json_data, newJSONFile, sort_keys=True, indent=4)
+			print json_file + " fixed!"
+
+
+# EINSTEIN FIX
+#			json_data['project'] = 'Einstein'
 #
 #		if 'sample_folder' in json_data:
 #			sample_path = json_data['sample_folder'].split("/")
@@ -56,11 +89,11 @@ if __name__ == "__main__":
 #				else:
 #					print "%s cannot fix ts_link"%json_file
 		
-		# The _QC.json fix
-		json_data['analysis']['settings']['beg_bed'] = "/rawdata/support_files/BED/startLoci_Ampliseq.bed"
-		json_data['analysis']['settings']['end_bed'] = "/rawdata/support_files/BED/endLoci_Ampliseq.bed"
-		
-		# dump the json file
-		with open(json_file, 'w') as newJSONFile:
-			json.dump(json_data, newJSONFile, sort_keys=True, indent=4)
-		print json_file + " fixed!"
+#		# The _QC.json fix
+#		json_data['analysis']['settings']['beg_bed'] = "/rawdata/support_files/BED/startLoci_Ampliseq.bed"
+#		json_data['analysis']['settings']['end_bed'] = "/rawdata/support_files/BED/endLoci_Ampliseq.bed"
+#		
+#			# dump the json file
+#			with open(json_file, 'w') as newJSONFile:
+#				json.dump(json_data, newJSONFile, sort_keys=True, indent=4)
+#			print json_file + " fixed!"
