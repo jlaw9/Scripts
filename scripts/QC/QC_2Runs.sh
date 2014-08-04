@@ -599,19 +599,20 @@ fi
 		 #----------------------- FIX FOR CDS REGION END -----------------------
 
 # Use awk to get the total_eligible_bases by getting only the base positions from both samtools depth outputs that have greater than the cutoff depth.
-total_elibigle_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
+total_eligible_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
 	awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($3 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
 
-if [ "$total_eligible_bases" == "0" ]; then
+if [ "$total_eligible_bases" == "" ]; then
 	echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1${CHR}_depths probably not found"
-	exit 1
+	total_elibigle_bases="0"
+#	exit 1
 else
 	# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
 	python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
 		--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
 		--jsons $JSON1 $JSON2 \
 		--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
-		--total_bases $total_elibigle_bases \
+		--total_bases $total_eligible_bases \
 		--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
 		--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
 	if [ "$?" != "0" ]; then

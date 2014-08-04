@@ -165,7 +165,7 @@ parser = OptionParser()
 parser.add_option('-v', '--vcfs', dest='vcfs', nargs=2, help='The two VCF files generated from the two runs combined Hotspot file')
 parser.add_option('-j', '--jsons', dest='jsons', nargs=2, help='The json files in each VCFs sample dir. These the sample and run info')
 parser.add_option('-g', '--gt_cutoffs', dest='gt_cutoffs', nargs=4, type="float", help='WT1_Cutoff, HOM1_Cutoff, WT2_Cutoff, HOM2_Cutoff. Variant filtering should already have been done before this step.')
-parser.add_option('-b', '--total_bases', dest='total_eligible_bases', type="int", help='The VCF files generated from the two runs combined Hotspot file')
+parser.add_option('-b', '--total_bases', dest='total_eligible_bases', help='The VCF files generated from the two runs combined Hotspot file')
 parser.add_option('-o', '--out_csv', dest='outCSV', help='Output csv file to summarize the matched variants')
 parser.add_option('-t', '--json_out', dest='json_out',  help='This json file will hold the QC error metrics for this comparison. QC_generateSheets.py will use this json file to generate the master spreadsheet')
 parser.add_option('-c', '--cds', dest='cds', action="store_true", help='Optional. Add a CDS feild to the json out file. This option should be used if the --run_gatk_twice option is specified in QC_2Runs.sh.')
@@ -175,7 +175,7 @@ parser.add_option('-c', '--cds', dest='cds', action="store_true", help='Optional
 #check to make sure either ID or name was provided
 if(not options.vcfs or not options.jsons or not options.gt_cutoffs or not options.total_eligible_bases or not options.outCSV or not options.json_out):
 	print "USAGE ERROR: --vcfs, --jsons, --gt_cutoffs, --total_bases, --out_csv, and --json_out are all required. Only --cds is optional."
-	print options.vcfs, options.jsons, options.gt_cutoffs, options.total_eligible_bases, options.outCSV, options.json_out
+	print "Options given: --vcf %s --jsons %s --gt_cutoffs %s --total_bases %s --out_csv %s --json_out %s"%(options.vcfs, options.jsons, options.gt_cutoffs, options.total_eligible_bases, options.outCSV, options.json_out)
 	print "Args given: %s"%args
 	print "use -h for help"
 	sys.exit(8)
@@ -186,7 +186,7 @@ WT1_Cutoff = options.gt_cutoffs[0]
 HOM1_Cutoff = options.gt_cutoffs[1]
 WT2_Cutoff = options.gt_cutoffs[2]
 HOM2_Cutoff = options.gt_cutoffs[3]
-total_eligible_bases = options.total_eligible_bases
+total_eligible_bases = int(options.total_eligible_bases)
 outCSV = open(options.outCSV, 'w')
 
 
