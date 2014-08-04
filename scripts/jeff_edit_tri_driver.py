@@ -105,7 +105,7 @@ class JobManager:
                         #since other json files may be around, let's be sure they have the analysis type flag
                         #can use this to filter things too
                         if 'analysis' in fileData and 'status' in fileData:
-                            if 'type' in fileData['analysis'] and 'status' == 'pending':
+                            if 'type' in fileData['analysis'] and fileData['status'] == 'pending':
                                 if fileData['analysis']['type'] in self.__jobFilters:
                                     #job was the right type so we can add to list
                                     files[os.path.join(root, filename)] = directory
@@ -143,7 +143,7 @@ if (__name__ == "__main__"):
 	parser = OptionParser()
 
 	# add the arguments
-	parser.add_option('-s', '--sample_dir', dest='sample_dir', action='append', help='Recurse through the given directory and look for *.json jobs. [default: , default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]]')
+	parser.add_option('-s', '--sample_dir', dest='sample_dir', action='append', help='Recurse through the given directory and look for *.json jobs. [default: default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]]')
 	parser.add_option('-S', '--software_dir', dest='software_dir', default="/rawdata/legos", help='The software root directory. [default: %default]')
 	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
 	
