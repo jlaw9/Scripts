@@ -293,10 +293,11 @@ if [ "$ERRORS" == "True" ]; then
 	exit 1
 fi
 
+echo "	$RUN_DIR finished getting run info at `date`"
+echo "$RUN_DIR finished getting run info at `date`" >>$log
+
 # cleanup and finished
 if [ "$CLEANUP" == "True" ]; then
 	rm -rf $OUTPUT_DIR
 fi
 
-echo "	$RUN_DIR finished getting run info at `date`"
-echo "$RUN_DIR finished getting run info at `date`" >>$log

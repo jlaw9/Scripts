@@ -136,12 +136,12 @@ function setupBED {
 		# get only the specified chromosome, and cut the other info so bedtools coverage will run faster , the output files will be smaller, and the number of columns in the output file will match for every project
 		bed_name=`basename $1`
 		grep -P "^${CHR}\t" $1 | bedtools sort -i | bedtools merge -i > ${TEMP_DIR}/${CHR}_sorted_merged_${bed_name}
-		intersected_bed="${CHR}_sorted_merged_${bed_name}"
+		intersected_bed="${TEMP_DIR}/${CHR}_sorted_merged_${bed_name}"
 	else
 		# sort and merge the bed file
 		bed_name=`basename $1`
 		cat $1 | bedtools sort -i | bedtools merge -i > ${TEMP_DIR}/sorted_merged_${bed_name}
-		intersected_bed="sorted_merged_${bed_name}"
+		intersected_bed="${TEMP_DIR}/sorted_merged_${bed_name}"
 	fi
 }
 
@@ -418,37 +418,41 @@ else
 	echo "--- vcf-merge ---" >>${log}
 	vcf-merge ${TEMP_DIR}/Run1.vcf.gz ${TEMP_DIR}/Run2.vcf.gz --remove-duplicates > ${TEMP_DIR}/merged.vcf 2>>${log}
 	
+	# Now setup the BED files
+	bed_name=`basename $BED`
+	#bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${BED} -u -f 0.99 > ${TEMP_DIR}/intersect_${bed_name} 2>>$log
+	intersected_bed="$BED"
 
-	# Function to keep only the amplicons that have depth coverage >= what the user specified.
+	# interstect the subset.bed file with the specified subset bed files
+	# if GET_CDS_DEPTHS is true, then the cds bed will not be subset out here so that all of the variants will be available, and  samtools depth can be run twice.
+	if [ "$CDS_BED" != "" -a "$GET_CDS_DEPTHS" != "True" ]; then
+		cds_name=`basename $CDS_BED`
+		# -f .99 option is not used here because the begin and end pos of the CDS region will not match up with the project bed file (it has intronic regions)
+		bedtools intersect -a $BED -b ${CDS_BED} > ${TEMP_DIR}/intersect_${cds_name} 2>>$log
+		intersected_bed="${TEMP_DIR}/intersect_${cds_name}"
+	fi
+	if [ "$SUBSET_BED" != "" ]; then
+		subset_name=`basename $SUBSET_BED`
+		bedtools intersect -a ${intersected_bed} -b ${SUBSET_BED} -u -f 0.99 > ${TEMP_DIR}/intersect2_${subset_name} 2>>$log
+		intersected_bed="${TEMP_DIR}/intersect2_${subset_name}"
+	fi
+	
+	# This fuction gets only the chr and pos from the project bed file to calculate the total possible bases. (Also to save time and make the output better for bedtools coverage).
+	setupBED ${intersected_bed} # The new bed file is also stored in intersected_bed
+	# Calculate the total_possible_bases in the intersected bed file
+	total_possible_bases=`awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}' $intersected_bed`
+
+	# Function to keep only the amplicons that have depth coverage >= AMP COV CUTOFF.
 	subset_low_cov $RUN1_DIR 1
 	subset_low_cov $RUN2_DIR 2
 	
 	echo "--- Creating subset bed files (where amp cov > $AMP_COV_CUTOFF) ---" >>${log}
 	# Now intersect the two subset bed files output by the subset_low_cov function
 	bedtools intersect -a ${TEMP_DIR}/run1_subset.bed -b ${TEMP_DIR}/run2_subset.bed -u -f 0.99 > ${TEMP_DIR}/low_cov_subset.bed 2>>$log
-	intersected_bed="low_cov_subset.bed"
 	
 	# Intersect the low_cov_subset.bed with the first bed specified. This shouldn't normally be needed, but it is a good precaution.
-	bed_name=`basename $BED`
-	bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${BED} -u -f 0.99 > ${TEMP_DIR}/intersect_${bed_name} 2>>$log
+	bedtools intersect -a ${TEMP_DIR}/low_cov_subset.bed -b ${intersected_bed} -u -f 0.99 > ${TEMP_DIR}/intersect_${bed_name} 2>>$log
 	intersected_bed="intersect_${bed_name}"
-
-	# interstect the subset.bed file with the specified subset bed files
-	# if GET_CDS_DEPTHS is true, then the cds bed will not be subset out here so that all of the variants will be available, and  samtools depth can be run twice.
-	if [ "$CDS_BED" != "" -a "$GET_CDS_DEPTHS" != "True" ]; then
-		subset1_name=`basename $CDS_BED`
-		# -f .99 option is not used here because the begin and end pos of the CDS region will not match up with the project bed file (it has intronic regions)
-		bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${CDS_BED} > ${TEMP_DIR}/intersect1_${subset1_name} 2>>$log
-		intersected_bed="intersect1_${subset1_name}"
-	fi
-	if [ "$SUBSET_BED" != "" ]; then
-		subset2_name=`basename $SUBSET_BED`
-		bedtools intersect -a ${TEMP_DIR}/${intersected_bed} -b ${SUBSET_BED} -u -f 0.99> ${TEMP_DIR}/intersect2_${subset2_name} 2>>$log
-		intersected_bed="intersect2_${subset2_name}"
-	fi
-	
-	# This fuction gets only the chr and pos from the project bed file (to save time and make the output better for bedtools coverage).
-	setupBED ${TEMP_DIR}/${intersected_bed}
 
 	# And then intersect that bed file with the merged vcf file to get only the variants that have > 30x coverage and that are found in the bed files specified.
 	bedtools intersect -a ${TEMP_DIR}/merged.vcf -b ${TEMP_DIR}/${intersected_bed} > ${TEMP_DIR}/merged_intersect.vcf 2>>$log
@@ -457,10 +461,10 @@ else
 	# Remove the variants that have a multi-allelic call (i.e. A,G). Bonnie thinks they are a sequencing artifact.
 	# if FAO + FRO is < Depth_Cutoff, that variant is removed
 	echo "--- Filtering Variants (multi-allelic calls, and where FAO+FRO is < $DEPTH_CUTOFF1 in VCF1 and < $DEPTH_CUTOFF2 in VCF2 ---" >>${log}
-	python ${QC_SCRIPTS}/QC_Filter_Var.py ${TEMP_DIR}/merged_intersect.vcf ${TEMP_DIR}/filtered_merged_intersect.vcf --merged $DEPTH_CUTOFF1 $DEPTH_CUTOFF2 >> $log 2>&1
+	python ${QC_SCRIPTS}/QC_Filter.py ${TEMP_DIR}/merged_intersect.vcf ${TEMP_DIR}/filtered_merged_intersect.vcf --merged $DEPTH_CUTOFF1 $DEPTH_CUTOFF2 >> $log 2>&1
 	if [ "$?" != "0" ]
 	then
-		echo "ERROR: $OUTPUT_DIR had a problem filtering variants with QC_Filter_Var.py... See $log for details" 1>&2
+		echo "ERROR: $OUTPUT_DIR had a problem filtering variants with QC_Filter.py... See $log for details" 1>&2
 		exit 1
 	fi
 	
@@ -498,8 +502,8 @@ else
 		# I keep trying to think of ways to shortcut around having to do this extra filtering, but Ozlem is doing it all
 		# because there were special cases where these steps were necessary. So I'll keep them.
 		# We need to remove the duplicate entries again.
-		python ${QC_SCRIPTS}/QC_Filter_Var.py ${TEMP_DIR}/VCF1_Intersect_Hotspot.vcf $VCF1_FINAL --single $DEPTH_CUTOFF1 >>$log 2>&1
-		python ${QC_SCRIPTS}/QC_Filter_Var.py ${TEMP_DIR}/VCF2_Intersect_Hotspot.vcf $VCF2_FINAL --single $DEPTH_CUTOFF2 >>$log 2>&1
+		python ${QC_SCRIPTS}/QC_Filter.py ${TEMP_DIR}/VCF1_Intersect_Hotspot.vcf $VCF1_FINAL --single $DEPTH_CUTOFF1 >>$log 2>&1
+		python ${QC_SCRIPTS}/QC_Filter.py ${TEMP_DIR}/VCF2_Intersect_Hotspot.vcf $VCF2_FINAL --single $DEPTH_CUTOFF2 >>$log 2>&1
 	fi
 
 
@@ -517,6 +521,7 @@ fi
 		 	# ------------------------------------------------------------------
 		 	# ----------------------- FIX FOR CDS REGION -----------------------
 		 	# ------------------------------------------------------------------
+			# NEEDS TO BE UPDATED!!!!
 if [ "$GET_CDS_DEPTHS" == "True" ]; then
 	if [ "`find ${OUTPUT_DIR}/VCF1${CHR}_CDS_Final.vcf -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/VCF2${CHR}_CDS_Final.vcf -type f 2>/dev/null`" \
 		-a "`find ${OUTPUT_DIR}/Run1${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_CDS_depths -maxdepth 0 -type f 2>/dev/null`" ]; then
@@ -590,7 +595,7 @@ if [ "$GET_CDS_DEPTHS" == "True" ]; then
 			--out_csv ${OUTPUT_DIR}/matched_variants${CHR}_CDS.csv \
 			--json_out ${JSON_OUT} \
 			--cds # this option changes the output in JSON_OUT
-		if [ "$?" != "0" ]; then
+		if [ $? -ne 0 ]; then
 			echo "ERROR: on CDS $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
 			exit 
 		fi
@@ -602,23 +607,18 @@ fi
 total_eligible_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
 	awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($3 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
 
-if [ "$total_eligible_bases" == "" ]; then
-	echo "ERROR: total_eligible_bases cannot =  0. ${OUTPUT_DIR}/Run1${CHR}_depths probably not found"
-	total_elibigle_bases="0"
-#	exit 1
-else
-	# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
-	python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
-		--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
-		--jsons $JSON1 $JSON2 \
-		--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
-		--total_bases $total_eligible_bases \
-		--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
-		--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
-	if [ "$?" != "0" ]; then
-		echo "ERROR: $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
-		exit 
-	fi
+# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
+ # total_possible_bases is calculated in the  setupBed function.
+python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
+	--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
+	--jsons $JSON1 $JSON2 \
+	--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
+	--bases $total_eligible_bases $total_possible_bases \
+	--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
+	--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
+if [ $? -ne 0 ]; then
+	echo "ERROR: $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
+	exit 
 fi
 
 # Cleanup and done.
