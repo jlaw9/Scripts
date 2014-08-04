@@ -113,14 +113,14 @@ class TemplateWriter:
     def __writeQCCompareTemplate(self, job, fileHandle):
         #default is to analyze all chromsomes
         chrFlag = '-chr chr1'
-		# default is to cleanup
-		cleanupFlag='-cl'
+        # default is to cleanup
+        cleanupFlag='-cl'
 
-		# if analyze_all_chromosomes is set to true in the json file, then take of the chrFlag
+        # if analyze_all_chromosomes is set to true in the json file, then take of the chrFlag
         if job['analysis']['settings']['analyze_all_chromosomes']:
             chrFlag = ''
 
-		# If cleanup is specified to false in the json file, then remove the cleanupFlag
+        # If cleanup is specified to false in the json file, then remove the cleanupFlag
         if 'cleanup' in job['analysis']['settings'] and not job['analysis']['settings']['cleanup']:
             cleanupFlag = ''
 
@@ -130,7 +130,7 @@ class TemplateWriter:
             fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -s %s -g %s %s %s %s -a %s -b %s %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['tvc_parameter_json'], job['analysis']['settings']['min_base_coverage'], job['analysis']['settings']['wt_cutoff'], job['analysis']['settings']['hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['project_bed'], chrFlag, cleanupFlag))
         elif job['analysis']['settings']['type'] == 'tumor_normal':
             #tumor_normal sample
-			fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -s %s -all %s %s %s %s %s %s %s %s -a %s -b %s %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['normal_tvc_json'], job['analysis']['settings']['normal_min_base_coverage'], job['analysis']['settings']['normal_wt_cutoff'], job['analysis']['settings']['normal_hom_cutoff'], job['analysis']['settings']['tumor_tvc_json'], job['analysis']['settings']['tumor_min_base_coverage'], job['analysis']['settings']['tumor_wt_cutoff'], job['analysis']['settings']['tumor_hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['project_bed'], chrFlag, cleanupFlag))
+            fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -s %s -all %s %s %s %s %s %s %s %s -a %s -b %s %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['normal_tvc_json'], job['analysis']['settings']['normal_min_base_coverage'], job['analysis']['settings']['normal_wt_cutoff'], job['analysis']['settings']['normal_hom_cutoff'], job['analysis']['settings']['tumor_tvc_json'], job['analysis']['settings']['tumor_min_base_coverage'], job['analysis']['settings']['tumor_wt_cutoff'], job['analysis']['settings']['tumor_hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['project_bed'], chrFlag, cleanupFlag))
         #add other types later
 
 
