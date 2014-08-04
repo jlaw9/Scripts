@@ -104,8 +104,8 @@ class JobManager:
                     
                         #since other json files may be around, let's be sure they have the analysis type flag
                         #can use this to filter things too
-                        if 'analysis' in fileData:
-                            if 'type' in fileData['analysis']:
+                        if 'analysis' in fileData and 'status' in fileData:
+                            if 'type' in fileData['analysis'] and 'status' == 'pending':
                                 if fileData['analysis']['type'] in self.__jobFilters:
                                     #job was the right type so we can add to list
                                     files[os.path.join(root, filename)] = directory
@@ -118,11 +118,11 @@ class JobManager:
         for file in files:
             #rename the json file so it won't get picked up by the next thread
             logging.debug('%s - Found %s' % (getTimestamp(), file))
-            shutil.move(file, '%s_read' % file)
+#           shutil.move(file, '%s' % file)
             #shutil.copy(file, '%s_read' % (file))
                                     
             #add the file to the array
-            jobsToProcess['%s_read' % (file)] = files[file]
+            jobsToProcess['%s' % (file)] = files[file]
 
         #return the array
         return(jobsToProcess)
