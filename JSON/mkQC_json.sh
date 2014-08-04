@@ -29,6 +29,7 @@ for sample in $samples; do
 #				mv ${run}/*.json_read ${run}/${sample_name}_${run_name}.json 2>/dev/null
 #			fi
 #			#echo "Removing $sample/QC"
+#			exit
 #			#rm -r ${sample}/QC
 		fi
 	done
@@ -38,6 +39,7 @@ for sample in $samples; do
 #		if [ ! "`find ${sample}/QC/*.json* -maxdepth 0 -type f 2>/dev/null`" ]; then
 		mkdir ${sample}/QC 2>/dev/null
 		./writeQCJson.py $sample 
+		exit
 #		else
 #			json=`find ${sample}/QC/*.json* -maxdepth 0 -type f`
 #			echo "mv ${json} ${sample}/QC/${sample_name}_QC.json"
