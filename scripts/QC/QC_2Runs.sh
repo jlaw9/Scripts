@@ -23,7 +23,7 @@ VARIANT_CALLER_DIR='/results/plugins/variantCaller'
 REF_FASTA='/results/referenceLibrary/tmap-f3/hg19/hg19.fasta'
 # Default Options
 AMP_COV_CUTOFF=30 # The minimum amount of coverage each amplicon needs to have. Default is 30
-GET_CDS_DEPTHS="False" # Variable to get depths of cds and the project bed.
+GET_CDS_DEPTHS="False" # Variable to get depths of cds as well as the project bed.
 CLEANUP="False"
 
 function usage {
@@ -390,8 +390,8 @@ fi
 
 
 # If QC has already been run using the options specified, then no need to re-run it.
-if [ "`find ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf -type f 2>/dev/null`" \
-	-a "`find ${OUTPUT_DIR}/Run1${CHR}_* -maxdepth 0 -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/Run2${CHR}_* -maxdepth 0 -type f 2>/dev/null`" ]; then
+qc_name=`basename $OUTPUT_DIR`
+if [ "`grep $qc_name $JSON_OUT 2>/dev/null`" ]; then
 	echo "	$OUTPUT_DIR has already been QCd. Skipping QC and running QC_Compare_VCFs.py"
 else
 	echo "	$OUTPUT_DIR Creating QC tables at `date`"
@@ -506,16 +506,49 @@ else
 		python ${QC_SCRIPTS}/QC_Filter.py ${TEMP_DIR}/VCF2_Intersect_Hotspot.vcf $VCF2_FINAL --single $DEPTH_CUTOFF2 >>$log 2>&1
 	fi
 
+	# If the depths have already been generated, then skip this step
+	if [ ! "`find ${OUTPUT_DIR}/Run1${CHR}_depths -maxdepth 0 -type f 2>/dev/null`" -a ! "`find ${OUTPUT_DIR}/Run2${CHR}_depths -maxdepth 0 -type f 2>/dev/null`" ]; then
+		# get Depths. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
+		getDepths ${RUN1_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
+		getDepths ${RUN2_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
+		
+		waitForJobsToFinish "samtools depths ${CHR}"
+		# Move the depths to the Output dir in case the script is interrupted in the middle of running samtools
+		mv ${TEMP_DIR}/Run1${CHR}_depths ${TEMP_DIR}/Run2${CHR}_depths ${OUTPUT_DIR}
+	fi
 
-	# No need for another if statement here. If both TVC and GATK files already existed, then this part would've already been skipped
-	# get Depths. Not needed for hotspot creation and such, but it will be used to find the total # of eligible bases later on.
-	getDepths ${RUN1_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 1${CHR}
-	getDepths ${RUN2_DIR}/${CHR}/${CHR}PTRIM.bam ${TEMP_DIR}/${intersected_bed} 2${CHR}
+	# Use awk to get the total_eligible_bases by getting only the base positions from both samtools depth outputs that have greater than the cutoff depth.
+	total_eligible_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
+		awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($3 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
 	
-	waitForJobsToFinish "samtools depths ${CHR}"
-	# Move the depths to the Output dir in case the script is interrupted in the middle of running samtools
-	mv ${TEMP_DIR}/Run1${CHR}_depths ${TEMP_DIR}/Run2${CHR}_depths ${OUTPUT_DIR}
+	# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
+	 # total_possible_bases is calculated in the  setupBed function.
+	python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
+		--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
+		--jsons $JSON1 $JSON2 \
+		--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
+		--bases $total_eligible_bases $total_possible_bases \
+		--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
+		--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
+	if [ $? -ne 0 ]; then
+		echo "ERROR: $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
+		exit 
+	fi
+	
+	# Cleanup and done.
+	if [ "$CLEANUP" == "True" ]; then
+		rm -rf ${TEMP_DIR}
+		# Remove the chr subsets if they were created.
+		if [ "$CHR" != "" ]; then
+			rm -rf ${RUN1_DIR}/${CHR} ${RUN2_DIR}/${CHR} 2>/dev/null
+		fi
+		# Remove the PTRIM.bam
+		rm ${RUN1_DIR}/PTRIM.bam* ${RUN2_DIR}/PTRIM.bam* 2>/dev/null
+	fi
 
+	echo "	$OUTPUT_DIR Finished QC." 
+	#echo "----------------------------------------------"
+	echo "$OUTPUT_DIR Finished QC." >>$log
 fi
 
 		 	# ------------------------------------------------------------------
@@ -602,37 +635,3 @@ if [ "$GET_CDS_DEPTHS" == "True" ]; then
 	fi
 fi
 		 #----------------------- FIX FOR CDS REGION END -----------------------
-
-# Use awk to get the total_eligible_bases by getting only the base positions from both samtools depth outputs that have greater than the cutoff depth.
-total_eligible_bases=`paste ${OUTPUT_DIR}/Run1${CHR}_depths ${OUTPUT_DIR}/Run2${CHR}_depths | \
-	awk -v cutoff1=$DEPTH_CUTOFF1 -v cutoff2=$DEPTH_CUTOFF2 '{ if ($3 >= cutoff1 && $6 >= cutoff2) printf "."}' | wc -c`
-
-# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
- # total_possible_bases is calculated in the  setupBed function.
-python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
-	--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
-	--jsons $JSON1 $JSON2 \
-	--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
-	--bases $total_eligible_bases $total_possible_bases \
-	--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
-	--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
-if [ $? -ne 0 ]; then
-	echo "ERROR: $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
-	exit 
-fi
-
-# Cleanup and done.
-if [ "$CLEANUP" == "True" ]; then
-	rm -rf ${TEMP_DIR}
-	# Remove the chr subsets if they were created.
-	if [ "$CHR" != "" ]; then
-		rm -rf ${RUN1_DIR}/${CHR} ${RUN2_DIR}/${CHR} 2>/dev/null
-	fi
-	# Remove the PTRIM.bam
-	rm ${RUN1_DIR}/PTRIM.bam* ${RUN2_DIR}/PTRIM.bam* 2>/dev/null
-fi
-
-echo "	$OUTPUT_DIR Finished QC." 
-#echo "----------------------------------------------"
-echo "$OUTPUT_DIR Finished QC." >>$log
-
