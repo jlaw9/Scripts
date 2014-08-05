@@ -122,8 +122,8 @@ class JobManager:
 									# reset the fileData status to pending to requeue this job
                                     fileData['status'] = 'pending'
 
-								# If the status is 'pending', then start this job
-                                if fileData['status'] == 'pending':
+								# If the status is 'pending' or if the user specified a status type to rerun, then start this job
+                                if fileData['status'] == 'pending' or fileData['status'] == options.rerun:
                                         #job was the right type so we can add to list
                                         files[os.path.join(root, filename)] = directory
                                     
@@ -161,6 +161,7 @@ if (__name__ == "__main__"):
 	parser.add_option('-S', '--software_dir', dest='software_dir', default="/rawdata/legos", help='The software root directory. [default: %default]')
 	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
 	parser.add_option('-r', '--requeue', dest="requeue", help="Will qdel jobs that have a status of 'queued' and re-submit them with the new specified queue, as well as start 'pending' jobs with the specified queue")
+	parser.add_option('-R', '--rerun', dest="rerun", help="Will 'rerun' jobs of the specified status type")
 	
 	#parse the arguments
 	(options, args) = parser.parse_args()
