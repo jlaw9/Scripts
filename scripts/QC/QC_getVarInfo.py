@@ -84,8 +84,8 @@ HOM_Cutoff = options.gt_cutoffs[1]
 
 if not os.path.isfile(options.json):
 	# If the json file doesn't exist for some reason, then add these simple metrics to it
-	sample = options.json.split("/")[-3]
-	run_name = options.output_dir.split("/")[-2]
+	sample = options.json.split("/")[-4]
+	run_name = options.json.split("/")[-2]
 	runData = {'sample': sample, 'name': run_name}
 else:
 	#read in the json file

@@ -211,8 +211,8 @@ else
 	
 	waitForJobsToFinish "$PTRIM_BAM samtools depth"
 	# Move the depths files to the output dir. This way, they will only be in the output dir if samtools depth finished successfully on everything
-	mv ${OUTPUT_DIR}/coverages/* $OUTPUT_DIR
-	rmdir ${OUTPUT_DIR}/coverages
+	mv ${OUTPUT_DIR}/coverages/* $OUTPUT_DIR 2>/dev/null
+	rmdir ${OUTPUT_DIR}/coverages 2>/dev/null
 	
 	# get the number of amplicons that have the 10th forward strand base covered at $AMP_COV_CUTOFF
 	forward_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_beg_depths | wc -c 2>/dev/null`
@@ -232,7 +232,7 @@ else
 fi
 
 # filter the VCF file to then get the TS_TV ratio
-python ${QC_SCRIPTS}/QC_Filter_Var.py $VCF ${OUTPUT_DIR}/filtered.vcf --single $DEPTH_CUTOFF >>$log
+python ${QC_SCRIPTS}/QC_Filter.py $VCF ${OUTPUT_DIR}/filtered.vcf --single $DEPTH_CUTOFF >>$log
 TS_TV=`cat ${OUTPUT_DIR}/filtered.vcf | vcf-tstv | grep -Po "\d+\.\d+"`
 
 # get the medianReadCoverageOverall for each amplicon by adding the total forward and reverse reads columns in the .amplicon.cov.xls, and then finding the median.
@@ -279,6 +279,7 @@ python ${QC_SCRIPTS}/QC_getVarInfo.py \
 	--metrics "$metrics" \
 	--gt_cutoffs $WT_CUTOFF $HOM_CUTOFF \
 	>>$log 2>&1
+
 if [ $? -ne 0 ]; then
 	echo "	ERROR QC_getVarInfo.py was unsuccessful. See $log for details" 1>&2
 	ERRORS="True"

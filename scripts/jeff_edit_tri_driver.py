@@ -60,6 +60,9 @@ class JobManager:
         logging.info('%s - Starting %s' % (getTimestamp(), analysisFile))
         fileData['status'] = 'submitted'
         fileData['output_folder'] = outputFolder
+		# if the --requeue option was specified, update the queue
+        if options.requeue:
+            fileData['analysis']['settings']['queue'] = options.requeue
 
         #update the json
         self.__updateJSON(jobFile, fileData)
@@ -90,13 +93,15 @@ class JobManager:
         logging.debug("%s - Looking for JSON job files in %s" % (getTimestamp(), self.__sampleDirectories))
         files = {}
         jobsToProcess = {}
+		# instantiate a runner object in case it's needed
+        runner = Runner("CommandLine")
 
         #recurse through and find the json files
         for directory in self.__sampleDirectories:
             #see if this directory exists
             if os.path.isdir(directory):
                 for root, dirnames, filenames in os.walk(directory):
-                    for filename in fnmatch.filter(filenames, '*.json'):
+                    for filename in fnmatch.filter(filenames, '*.json*'):
                         #see if it is the right type
                         #logging.debug('%s - Looking at %s' % (getTimestamp(), os.path.join(root, filename)))
                         jsonData = open(os.path.join(root, filename))
@@ -104,15 +109,24 @@ class JobManager:
                     
                         #since other json files may be around, let's be sure they have the analysis type flag
                         #can use this to filter things too
-                        if 'analysis' in fileData and 'status' in fileData:
-                            if 'type' in fileData['analysis'] and fileData['status'] == 'pending':
-                                if fileData['analysis']['type'] in self.__jobFilters:
-                                    #job was the right type so we can add to list
-                                    files[os.path.join(root, filename)] = directory
+                        if 'analysis' in fileData and 'type' in fileData['analysis'] and 'status' in fileData:
+							# If the analysis type matches the given jobFilter, check to see if this job should be started
+                            if fileData['analysis']['type'] in self.__jobFilters:
+
+								# if the status is 'queued' and the user specified requeue, then delete the current pending or running job
+                                if 'sge_job_id' in fileData and (fileData['status'] == 'queued' and options.requeue):
+                                    logging.info('%s - Deleting Job ID %s' % (getTimestamp(), fileData['sge_job_id']))
+									# delete this json file's job id
+                                    command = "qdel %s"%fileData['sge_job_id']                           
+                                    runner.runCommandLine(command) 
+									# reset the fileData status to pending to requeue this job
+                                    fileData['status'] = 'pending'
+
+								# If the status is 'pending', then start this job
+                                if fileData['status'] == 'pending':
+                                        #job was the right type so we can add to list
+                                        files[os.path.join(root, filename)] = directory
                                     
-                                elif len(self.__jobFilters) == 0:
-                                    #no filters on job type were given so just let them all go through
-                                    files[os.path.join(root, filename)] = directory
                                     
         #process each of the json files
         for file in files:
@@ -146,6 +160,7 @@ if (__name__ == "__main__"):
 	parser.add_option('-s', '--sample_dir', dest='sample_dir', action='append', help='Recurse through the given directory and look for *.json jobs. [default: default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]]')
 	parser.add_option('-S', '--software_dir', dest='software_dir', default="/rawdata/legos", help='The software root directory. [default: %default]')
 	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
+	parser.add_option('-r', '--requeue', dest="requeue", help="Will qdel jobs that have a status of 'queued' and re-submit them with the new specified queue, as well as start 'pending' jobs with the specified queue")
 	
 	#parse the arguments
 	(options, args) = parser.parse_args()
