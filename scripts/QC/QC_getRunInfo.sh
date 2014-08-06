@@ -192,24 +192,24 @@ echo "$RUNNING at `date`" >> $log
 
 # Check to see if the run has a PTRIM.bam. if it does, then we can run samtools depth.
 if [ "$PTRIM_BAM" == "" ]; then
-	#echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
-	#echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
-	#TEMP FOR WALES
-	echo "	Generating PTRIM"
-	# get the BAM file
-	PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
-	bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
-	#echo "$bam $PTRIM_BAM $REF_FASTA $PROJECT_BED"
-	java -Xmx8G -cp /home/ionadmin/software/TRIMP_lib -jar /home/ionadmin/software/TRIMP.jar \
-		$bam \
-		$PTRIM_BAM \
-		$REF_FASTA \
-		$PROJECT_BED \
-		>> $log
-fi
-if [ $? -ne 0 ]; then
-	echo "	ERROR: FAILED to generate the PTRIM.bam "
-	exit
+	echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
+	echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
+	#TEMP FOR WALES to generate the PTRIM.bam file. Takes longer than an hour for Exome data
+#	echo "	Generating PTRIM"
+#	# get the BAM file
+#	PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
+#	bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
+#	#echo "$bam $PTRIM_BAM $REF_FASTA $PROJECT_BED"
+#	java -Xmx8G -cp /home/ionadmin/software/TRIMP_lib -jar /home/ionadmin/software/TRIMP.jar \
+#		$bam \
+#		$PTRIM_BAM \
+#		$REF_FASTA \
+#		$PROJECT_BED \
+#		>> $log
+#fi
+#if [ $? -ne 0 ]; then
+#	echo "	ERROR: FAILED to generate the PTRIM.bam "
+#	exit
 else
 	# Check to see if the depths already exist
 	if [ "`find ${OUTPUT_DIR}/forward_beg_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_beg_depths -type f 2>/dev/null`" -a \
