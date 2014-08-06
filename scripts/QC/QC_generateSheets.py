@@ -99,7 +99,11 @@ def check_max_and_write(row, col, value, Max):
 def check_to_write(row, col, key, write_format, metrics):
 	if key in metrics:
 		try:
-			if re.search("num_format", write_format):
+			if re.search("=", write_format):
+				cell1 = xl_rowcol_to_cell(row, col-2)
+				cell2 = xl_rowcol_to_cell(row, col-1)
+				QCsheet.write_formula(row, col, "=(%s-%s)/%s"%(cell1, cell2, cell1), formats[write_format[1:]])
+			elif re.search("num_format", write_format):
 				if not isinstance(metrics[key], int) and not isinstance(metrics[key], float):
 					QCsheet.write_number(row, col, int(metrics[key].replace(',','')), formats[write_format])
 				else:
@@ -109,10 +113,6 @@ def check_to_write(row, col, key, write_format, metrics):
 			elif re.search("dec3_format", write_format):
 				QCsheet.write_number(row, col, float(metrics[key]), formats[write_format])
 			# special case to write the formula for the +-10 bp col
-			elif re.search("=", write_format):
-				cell1 = xl_rowcol_to_cell(row, col-2)
-				cell2 = xl_rowcol_to_cell(row, col-1)
-				QCsheet.write_formula(row, col, "=(%s-%s)/%s"%(cell1, cell2, cell1), formats[write_format[1:]])
 			else:
 				# if write_format is blank, then formats will also be blank
 				QCsheet.write(row, col, metrics[key], formats[write_format])
@@ -134,9 +134,9 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "Sample #", formats['header_format'])
 	QCsheet.set_column(col,col,None, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "Plate, row and column", formats['header_format'])
-	QCsheet.set_column(col,col,10, formats['center'])
-	col += 1
+#	QCsheet.write(0,col, "Plate, row and column", formats['header_format'])
+#	QCsheet.set_column(col,col,10, formats['center'])
+#	col += 1
 	QCsheet.write(0,col, "Library prep date", formats['header_format'])
 	QCsheet.set_column(col,col,10, formats['center'])
 	col += 1
@@ -179,15 +179,15 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "(%covered at bp(10) - bp(n-10))/bp(10)", formats['header_format'])
 	QCsheet.set_column(col,col,13, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "total number of bases covered at 30x (the # of bases covered in the 'covered_bases region' region.)", formats['header_format'])
-	QCsheet.set_column(col,col,18, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "% covered bases (n/83046)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "% targeted bases (n/84447)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
+#	QCsheet.write(0,col, "total number of bases covered at 30x (the # of bases covered in the 'covered_bases region' region.)", formats['header_format'])
+#	QCsheet.set_column(col,col,18, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "% covered bases (n/83046)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "% targeted bases (n/84447)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
 	QCsheet.write(0,col, "Ts/Tv", formats['header_format'])
 	QCsheet.set_column(col,col,13, formats['center'])
 	col += 1
@@ -244,11 +244,16 @@ def writeRunMetrics(run_metrics):
 	QCsheet.set_row(0,100, formats['header_format'])
 	
 	row = 1
-	azure = ''
+	azure = '_azure'
 	last_sample = ""
 	
 	for sample in sorted(run_metrics):
-		for run, metrics in sorted(run_metrics[sample].iteritems()):
+		# for each sample, change the color
+		if azure == "":
+			azure = "_azure"
+		else:
+			azure = ""
+		for run, metrics in sorted(run_metrics[sample]['runs'].iteritems()):
 			col = 0
 			#col += check_to_write(row, col, 'sample_num', "" + azure, metrics)
 			col += check_to_write(row, col, 'sample', "" + azure, metrics)
@@ -266,7 +271,7 @@ def writeRunMetrics(run_metrics):
 			col += check_to_write(row, col, 'begin_amp_cov', 'perc_format' + azure, metrics)
 			col += check_to_write(row, col, 'end_amp_cov', 'perc_format' + azure, metrics)
 			# give it the dummy 'end_amp_cov' key to write the function of +-10 bp difference. the = is for a function
-			col += check_to_write(row, col, 'end_amp_cov', "=" + azure, metrics)
+			col += check_to_write(row, col, 'end_amp_cov', "=dec3_format" + azure, metrics)
 #			col += check_to_write(row, col, 'total_covered', 'num_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_expected', 'perc_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_targeted', 'perc_format' + azure, metrics)
@@ -312,13 +317,10 @@ def writeRunMetrics(run_metrics):
 				col += check_to_write(row, col, 'tn_zscore', '' + azure, metrics)
 			col += check_to_write(row, col, 'tn_status', "" + azure, metrics)
 		
+			# Set the color of this row according to the current color
+			QCsheet.set_row(row, None, formats[azure])
+
 			row += 1
-		# for each sample, change the color
-		if azure == "":
-			azure = "_azure"
-		else:
-			azure = ""
-			QCsheet.set_row(row, None, formats['_azure'])
 	
 
 
@@ -452,7 +454,7 @@ if (__name__ == "__main__"):
 	elif options.json:
 		json_data = json.load(open(options.json))
 		writeRunMetrics(json_data)
-	elif options.json:
+	elif options.qc_json:
 		QC_json_data = json.load(open(options.json))
 		write3x3Tables(QC_json_data)
 
