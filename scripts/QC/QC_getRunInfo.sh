@@ -12,7 +12,7 @@
 #$ -N QC
 #$ -o qc_sample_out.log
 #$ -e qc_sample_out.log
-#$ -q all.q
+#$ -q plugin.q ##TEMP FOR WALES
 #$ -V
 
 
@@ -29,9 +29,10 @@ USAGE: bash QC_getRunInfo.sh
 	-h | --help
 	-r | --run_dir <path/to/run_dir> (run dir should have the vcf file, the amplicon.cov.xls file, and the .json file)
 	-o | --out_dir <path/to/output_dir> 
-	-a | --amp_cov_cutoff (Cutoff for # of amplicon reads.) 
-	-d | --depth_cutoff (Cutoff for base depth)
-	-wh | --wt_hom_cutoff (WT and HOM cutoffs)
+	-a | --amp_cov_cutoff <min_amp_coverage> (Cutoff for # of amplicon reads.) 
+	-d | --depth_cutoff <min_base_depth> (Cutoff for base depth)
+	-wh | --wt_hom_cutoff <WT_Cutoff> <HOM_Cutoff> (WT and HOM cutoffs)
+	-pb | --proj_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
 	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)
 	-cb | --cds_bed <path/to/CDS_bed> (Optional. Only available if the Run has a PTRIM.bam. Run GATK on the CDS region of the bed file)
@@ -108,6 +109,11 @@ do
 			HOM_CUTOFF=$3
 			RUNNING="$RUNNING --wt_hom_cutoff: WT: $2, HOM: $3 "
 			shift 3
+			;;
+		-pb | --proj_bed)
+			PROJECT_BED=$2
+			RUNNING="$RUNNING --proj_bed: $2 "
+			shift 2
 			;;
 		-bb | --beg_bed)
 			BEG_BED=$2
@@ -186,8 +192,24 @@ echo "$RUNNING at `date`" >> $log
 
 # Check to see if the run has a PTRIM.bam. if it does, then we can run samtools depth.
 if [ "$PTRIM_BAM" == "" ]; then
-	echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
-	echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
+	#echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
+	#echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
+	#TEMP FOR WALES
+	echo "	Generating PTRIM"
+	# get the BAM file
+	PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
+	bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
+	#echo "$bam $PTRIM_BAM $REF_FASTA $PROJECT_BED"
+	java -Xmx8G -cp /home/ionadmin/software/TRIMP_lib -jar /home/ionadmin/software/TRIMP.jar \
+		$bam \
+		$PTRIM_BAM \
+		$REF_FASTA \
+		$PROJECT_BED \
+		>> $log
+fi
+if [ $? -ne 0 ]; then
+	echo "	ERROR: FAILED to generate the PTRIM.bam "
+	exit
 else
 	# Check to see if the depths already exist
 	if [ "`find ${OUTPUT_DIR}/forward_beg_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_beg_depths -type f 2>/dev/null`" -a \
@@ -222,6 +244,8 @@ else
 	forward_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_end_depths | wc -c 2>/dev/null`
 	# get the number of amplicons that have the 10th reverse strand base from the end covered at $AMP_COV_CUTOFF
 	reverse_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_end_depths | wc -c 2>/dev/null`
+
+	num_amps=`tail -n +2 $AMP | wc -l`
 	
 	# add up the beginning of the forward reads depths with the end of the reverse reads depths to get the "30x coverage at beginning of amplicon"
 	begin_amp_cov=$(( (forward_begbpCov + reverse_endbpCov) / 2 ))
@@ -242,10 +266,10 @@ if [ "$CDS" != "" ]; then
 	# If GATK ran successfully, then get the total number of bases covered at $DEPTH_CUTOFF
 	CDSCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/CDS_depths | wc -c`
 	# These QC metrics will be added to the json file of the run.
-	metrics="cds_cov:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$CDSCov:$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
+	metrics="cds_cov:num_amps:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$CDSCov:$num_amps:$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
 else
 	# These QC metrics will be added to the json file of the run.
-	metrics="begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
+	metrics="num_amps:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$num_amps:$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
 fi
 
 # Find this run's .json file, or add another one

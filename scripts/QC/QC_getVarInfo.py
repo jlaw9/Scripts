@@ -91,6 +91,12 @@ else:
 	#read in the json file
 	jsonData = open(options.json)
 	runData = json.load(jsonData)
+	# TEMP FOR WALES
+	if runData['project'] == 'Wales':
+		if options.json.split("/")[-4] == "":
+			runData['name'] = "_".join(options.json.split("/")[-3:-1]) + "_Run1"
+		else:
+			runData['name'] = "_".join(options.json.split("/")[-4:])
 
 numHET = 0
 numHOM = 0
@@ -122,9 +128,20 @@ runData['run_data']['het_hom'] = het_hom  # HET / HOM ratio
 # they are set up as "key1:key2:key3;value1:value2:value3" so we can use dict(zip(keys, values))
 metrics = dict(zip(options.metrics.split(';')[0].split(':'), options.metrics.split(";")[1].split(":")))
 
+# Bash can't do float division, so do that division here
+try:
+	metrics['begin_amp_cov'] = float(metrics['begin_amp_cov']) / float(metrics['num_amps'])
+	metrics['end_amp_cov'] = float(metrics['end_amp_cov']) / float(metrics['num_amps'])
+except ValueError:
+	pass
+
 # add those metrics to the json file.
 for key in metrics:
-	runData['run_data'][key] = metrics[key]
+	if key != 'num_amps':
+		try:
+			runData['run_data'][key] = float(metrics[key])
+		except ValueError:
+			runData['run_data'][key] = metrics[key]
 
 #dump the json file
 with open(options.json, 'w') as newJSONFile:

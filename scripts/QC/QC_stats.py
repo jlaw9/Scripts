@@ -88,6 +88,9 @@ def getAllRunInfo(run_files):
 				print "%s has no run_data"%jsonFile
 			else:
 				all_run_data[jsonData['sample']]['runs'][jsonData['name']] = jsonData['run_data']
+				if 'sample' not in all_run_data[jsonData['sample']]['runs'][jsonData['name']]:
+					all_run_data[jsonData['sample']]['runs'][jsonData['name']]['sample'] = jsonData['sample']
+					all_run_data[jsonData['sample']]['runs'][jsonData['name']]['run_num'] = jsonData['name']
 #		except KeyError:
 #			print jsonFile, jsonData
 #			sys.exit(8)
@@ -311,8 +314,7 @@ def findBestRunComp(sample_dict):
 			#print 'HERE YO', sample_dict
 			for run in avail_runs:
 				if re.search(run, run_comp):
-					perc_avail_bases = float(error_metrics['total_eligible_bases']) / total_possible_bases
-					if error_metrics['error_rate'] < bestErrorRate and perc_avail_bases > perc_avail_bases_filter:
+					if error_metrics['error_rate'] < bestErrorRate and error_metrics['perc_avail_bases'] > perc_avail_bases_filter:
 						bestRunComp = run_comp
 						bestErrorRate = error_metrics['error_rate']
 		perc_avail_bases_filter -= .05

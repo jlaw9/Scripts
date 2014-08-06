@@ -22,8 +22,8 @@ def check_depth(vcfInfo):
 				alt_depth = vcfInfo['AO']
 				ref_depth = vcfInfo['RO']
 			elif 'AD' in vcfInfo: # For older vcf files (3.2), the format is different.
-				alt_depth = info['AD'].split(',')[1]
-				ref_depth = info['AD'].split(',')[0]
+				alt_depth = vcfInfo['AD'].split(',')[1]
+				ref_depth = vcfInfo['AD'].split(',')[0]
 			total_depth = int(alt_depth) + int(ref_depth)
 			return total_depth
 		except KeyError:
