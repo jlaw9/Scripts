@@ -173,8 +173,16 @@ function checkFlags {
 	elif [ "$FLAG_DUPS" == "True" ]; then
 		bash ${SOFTWARE_ROOT}/scripts/flags.sh \
 			$BAM_FILE \
-			--flag_dups \
-			--cleanup
+			--flag_dups 
+
+		bam_dir=`dirname $BAM_FILE`
+		bam_name=`basename $BAM_FILE`
+		if [ "`find ${bam_dir}/Flag_${bam_name} -maxdepth 0 -type f 2>/dev/null`" ]; then
+			mkdir ${bam_dir}/Bam_Backup
+			mv ${BAM_FILE}* ${bam_dir}/Bam_Backup
+			BAM_FILE="${bam_dir}/Flag_${bam_name}"
+		fi
+		#	--cleanup
 	fi
 }
 
