@@ -1,0 +1,26 @@
+{
+  "analysis":{
+    "files":[
+      "rawlib.bam"
+    ],
+    "settings":{
+      "capture_type":"TargetSeq",
+      "mark_dups":"true",
+      "priority":"0",
+      "qc_merged_bed":"/rawdata/project_data/BED_Files/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12_mergedDetail.bed",
+      "qc_unmerged_bed":"/rawdata/project_data/BED_Files/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12_unmergedDetail.bed",
+      "queue":"all.q",
+	  "tvc_bed":"/rawdata/project_data/BED_Files/Methuselah/LTC_TS_Exome_hg19_annotated_rev27Nov12.bed",
+      "tvc_parameter_json":"/rawdata/project_data/parameter_sets/targetseq_germline_highstringency_p1_parameters.json"
+    },
+    "type":"qc_tvc"
+  },
+  "name":"Run1",
+  "project":"Methuselah",
+  "report_name":"/mnt/Triton/archivedReports//Auto_user_NEP-48-Methuselah_D0009_Run6_L_71_102",
+  "sample":"D0009",
+  "sample_folder":"/mnt/Despina/projects/Methuselah/D0009",
+  "status":"pending",
+  "torrent_suite_link":"http://192.168.200.42/report/102",
+  "tsversion":"3.6"
+}
