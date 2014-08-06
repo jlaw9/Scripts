@@ -33,7 +33,7 @@ def getGTInfo(line, WT_Cutoff, HOM_Cutoff):
 	else:
 		info = dict(zip(line[8].split(":"), line[9].split(":"))) #Creates a dictionary with the description as the key, and the actual value as the value.
 		try:
-			if 'FAO' in info and info['FAO'] != '.': # Ozlem said that the frequency depth score is better than the regular depth score, so use that if we can.
+			if 'FAO' in info and info['FAO'] != '.': # Ozlem said that the flow space depths are more accurate than the base space depths, so use that if we can.
 				alt_depth = info['FAO']
 				ref_depth = info['FRO']
 			elif 'AO' in info:

@@ -116,12 +116,12 @@ class TemplateWriter:
         # default is to cleanup
         cleanupFlag='-cl'
 
-        # if analyze_all_chromosomes is set to true in the json file, then take of the chrFlag
-        if job['analysis']['settings']['analyze_all_chromosomes']:
+        # if analyze_all_chromosomes is set to true in the json file, then take off the chrFlag
+        if job['analysis']['settings']['analyze_all_chromosomes'] == True:
             chrFlag = ''
 
         # If cleanup is specified to false in the json file, then remove the cleanupFlag
-        if 'cleanup' in job['analysis']['settings'] and not job['analysis']['settings']['cleanup']:
+        if 'cleanup' in job['analysis']['settings'] and job['analysis']['settings']['cleanup'] == False:
             cleanupFlag = ''
 
         #let's check the type
