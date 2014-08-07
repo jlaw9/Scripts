@@ -267,6 +267,10 @@ def writeRunMetrics(run_metrics):
 			col += check_to_write(row, col, 'rotID', "" + azure, metrics)
 			col += check_to_write(row, col, 'run_date', "" + azure, metrics)
 			col += check_to_write(row, col, 'total_bases', "num_format" + azure, metrics)
+			# Old naming sheme:
+			#col += check_to_write(row, col, 'polyclonal', "perc_format" + azure, metrics)
+			#col += check_to_write(row, col, 'mean', "num_format" + azure, metrics)
+			#col += check_to_write(row, col, 'median', "num_format" + azure, metrics)
 			col += check_to_write(row, col, 'polyclonality', "perc_format" + azure, metrics)
 			col += check_to_write(row, col, 'mean_read_length', "num_format" + azure, metrics)
 			col += check_to_write(row, col, 'median_read_length', "num_format" + azure, metrics)
@@ -278,6 +282,8 @@ def writeRunMetrics(run_metrics):
 #			col += check_to_write(row, col, 'total_covered', 'num_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_expected', 'perc_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_targeted', 'perc_format' + azure, metrics)
+			# Old naming scheme:
+			#col += check_to_write(row, col, 'tstv', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'ts_tv', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'total_vars', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'num_het', 'num_format' + azure, metrics)
