@@ -140,9 +140,9 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "Library prep date", formats['header_format'])
 	QCsheet.set_column(col,col,10, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "Barcode used", formats['header_format'])
-	QCsheet.set_column(col,col,12, formats['center'])
-	col += 1
+	#QCsheet.write(0,col, "Barcode used", formats['header_format'])
+	#QCsheet.set_column(col,col,12, formats['center'])
+	#col += 1
 	QCsheet.write(0,col, "Library concentration (ng/ul)", formats['header_format'])
 	QCsheet.set_column(col,col,None, formats['center'])
 	col += 1
@@ -155,7 +155,7 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "Run Date", formats['header_format'])
 	QCsheet.set_column(col,col,12, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "Total Basepairs", formats['header_format'])
+	QCsheet.write(0,col, "Total M Basepairs", formats['header_format'])
 	QCsheet.set_column(col,col,12, formats['center'])
 	col += 1
 	QCsheet.write(0,col, "% Polyclonal", formats['header_format'])
@@ -167,7 +167,7 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "Median Read Length", formats['header_format'])
 	QCsheet.set_column(col,col,None, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "% expected read length (out of 120 bp)", formats['header_format'])
+	QCsheet.write(0,col, "% expected read length (out of XXX bp)", formats['header_format'])
 	QCsheet.set_column(col,col,12, formats['center'])
 	col += 1
 	QCsheet.write(0,col, "% amplicons > 30x covered at bp +10", formats['header_format'])
@@ -176,9 +176,9 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "% amplicons > 30x covered at bp -10", formats['header_format'])
 	QCsheet.set_column(col,col,13, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "(%covered at bp(10) - bp(n-10))/bp(10)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
+#	QCsheet.write(0,col, "(%covered at bp(10) - bp(n-10))/bp(10)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
 #	QCsheet.write(0,col, "total number of bases covered at 30x (the # of bases covered in the 'covered_bases region' region.)", formats['header_format'])
 #	QCsheet.set_column(col,col,18, formats['center'])
 #	col += 1
@@ -258,7 +258,7 @@ def writeRunMetrics(run_metrics):
 			#col += check_to_write(row, col, 'sample_num', "" + azure, metrics)
 			col += check_to_write(row, col, 'sample', "" + azure, metrics)
 			col += check_to_write(row, col, 'lib_prep_date', "" + azure, metrics)
-			col += check_to_write(row, col, 'barcode', "" + azure, metrics)
+			#col += check_to_write(row, col, 'barcode', "" + azure, metrics)
 			col += check_to_write(row, col, 'lib_conc', "" + azure, metrics)
 			col += check_to_write(row, col, 'run_num', "" + azure, metrics)
 			col += check_to_write(row, col, 'rotID', "" + azure, metrics)
@@ -267,7 +267,7 @@ def writeRunMetrics(run_metrics):
 			col += check_to_write(row, col, 'polyclonal', "perc_format" + azure, metrics)
 			col += check_to_write(row, col, 'mean', "num_format" + azure, metrics)
 			col += check_to_write(row, col, 'median', "num_format" + azure, metrics)
-#			col += check_to_write(row, col, 'expected_length', "" + azure, metrics)
+			col += check_to_write(row, col, 'expected_length', "" + azure, metrics)
 			col += check_to_write(row, col, 'begin_amp_cov', 'perc_format' + azure, metrics)
 			col += check_to_write(row, col, 'end_amp_cov', 'perc_format' + azure, metrics)
 			# give it the dummy 'end_amp_cov' key to write the function of +-10 bp difference. the = is for a function
@@ -455,7 +455,7 @@ if (__name__ == "__main__"):
 		json_data = json.load(open(options.json))
 		writeRunMetrics(json_data)
 	elif options.qc_json:
-		QC_json_data = json.load(open(options.json))
+		QC_json_data = json.load(open(options.qc_json))
 		write3x3Tables(QC_json_data)
 
 	# if no json_data file was specified, then find the metrics in the project dir specified
