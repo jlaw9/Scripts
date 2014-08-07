@@ -100,15 +100,18 @@ def check_to_write(row, col, key, write_format, metrics):
 	if key in metrics:
 		try:
 			if re.search("=", write_format):
-				cell1 = xl_rowcol_to_cell(row, col-2)
-				cell2 = xl_rowcol_to_cell(row, col-1)
-				QCsheet.write_formula(row, col, "=(%s-%s)/%s"%(cell1, cell2, cell1), formats[write_format[1:]])
+				if metrics[key] != "":
+					cell1 = xl_rowcol_to_cell(row, col-2)
+					cell2 = xl_rowcol_to_cell(row, col-1)
+					QCsheet.write_formula(row, col, "=(%s-%s)/%s"%(cell1, cell2, cell1), formats[write_format[1:]])
 			elif re.search("num_format", write_format):
 				if not isinstance(metrics[key], int) and not isinstance(metrics[key], float):
 					QCsheet.write_number(row, col, int(metrics[key].replace(',','')), formats[write_format])
 				else:
 					QCsheet.write_number(row, col, metrics[key], formats[write_format])
 			elif re.search("perc_format", write_format):
+				if float(metrics[key]) > 1:
+					metrics[key] = metrics[key] / 100
 				QCsheet.write_number(row, col, float(metrics[key]), formats[write_format])
 			elif re.search("dec3_format", write_format):
 				QCsheet.write_number(row, col, float(metrics[key]), formats[write_format])
@@ -176,9 +179,9 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "% amplicons > 30x covered at bp -10", formats['header_format'])
 	QCsheet.set_column(col,col,13, formats['center'])
 	col += 1
-#	QCsheet.write(0,col, "(%covered at bp(10) - bp(n-10))/bp(10)", formats['header_format'])
-#	QCsheet.set_column(col,col,13, formats['center'])
-#	col += 1
+	QCsheet.write(0,col, "(%covered at bp(10) - bp(n-10))/bp(10)", formats['header_format'])
+	QCsheet.set_column(col,col,13, formats['center'])
+	col += 1
 #	QCsheet.write(0,col, "total number of bases covered at 30x (the # of bases covered in the 'covered_bases region' region.)", formats['header_format'])
 #	QCsheet.set_column(col,col,18, formats['center'])
 #	col += 1
@@ -221,21 +224,21 @@ def writeRunMetrics(run_metrics):
 	QCsheet.write(0,col, "Z-Score error rate (whole amplicon)", formats['header_format'])
 	QCsheet.set_column(col,col,13, formats['center'])
 	col += 1
-	QCsheet.write(0,col, "Total bases evaluated (>=30x in both runs) (cds only)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "% Available Bases (cds only)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "3x3 qc observed error counts  (cds only)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "3x3 qc error rate  (cds only)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
-	QCsheet.write(0,col, "Z-Score error rate (cds only)", formats['header_format'])
-	QCsheet.set_column(col,col,13, formats['center'])
-	col += 1
+#	QCsheet.write(0,col, "Total bases evaluated (>=30x in both runs) (cds only)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "% Available Bases (cds only)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "3x3 qc observed error counts  (cds only)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "3x3 qc error rate  (cds only)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
+#	QCsheet.write(0,col, "Z-Score error rate (cds only)", formats['header_format'])
+#	QCsheet.set_column(col,col,13, formats['center'])
+#	col += 1
 	QCsheet.write(0,col, "run status (does it pass qc?)", formats['header_format'])
 	QCsheet.set_column(col,col,None, formats['center'])
 	col += 1
@@ -245,14 +248,14 @@ def writeRunMetrics(run_metrics):
 	
 	row = 1
 	azure = '_azure'
-	last_sample = ""
 	
 	for sample in sorted(run_metrics):
 		# for each sample, change the color
-		if azure == "":
-			azure = "_azure"
-		else:
-			azure = ""
+		if len(run_metrics[sample]['runs']) > 0:
+			if azure == "":
+				azure = "_azure"
+			else:
+				azure = ""
 		for run, metrics in sorted(run_metrics[sample]['runs'].iteritems()):
 			col = 0
 			#col += check_to_write(row, col, 'sample_num', "" + azure, metrics)
@@ -264,9 +267,9 @@ def writeRunMetrics(run_metrics):
 			col += check_to_write(row, col, 'rotID', "" + azure, metrics)
 			col += check_to_write(row, col, 'run_date', "" + azure, metrics)
 			col += check_to_write(row, col, 'total_bases', "num_format" + azure, metrics)
-			col += check_to_write(row, col, 'polyclonal', "perc_format" + azure, metrics)
-			col += check_to_write(row, col, 'mean', "num_format" + azure, metrics)
-			col += check_to_write(row, col, 'median', "num_format" + azure, metrics)
+			col += check_to_write(row, col, 'polyclonality', "perc_format" + azure, metrics)
+			col += check_to_write(row, col, 'mean_read_length', "num_format" + azure, metrics)
+			col += check_to_write(row, col, 'median_read_length', "num_format" + azure, metrics)
 			col += check_to_write(row, col, 'expected_length', "" + azure, metrics)
 			col += check_to_write(row, col, 'begin_amp_cov', 'perc_format' + azure, metrics)
 			col += check_to_write(row, col, 'end_amp_cov', 'perc_format' + azure, metrics)
@@ -275,7 +278,7 @@ def writeRunMetrics(run_metrics):
 #			col += check_to_write(row, col, 'total_covered', 'num_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_expected', 'perc_format' + azure, metrics)
 #			col += check_to_write(row, col, 'perc_targeted', 'perc_format' + azure, metrics)
-			col += check_to_write(row, col, 'tstv', 'num_format' + azure, metrics)
+			col += check_to_write(row, col, 'ts_tv', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'total_vars', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'num_het', 'num_format' + azure, metrics)
 			col += check_to_write(row, col, 'num_hom', 'num_format' + azure, metrics)
