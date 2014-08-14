@@ -390,11 +390,10 @@ fi
 
 
 # If QC has already been run using the options specified, then no need to re-run it.
-#qc_name=`basename $OUTPUT_DIR`
-#if [ "`grep $qc_name $JSON_OUT 2>/dev/null`" ]; then
-#	echo "	$OUTPUT_DIR has already been QCd. Skipping QC and running QC_Compare_VCFs.py"
-#else
-# TEMP FOR EINSTEIN
+qc_name=`basename $OUTPUT_DIR`
+if [ "`grep $qc_name $JSON_OUT 2>/dev/null`" ]; then
+	echo "	$OUTPUT_DIR has already been QCd. Skipping QC_2Runs.sh"
+else
 	echo "	$OUTPUT_DIR Creating QC tables at `date`"
 	#echo "For progress and results, see $log"
 	echo "Creating QC tables for $OUTPUT_DIR at `date`" >>$log
@@ -559,7 +558,7 @@ fi
 	echo "	$OUTPUT_DIR Finished QC." 
 	#echo "----------------------------------------------"
 	echo "$OUTPUT_DIR Finished QC." >>$log
-#fi
+fi
 
 		 	# ------------------------------------------------------------------
 		 	# ----------------------- FIX FOR CDS REGION -----------------------
