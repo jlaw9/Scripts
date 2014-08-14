@@ -92,7 +92,7 @@ else:
 	jsonData = open(options.json)
 	runData = json.load(jsonData)
 	# TEMP FOR WALES
-	if runData['project'] == 'Wales':
+	if 'project' in runData and runData['project'] == 'Wales':
 		if options.json.split("/")[-4] == "":
 			runData['name'] = "_".join(options.json.split("/")[-3:-1]) + "_Run1"
 		else:
