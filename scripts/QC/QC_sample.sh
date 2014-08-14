@@ -179,16 +179,6 @@ do
 			RUNNING="$RUNNING --cds_bed: $2, "
 			shift 2
 			;;
-		-bb | --beg_bed)
-			BEG_BED=$2
-			RUNNING="$RUNNING --plus10: $2, "
-			shift 2
-			;;
-		-eb | --end_bed)
-			END_BED=$2
-			RUNNING="$RUNNING --minus10: $2, "
-			shift 2
-			;;
 		-a | --amp_cov_cutoff)
 			AMP_COV_CUTOFF=$2
 			RUNNING="$RUNNING --amp_cov_cutoff: $2, "
@@ -234,7 +224,7 @@ done
 # RUNNING contains all of the specified options
 echo "$RUNNING at `date`"
 
-files=("$SAMPLE_DIR" "$PROJECT_BED" "$BEG_BED" "$END_BED" "$CDS_BED")
+files=("$SAMPLE_DIR" "$PROJECT_BED" "$CDS_BED")
 checkFiles $files
 
 if [ "$CDS_BED" == "" -a "$RUN_GATK_CDS" == "True" ]; then
@@ -248,11 +238,11 @@ fi
 # ----------------------------------------------------
 
 # THIS FUNCTION IS NOT YET IMPLEMENTED
-# $1: Run_Dir $2: The output dir $3 the depth cutoff $4 the WT_Cutoff $5 the HOM_Cutoff
+# $1: Run_Dir $2: The output dir $3 the depth cutoff $4 the WT_Cutoff $5 the HOM_Cutoff $6: the TVC Json file needed to regenerate the PTRIM file.
 function QC_getRunInfo {
 	# QC_getRunInfo.sh gets the following metrics: % amps covered at the beg and end, Ts/Tv ratio,	# Total variants,	# HET variants, 	# HOM variants
 	# It also gets the metrics from the backupPDF.pdf if it is available.
-	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --project_bed $PROJECT_BED"
+	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --project_bed $PROJECT_BED --ptrim_json $6"
 	if [ "$CDS_BED" != "" ]; then
 		qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
 	fi
@@ -356,7 +346,7 @@ if [ "$GERMLINE" == "True" ]; then
 			fi
 		done
 		# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-		QC_getRunInfo $run1 ${run1}/Analysis_Files/temp_files $DEPTH_CUTOFF $WT_CUTOFF $HOM_CUTOFF
+		QC_getRunInfo $run1 ${run1}/Analysis_Files/temp_files $DEPTH_CUTOFF $WT_CUTOFF $HOM_CUTOFF $JSON_PARAS
 	done
 fi
 # ---------------------------------- END GERMLINE ---------------------------------------
@@ -382,10 +372,10 @@ if [ "$TUMOR_NORMAL" == "True" ]; then
 	    	fi 
 
 			# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-			QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+			QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR $JSON_PARAS_TUMOR
 		done		
 		# also get the Run Info for the normal runs.
-		QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
+		QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL $JSON_PARAS_NORMAL
 	done
 fi
 
@@ -410,7 +400,7 @@ if [ "$TUMOR_TUMOR" == "True" ]; then
 		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
 	
 		# If the user did not specify to get this run's info, then get this run's info.
-	        QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+	        QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR $JSON_PARAS_TUMOR
 
 	done
 fi
@@ -434,7 +424,7 @@ if [ "$NORMAL_NORMAL" == "True" ]; then
 			fi
 		done		
 		# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-		QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
+		QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL $JSON_PARAS_NORMAL
 	done
 fi
 	
