@@ -36,8 +36,6 @@ USAGE: bash QC_getRunInfo.sh
 	-wh | --wt_hom_cutoff <WT_Cutoff> <HOM_Cutoff> (WT and HOM cutoffs)
 	-pb | --project_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
 	-pj | --ptrim_json <path/to/tvc_json>	(Regenerate the PTRIM.bam if it is not found. Used to calculate depths.)
-	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
-	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)
 	-cb | --cds_bed <path/to/CDS_bed> (Optional. Only available if the Run has a PTRIM.bam. Run GATK on the CDS region of the bed file)
 	-cl | --cleanup (Optional. Will delete the file specified as --out_dir after generating the QC metrics needed.)
 EOF
@@ -122,16 +120,6 @@ do
 			REGEN_PTRIM="True"
 			TVC_JSON=$2
 			RUNNING="$RUNNING --ptrim_json: $2 "
-			shift 2
-			;;
-		-bb | --beg_bed)
-			BEG_BED=$2
-			RUNNING="$RUNNING --beg_bed: $2 "
-			shift 2
-			;;
-		-eb | --end_bed)
-			END_BED=$2
-			RUNNING="$RUNNING --end_bed: $2 "
 			shift 2
 			;;
 		-cb | --cds_bed)
@@ -234,49 +222,76 @@ if [ "$PTRIM_BAM" == "" ]; then
 	echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
 	echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
 else
-	# Check to see if the depths already exist
-	if [ "`find ${OUTPUT_DIR}/forward_beg_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_beg_depths -type f 2>/dev/null`" -a \
-			"`find ${OUTPUT_DIR}/forward_end_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_end_depths -type f 2>/dev/null`" ]; then
-		echo "	$OUTPUT_DIR already has the depth files. Skipping samtools depth and getting the metrics"
-	else	
-		echo "	$PTRIM_BAM beginning samtools depth at `date`"
-		mkdir ${OUTPUT_DIR}/coverages 2>/dev/null
-		# get the depth of the beginning and end of the forward and reversestrands
-		# -g means include, and -G means exclude. 0x10 means reverse strands
-		samtools depth -b $BEG_BED -G 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/forward_beg_depths
-		samtools depth -b $BEG_BED -g 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/reverse_beg_depths
-		samtools depth -b $END_BED -G 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/forward_end_depths
-		samtools depth -b $END_BED -g 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/reverse_end_depths
-	fi
+	echo "	$PTRIM_BAM running samtools depth at `date`"
+
+	# GOAL: Find all of the 'passing' amplicons of a bam file of a run. 
+
+	# A run is a 'pass' if the following criteria is met:
+	# the 10th bp from the begginging of the amplicion (bp + 10) has >= 30 reads and 
+	# the ratio of the # forward reads / total # of reads and the # of reverse reads / total # of reads at bp +10 is between .25 and .75
+	# the 10th bp from the end of the amplicion (bp -10) has >= 30 reads and 
+	# the ratio of the # forward reads / total # of reads and the # of reverse reads / total # of reads at bp -10 is between .25 and .75
+
+	total_plus10_pass="0"
+	total_minus10_pass=0
 	
+	# loop through the project_bed file, and get the plus10 and minus10 bp positions of each amplicon. Then see if the run passes the other cutoffs.
+	while read chr start_pos end_pos the_rest; do 
+		plus10_pos=$(( $start_pos + 9 ))	
+		minus10_pos=$(( $end_pos - 10 ))  # BED files are non-inclusive at the end.	
+	
+		# get the depths of the +10 and -10 postions on the forward and reverse strands. -G means exclude, -g include. 0x10 means reverse strands.
+		fwd_beg_depth=`samtools depth -r ${chr}:${plus10_pos}-${plus10_pos} -G 0x10 $PTRIM_BAM | grep -Eo "[0-9]+$"`
+		if [ "$fwd_beg_depth" == "" ]; then
+			fwd_beg_depth=0
+		fi
+		rev_end_depth=`samtools depth -r ${chr}:${plus10_pos}-${plus10_pos} -g 0x10 $PTRIM_BAM | grep -Eo "[0-9]+$"`
+		if [ "$rev_end_depth" == "" ]; then
+			rev_end_depth=0
+		fi
+		fwd_end_depth=`samtools depth -r ${chr}:${minus10_pos}-${minus10_pos} -G 0x10 $PTRIM_BAM | grep -Eo "[0-9]+$"`
+		if [ "$fwd_end_depth" == "" ]; then
+			fwd_end_depth=0
+		fi
+		rev_beg_depth=`samtools depth -r ${chr}:${minus10_pos}-${minus10_pos} -g 0x10 $PTRIM_BAM | grep -Eo "[0-9]+$"`
+		if [ "$rev_beg_depth" == "" ]; then
+			rev_beg_depth=0
+		fi
+	
+		# calculate the depths and the ratios
+		plus10_depth=$(( $fwd_beg_depth + $rev_end_depth))
+		# we just need to look at either the fwd beg or rev end depth ratio because if one of them is between .25 and .75, then the other ratio must also be (they will follow the equation fwd_ratio + rev_ratio = 1)
+		# bash can't do float division, so use python here.
+		plus10_ratio=`python -c "plus10_ratio = $fwd_beg_depth / float($plus10_depth)
+if plus10_ratio >= .25 and plus10_ratio <= .75:
+	print 'PASS'
+" 2>/dev/null`
+		minus10_depth=$(( $fwd_end_depth + $rev_beg_depth))
+		minus10_ratio=`python -c "plus10_ratio = $rev_beg_depth / float($minus10_depth)
+if plus10_ratio >= .25 and plus10_ratio <= .75:
+	print 'PASS'
+" 2>/dev/null`
+	
+		# check if the depths meet the criteria
+		if [ $plus10_depth -ge 30 -a $minus10_depth -ge 30 ]; then 
+			if [ "$plus10_ratio" == "PASS" ];then 
+				let "total_plus10_pass+=1"
+			fi
+			if [ "$minus10_ratio" == 'PASS' ];then
+				let "total_minus10_pass+=1"
+			fi
+		fi
+	done < $PROJECT_BED
+
+	echo "Total plus10 pass: $total_plus10_pass" >> $log
+	echo "Total minus10 pass: $total_minus10_pass" >> $log
+
 	# If the CDS bed is specified, then also use that.
 	if [ "$CDS" != "" -a ! "`find $OUTPUT_DIR}/CDS_depths -type f 2>/dev/null`" ]; then
 		samtools depth -b $CDS_BED $PTRIM_BAM > ${OUTPUT_DIR}/coverages/CDS_depths
 	fi
-	
-	waitForJobsToFinish "$PTRIM_BAM samtools depth"
-	# Move the depths files to the output dir. This way, they will only be in the output dir if samtools depth finished successfully on everything
-	mv ${OUTPUT_DIR}/coverages/* $OUTPUT_DIR 2>/dev/null
-	rmdir ${OUTPUT_DIR}/coverages 2>/dev/null
-	
-	# get the number of amplicons that have the 10th forward strand base covered at $AMP_COV_CUTOFF
-	forward_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_beg_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th reverse strand base covered at $AMP_COV_CUTOFF
-	reverse_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_beg_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th forward strand base from the end covered at $AMP_COV_CUTOFF
-	forward_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_end_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th reverse strand base from the end covered at $AMP_COV_CUTOFF
-	reverse_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_end_depths | wc -c 2>/dev/null`
-
-	num_amps=`tail -n +2 $AMP | wc -l`
-	
-	# add up the beginning of the forward reads depths with the end of the reverse reads depths to get the "30x coverage at beginning of amplicon"
-	begin_amp_cov=$(( (forward_begbpCov + reverse_endbpCov) / 2 ))
-	#echo "$begin_amp_cov"
-	# add up the end of the forward reads depths with the beginning of the reverse reads depths to get the "30x coverage at end of amplicon"
-	end_amp_cov=$(( (forward_endbpCov + reverse_begbpCov) / 2 ))
-	#echo "$end_amp_cov"
-
+	echo "	$PTRIM_BAM finished samtools depth at `date`"
+fi	
 
 # filter the VCF file to then get the TS_TV ratio
 python ${QC_SCRIPTS}/QC_Filter.py $VCF ${OUTPUT_DIR}/filtered.vcf --single $DEPTH_CUTOFF >>$log
@@ -285,6 +300,9 @@ TS_TV=`cat ${OUTPUT_DIR}/filtered.vcf | vcf-tstv | grep -Po "\d+\.\d+"`
 # get the medianReadCoverageOverall for each amplicon by adding the total forward and reverse reads columns in the .amplicon.cov.xls, and then finding the median.
 medainReadCoverageOverall=`awk '{ print ($11 + $12) }' $AMP | awk '{ count[NR] = $1; } END { if (NR % 2) { print count[(NR + 1) / 2]; } else { print (count[(NR / 2)] + count[(NR / 2) + 1]) /2.0; }}'`
 
+# number of amplicons in the project. Used to calculate the plus10 minus10 percentages.
+num_amps=`wc -l $PROJECT_BED`
+
 if [ "$CDS" != "" ]; then
 	# If GATK ran successfully, then get the total number of bases covered at $DEPTH_CUTOFF
 	CDSCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/CDS_depths | wc -c`
@@ -292,7 +310,7 @@ if [ "$CDS" != "" ]; then
 	metrics="cds_cov:num_amps:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$CDSCov:$num_amps:$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
 else
 	# These QC metrics will be added to the json file of the run.
-	metrics="num_amps:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$num_amps:$begin_amp_cov:$end_amp_cov:$TS_TV:$medainReadCoverageOverall" 
+	metrics="num_amps:begin_amp_cov:end_amp_cov:ts_tv:median_coverage_overall;$num_amps:$total_plus10_pass:$total_minus10_pass:$TS_TV:$medainReadCoverageOverall" 
 fi
 
 # Find this run's .json file, or add another one
