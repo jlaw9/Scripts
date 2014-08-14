@@ -9,7 +9,7 @@
 #$ -N QC_Sample
 #$ -o qc_sample_out.log
 #$ -e qc_sample_out.log
-#$ -q all.q
+#$ -q plugin.q
 #$ -V
 
 
@@ -33,9 +33,7 @@ USAGE: bash QC_sample.sh
 	-a | --amp_cov_cutoff (Cutoff for # of amplicon reads.) 
 	-rgc | --run_gatk_cds (Normally, GATK is run using the subset of the beds specified above. If the cds_bed is specified, and this option is specified, GATK will be run twice.)
 	-chr | --subset_chr <chr#> (The chromosome specified here (for example: chr1) will be used to subset the VCF and BAM files)
-	-nr | --no_run_info (If this option is specified, no need to supply the plus and minus 10 beds.)
-	-bb | --beg_bed <path/to/startLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos of the amplicons)
-	-eb | --end_bed <path/to/endLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos from the end of the amplicons)
+	-gr | --get_run_info (To skip QC_2Runs and just run QC_getRunInfo )
 	-cl | --cleanup (Will delete temporary files used to generate the QC metrics)
 EOF
 exit 8
@@ -65,7 +63,7 @@ GERMLINE="False" # Treat the file system as germline and generate QC tables for 
 TUMOR_NORMAL="False" # Treat the file system as Tumor / Normal pairs and generate QC tables for them. 
 TUMOR_TUMOR="False" # Treat the file system as Tumor / Tumor pairs and generate QC tables for them. 
 NORMAL_NORMAL="False" # Treat the file system as Normal / Normal pairs and generate QC tables for them. 
-GET_RUN_INFO="True" # Option to generate run information about each sample
+GET_ONLY_RUN_INFO="False" # Option to generate run information about each sample
 CLEANUP="False" # Option to delete the temporary files. Not yet implemented.
 NO_ERRS="True" # used for cleanup
 AMP_COV_CUTOFF=30 # The minimum amount of coverage each amplicon needs to have. Default is 30
@@ -166,9 +164,9 @@ do
 			shift 5
 			;;
 
-		-nr | --no_run_info)
-			GET_RUN_INFO="False"
-			RUNNING="$RUNNING --no_run_info, "
+		-gr | --get_run_info)
+			GET_ONLY_RUN_INFO="True"
+			RUNNING="$RUNNING --get_run_info, "
 			shift
 			;;
 		-b | --bed)
@@ -244,14 +242,6 @@ if [ "$CDS_BED" == "" -a "$RUN_GATK_CDS" == "True" ]; then
 	exit 8
 fi
 
-if [ "$GET_RUN_INFO" == "True" ]; then
-	if [ "$BEG_BED" == "" -o "$END_BED" == "" ]; then
-		echo "USAGE ERROR: --plus10bed and --minus10bed options are required." 
-		echo "Use --no_run_info to skip gathering each run's info"
-		exit 8
-	fi
-fi
-
 
 # ----------------------------------------------------
 # ------------ FUNCTIONS DEFINED HERE ----------------
@@ -262,17 +252,18 @@ fi
 function QC_getRunInfo {
 	# QC_getRunInfo.sh gets the following metrics: % amps covered at the beg and end, Ts/Tv ratio,	# Total variants,	# HET variants, 	# HOM variants
 	# It also gets the metrics from the backupPDF.pdf if it is available.
-	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --beg_bed $BEG_BED --end_bed $END_BED"
+	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --project_bed $PROJECT_BED"
 	if [ "$CDS_BED" != "" ]; then
 		qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
 	fi
-	if [ "$CLEANUP" == "True" ]; then
-		qcgetruninfo="$qcgetruninfo --cleanup "
-	fi
+	# Cleanup will be done at the end of this script
+	#if [ "$CLEANUP" == "True" ]; then
+	#	qcgetruninfo="$qcgetruninfo --cleanup "
+	#fi
 	$qcgetruninfo
 	status="$?"
 	if [ $status -eq 1 ]; then
-		echo "$QCd QC_getRunInfo.sh had an error!! " 1>&2
+		echo "$QCd QC_getRunInfo_v2.sh had an error!! " 1>&2
 		NO_ERRS="False"
 	elif [ $status -eq 4 ]; then
 		echo "$QCd got a file not found error..." 1>&2
@@ -354,20 +345,18 @@ if [ "$GERMLINE" == "True" ]; then
 		for run2 in $runs; do
 			run2_num=`echo "$run2" | grep -Eo "[0-9]$"`
 			if [ $run1_num -lt $run2_num ]; then
+				if  [ "$GET_ONLY_RUN_INFO" == "False" ];then 
 				# Make the QC table for this combination.
 				QC_2Runs $run1 $run2 \
 					$JSON_PARAS $JSON_PARAS \
 					$DEPTH_CUTOFF $DEPTH_CUTOFF \
 					$WT_CUTOFF $HOM_CUTOFF \
 					$WT_CUTOFF $HOM_CUTOFF
+				fi 
 			fi
 		done
-		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-		# If the user did not specify to get this run's info, then get this run's info.
-		if [ "$GET_RUN_INFO" == "True" ]; then
-			#get_Run_Info $sample ${sample}/Analysis_files/gatk_out
-			QC_getRunInfo $run1 ${run1}/Analysis_Files/temp_files $DEPTH_CUTOFF $WT_CUTOFF $HOM_CUTOFF
-		fi
+		# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+		QC_getRunInfo $run1 ${run1}/Analysis_Files/temp_files $DEPTH_CUTOFF $WT_CUTOFF $HOM_CUTOFF
 	done
 fi
 # ---------------------------------- END GERMLINE ---------------------------------------
@@ -384,22 +373,19 @@ if [ "$TUMOR_NORMAL" == "True" ]; then
 	for normal_run in $normal_runs; do
 		for tumor_run in $tumor_runs; do
 			# Make the QC table for this combination.
+			if [ "$GET_ONLY_RUN_INFO" == "False" ];then
 			QC_2Runs $normal_run $tumor_run \
 				$JSON_PARAS_NORMAL $JSON_PARAS_TUMOR \
 				$DEPTH_CUTOFF_NORMAL $DEPTH_CUTOFF_TUMOR \
 				$WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL \
 				$WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+	    	fi 
 
-			# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-			# If the user did not specify to get this run's info, then get this run's info.
-			if [ "$GET_RUN_INFO" == "True" -a "$TUMOR_TUMOR" != "True" ]; then
-				QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
-			fi
+			# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+			QC_getRunInfo $tumor_run ${tumor_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
 		done		
 		# also get the Run Info for the normal runs.
-		if [ "$GET_RUN_INFO" == "True" -a "$NORMAL_NORMAL" != "True" ]; then
-			QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
-		fi
+		QC_getRunInfo $normal_run ${normal_run}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 	done
 fi
 
@@ -412,18 +398,20 @@ if [ "$TUMOR_TUMOR" == "True" ]; then
 			t2_num=`echo "$tumor_run2" | grep -Eo "[0-9]$"`
 			if [ $t1_num -lt $t2_num ]; then
 				# Make the QC table for this combination.
+				if [ "$GET_ONLY_RUN_INFO" == "False" ];then
 				QC_2Runs $tumor_run1 $tumor_run2 \
 					$JSON_PARAS_TUMOR $JSON_PARAS_TUMOR \
 					$DEPTH_CUTOFF_TUMOR $DEPTH_CUTOFF_TUMOR \
 					$WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR \
 					$WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+		    	fi 
 			fi
 		done		
 		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+	
 		# If the user did not specify to get this run's info, then get this run's info.
-		if [ "$GET_RUN_INFO" == "True" ]; then
-			QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
-		fi
+	        QC_getRunInfo $tumor_run1 ${tumor_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_TUMOR $WT_CUTOFF_TUMOR $HOM_CUTOFF_TUMOR
+
 	done
 fi
 
@@ -436,18 +424,17 @@ if [ "$NORMAL_NORMAL" == "True" ]; then
 			n2_num=`echo "$normal_run2" | grep -Eo "[0-9]$"`
 			if [ $n1_num -lt $n2_num ]; then
 				# Make the QC table for this combination.
+			    if [ "$GET_ONLY_RUN_INFO" == "False" ];then
 				QC_2Runs $normal_run1 $normal_run2 \
 					$JSON_PARAS_NORMAL $JSON_PARAS_NORMAL \
 					$DEPTH_CUTOFF_NORMAL $DEPTH_CUTOFF_NORMAL \
 					$WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL \
 					$WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
+				fi 
 			fi
 		done		
-		# the call to QC_getRunInfo.sh must be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
-		# If the user did not specify to get this run's info, then get this run's info.
-		if [ "$GET_RUN_INFO" == "True" ]; then
-			QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
-		fi
+		# the call to QC_getRunInfo.sh should be after QC_2Runs.sh because the PTRIM.bam output after TVC is necessary to the beg and end amplicon cov metrics. 
+		QC_getRunInfo $normal_run1 ${normal_run1}/Analysis_Files/temp_files $DEPTH_CUTOFF_NORMAL $WT_CUTOFF_NORMAL $HOM_CUTOFF_NORMAL
 	done
 fi
 	
@@ -481,6 +468,6 @@ if [ "$CLEANUP" == "True" ]; then
 	done
 fi
 
-echo "$SAMPLE_DIR Finished QC at `date`"
+echo "$SAMPLE_DIR Finished QC_sample at `date`"
 echo "----------------------------------------------"
 

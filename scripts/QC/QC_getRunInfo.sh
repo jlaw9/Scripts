@@ -22,6 +22,8 @@ QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
 BAM_INDEXER='/opt/picard/picard-tools-current/BuildBamIndex.jar'
 GATK="/results/plugins/variantCaller/TVC/jar/GenomeAnalysisTK.jar"
 REF_FASTA="/results/referenceLibrary/tmap-f3/hg19/hg19.fasta"
+VARIANT_CALLER_DIR="/results/plugins/variantCaller"
+TVC_VERSION='4.2'
 
 function usage {
 cat << EOF
@@ -32,7 +34,8 @@ USAGE: bash QC_getRunInfo.sh
 	-a | --amp_cov_cutoff <min_amp_coverage> (Cutoff for # of amplicon reads.) 
 	-d | --depth_cutoff <min_base_depth> (Cutoff for base depth)
 	-wh | --wt_hom_cutoff <WT_Cutoff> <HOM_Cutoff> (WT and HOM cutoffs)
-	-pb | --proj_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
+	-pb | --project_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
+	-pj | --ptrim_json <path/to/tvc_json>	(Regenerate the PTRIM.bam if it is not found. Used to calculate depths.)
 	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)
 	-cb | --cds_bed <path/to/CDS_bed> (Optional. Only available if the Run has a PTRIM.bam. Run GATK on the CDS region of the bed file)
@@ -110,9 +113,15 @@ do
 			RUNNING="$RUNNING --wt_hom_cutoff: WT: $2, HOM: $3 "
 			shift 3
 			;;
-		-pb | --proj_bed)
+		-pb | --project_bed)
 			PROJECT_BED=$2
-			RUNNING="$RUNNING --proj_bed: $2 "
+			RUNNING="$RUNNING --project_bed: $2 "
+			shift 2
+			;;
+		-pj | --ptrim_json)
+			REGEN_PTRIM="True"
+			TVC_JSON=$2
+			RUNNING="$RUNNING --ptrim_json: $2 "
 			shift 2
 			;;
 		-bb | --beg_bed)
@@ -169,6 +178,7 @@ files=("$RUN_DIR" "$BEG_BED" "$END_BED" "$REF_FASTA" "$GATK")
 checkFiles $files
 
 PTRIM_BAM=`find ${RUN_DIR}/PTRIM.bam -maxdepth 0 -type f 2>/dev/null`
+
 # get the VCF file
 if [ "`find ${RUN_DIR}/tvc*_out -maxdepth 0 -type d 2>/dev/null`" ]; then
 	checkFiles "${RUN_DIR}/tvc*_out/TSVC_variants.vcf" 
@@ -191,25 +201,38 @@ log="${OUTPUT_DIR}/getRunInfo.log"
 echo "$RUNNING at `date`" >> $log
 
 # Check to see if the run has a PTRIM.bam. if it does, then we can run samtools depth.
+if [ "$PTRIM_BAM" == "" -a "$REGEN_PTRIM" == "True" ]; then
+	echo "	$RUN_DIR has no PTRIM. Regenerating it now at: `date`"
+    bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
+
+	#now run TVC v4.2. 
+	mkdir -p ${OUTPUT_DIR}/tvc${TVC_VERSION}_out 2>/dev/null
+	${VARIANT_CALLER_DIR}/variant_caller_pipeline.py \
+		--input-bam "$bam" \
+		--reference-fasta "$REF_FASTA" \
+		--output-dir "${OUTPUT_DIR}/tvc${TVC_VERSION}_out" \
+		--parameters-file "$TVC_JSON" \
+		--bin-dir "${VARIANT_CALLER_DIR}" \
+		--region-bed  "${PROJECT_BED}" \
+		--primer-trim-bed "${PROJECT_BED}" \
+	    --postprocessed-bam=${RUN_DIR}/PTRIM.bam \
+    	${OUTPUT_DIR}/tvc${TVC_VERSION}_out/log.out 2>&1
+
+	# check to make sure TVC finished correctly.
+	if [ $? -ne 0 ]; then
+		echo "	$RUN_DIR was unable to generate the PTRIM.bam at `date`"
+		echo "	$RUN_DIR was unable to generate the PTRIM.bam at `date`" >> $log
+	else
+		PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
+		echo "	$PTRIM_BAM was generated successfully at `date`"
+		echo "	$PTRIM_BAM was generated successfully at `date`" >> $log
+	fi
+fi
+
+# 
 if [ "$PTRIM_BAM" == "" ]; then
 	echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
 	echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
-	#TEMP FOR WALES to generate the PTRIM.bam file. Takes longer than an hour for Exome data
-#	echo "	Generating PTRIM"
-#	# get the BAM file
-#	PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
-#	bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
-#	#echo "$bam $PTRIM_BAM $REF_FASTA $PROJECT_BED"
-#	java -Xmx8G -cp /home/ionadmin/software/TRIMP_lib -jar /home/ionadmin/software/TRIMP.jar \
-#		$bam \
-#		$PTRIM_BAM \
-#		$REF_FASTA \
-#		$PROJECT_BED \
-#		>> $log
-#fi
-#if [ $? -ne 0 ]; then
-#	echo "	ERROR: FAILED to generate the PTRIM.bam "
-#	exit
 else
 	# Check to see if the depths already exist
 	if [ "`find ${OUTPUT_DIR}/forward_beg_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_beg_depths -type f 2>/dev/null`" -a \
@@ -253,7 +276,7 @@ else
 	# add up the end of the forward reads depths with the beginning of the reverse reads depths to get the "30x coverage at end of amplicon"
 	end_amp_cov=$(( (forward_endbpCov + reverse_begbpCov) / 2 ))
 	#echo "$end_amp_cov"
-fi
+
 
 # filter the VCF file to then get the TS_TV ratio
 python ${QC_SCRIPTS}/QC_Filter.py $VCF ${OUTPUT_DIR}/filtered.vcf --single $DEPTH_CUTOFF >>$log
@@ -323,6 +346,6 @@ echo "$RUN_DIR finished getting run info at `date`" >>$log
 
 # cleanup and finished
 if [ "$CLEANUP" == "True" ]; then
-	rm -rf $OUTPUT_DIR
+	rm -rf $OUTPUT_DIR/tvc${TVC_VERSION}_out
 fi
 
