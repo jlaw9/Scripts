@@ -301,7 +301,7 @@ TS_TV=`cat ${OUTPUT_DIR}/filtered.vcf | vcf-tstv | grep -Po "\d+\.\d+"`
 medainReadCoverageOverall=`awk '{ print ($11 + $12) }' $AMP | awk '{ count[NR] = $1; } END { if (NR % 2) { print count[(NR + 1) / 2]; } else { print (count[(NR / 2)] + count[(NR / 2) + 1]) /2.0; }}'`
 
 # number of amplicons in the project. Used to calculate the plus10 minus10 percentages.
-num_amps=`wc -l $PROJECT_BED`
+num_amps=`cat $PROJECT_BED | sed '/^\s*$/d' | wc -l`
 
 if [ "$CDS" != "" ]; then
 	# If GATK ran successfully, then get the total number of bases covered at $DEPTH_CUTOFF
