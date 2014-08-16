@@ -272,10 +272,10 @@ function QC_getRunInfo {
 	if [ "$CDS_BED" != "" ]; then
 		qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
 	fi
-	# Cleanup will be done at the end of this script
-	#if [ "$CLEANUP" == "True" ]; then
-	#	qcgetruninfo="$qcgetruninfo --cleanup "
-	#fi
+	# QC_getRunInfo's cleanup will just cleanup the output of TVC if the PTRIM was generated
+	if [ "$CLEANUP" == "True" ]; then
+		qcgetruninfo="$qcgetruninfo --cleanup "
+	fi
 	$qcgetruninfo
 	status="$?"
 	if [ $status -eq 1 ]; then
