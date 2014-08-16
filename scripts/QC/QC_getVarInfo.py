@@ -135,9 +135,21 @@ try:
 except ValueError:
 	pass
 
-# add those metrics to the json file.
+# check the begin_amp_cov and end_amp_cov separately to not overwrite data incase something went wrong with getting the depths in QC_getRunINfo
+if 'begin_amp_cov' in runData['run_data'] and runData['run_data']['begin_amp_cov'] != "" and metrics['begin_amp_cov'] == "":
+	# don't overwrite what is already in the JSON file with nothing.
+	pass
+else:
+	runData['run_data']['begin_amp_cov'] = metrics['begin_amp_cov']
+if 'end_amp_cov' in runData['run_data'] and runData['run_data']['end_amp_cov'] != "" and metrics['end_amp_cov'] == "":
+	# don't overwrite what is already in the JSON file with nothing.
+	pass
+else:
+	runData['run_data']['end_amp_cov'] = metrics['end_amp_cov']
+
+# add the other metrics to the json file.
 for key in metrics:
-	if key != 'num_amps':
+	if key != 'num_amps' and key != 'begin_amp_cov' and key != 'end_amp_cov':
 		try:
 			runData['run_data'][key] = float(metrics[key])
 		except ValueError:

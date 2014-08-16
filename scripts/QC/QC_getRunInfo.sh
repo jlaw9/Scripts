@@ -22,6 +22,8 @@ QC_SCRIPTS="${SOFTWARE_ROOT}/scripts/QC"
 BAM_INDEXER='/opt/picard/picard-tools-current/BuildBamIndex.jar'
 GATK="/results/plugins/variantCaller/TVC/jar/GenomeAnalysisTK.jar"
 REF_FASTA="/results/referenceLibrary/tmap-f3/hg19/hg19.fasta"
+VARIANT_CALLER_DIR="/results/plugins/variantCaller"
+TVC_VERSION='4.2'
 
 function usage {
 cat << EOF
@@ -32,7 +34,8 @@ USAGE: bash QC_getRunInfo.sh
 	-a | --amp_cov_cutoff <min_amp_coverage> (Cutoff for # of amplicon reads.) 
 	-d | --depth_cutoff <min_base_depth> (Cutoff for base depth)
 	-wh | --wt_hom_cutoff <WT_Cutoff> <HOM_Cutoff> (WT and HOM cutoffs)
-	-pb | --proj_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
+	-pb | --project_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
+	-pj | --ptrim_json <path/to/tvc_json>	(Regenerate the PTRIM.bam if it is not found. Used to calculate depths.)
 	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)
 	-cb | --cds_bed <path/to/CDS_bed> (Optional. Only available if the Run has a PTRIM.bam. Run GATK on the CDS region of the bed file)
@@ -110,9 +113,15 @@ do
 			RUNNING="$RUNNING --wt_hom_cutoff: WT: $2, HOM: $3 "
 			shift 3
 			;;
-		-pb | --proj_bed)
+		-pb | --project_bed)
 			PROJECT_BED=$2
-			RUNNING="$RUNNING --proj_bed: $2 "
+			RUNNING="$RUNNING --project_bed: $2 "
+			shift 2
+			;;
+		-pj | --ptrim_json)
+			REGEN_PTRIM="True"
+			TVC_JSON=$2
+			RUNNING="$RUNNING --ptrim_json: $2 "
 			shift 2
 			;;
 		-bb | --beg_bed)
@@ -169,6 +178,7 @@ files=("$RUN_DIR" "$BEG_BED" "$END_BED" "$REF_FASTA" "$GATK")
 checkFiles $files
 
 PTRIM_BAM=`find ${RUN_DIR}/PTRIM.bam -maxdepth 0 -type f 2>/dev/null`
+
 # get the VCF file
 if [ "`find ${RUN_DIR}/tvc*_out -maxdepth 0 -type d 2>/dev/null`" ]; then
 	checkFiles "${RUN_DIR}/tvc*_out/TSVC_variants.vcf" 
@@ -190,38 +200,53 @@ mkdir -p $OUTPUT_DIR
 log="${OUTPUT_DIR}/getRunInfo.log"
 echo "$RUNNING at `date`" >> $log
 
-# Check to see if the run has a PTRIM.bam. if it does, then we can run samtools depth.
-if [ "$PTRIM_BAM" == "" ]; then
-	echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
-	echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
-	#TEMP FOR WALES to generate the PTRIM.bam file. Takes longer than an hour for Exome data
-#	echo "	Generating PTRIM"
-#	# get the BAM file
-#	PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
-#	bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
-#	#echo "$bam $PTRIM_BAM $REF_FASTA $PROJECT_BED"
-#	java -Xmx8G -cp /home/ionadmin/software/TRIMP_lib -jar /home/ionadmin/software/TRIMP.jar \
-#		$bam \
-#		$PTRIM_BAM \
-#		$REF_FASTA \
-#		$PROJECT_BED \
-#		>> $log
-#fi
-#if [ $? -ne 0 ]; then
-#	echo "	ERROR: FAILED to generate the PTRIM.bam "
-#	exit
-fi
-	# Check to see if the depths already exist
-	if [ "`find ${OUTPUT_DIR}/forward_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_depths -type f 2>/dev/null`" ]; then
-		echo "	$OUTPUT_DIR already has the depth files. Skipping samtools depth and getting the metrics"
-
-	else	
+# Check to see if the depths already exist
+if [ "`find ${OUTPUT_DIR}/forward_beg_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_beg_depths -type f 2>/dev/null`" -a \
+		"`find ${OUTPUT_DIR}/forward_end_depths -type f 2>/dev/null`" -a "`find ${OUTPUT_DIR}/reverse_end_depths -type f 2>/dev/null`" ]; then
+	echo "	$OUTPUT_DIR already has the depth files. Skipping samtools depth and getting the metrics"
+else
+	# Check to see if the run has a PTRIM.bam. if it does, then we can run samtools depth.
+	if [ "$PTRIM_BAM" == "" -a "$REGEN_PTRIM" == "True" ]; then
+		echo "	$RUN_DIR has no PTRIM. Regenerating it now at: `date`"
+	    bam=`find ${RUN_DIR}/*.bam -maxdepth 0 -type f 2>/dev/null | head -n 1`
+	
+		#now run TVC v4.2. 
+		mkdir -p ${OUTPUT_DIR}/tvc${TVC_VERSION}_out 2>/dev/null
+		${VARIANT_CALLER_DIR}/variant_caller_pipeline.py \
+			--input-bam "$bam" \
+			--reference-fasta "$REF_FASTA" \
+			--output-dir "${OUTPUT_DIR}/tvc${TVC_VERSION}_out" \
+			--parameters-file "$TVC_JSON" \
+			--bin-dir "${VARIANT_CALLER_DIR}" \
+			--region-bed  "${PROJECT_BED}" \
+			--primer-trim-bed "${PROJECT_BED}" \
+		    --postprocessed-bam=${RUN_DIR}/PTRIM.bam \
+	    	> ${OUTPUT_DIR}/tvc${TVC_VERSION}_out/log.out 2>&1
+	
+		# check to make sure TVC finished correctly.
+		if [ $? -ne 0 ]; then
+			echo "	$RUN_DIR was unable to generate the PTRIM.bam at `date`"
+			echo "	$RUN_DIR was unable to generate the PTRIM.bam at `date`" >> $log
+		else
+			PTRIM_BAM="${RUN_DIR}/PTRIM.bam"
+			echo "	$PTRIM_BAM was generated successfully at `date`"
+			echo "	$PTRIM_BAM was generated successfully at `date`" >> $log
+		fi
+	fi
+	
+	# 
+	if [ "$PTRIM_BAM" == "" ]; then
+		echo "	PTRIM.bam was not available for this run. Skipping samtools depth"
+		echo "	PTRIM.bam was not available for this run. Skipping samtools depth" >>$log
+	else
 		echo "	$PTRIM_BAM beginning samtools depth at `date`"
 		mkdir ${OUTPUT_DIR}/coverages 2>/dev/null
 		# get the depth of the beginning and end of the forward and reversestrands
-		# -g means include, and -G means exclude. 0x10 means reverse strands. The & means run it in the background. That way 'waitForJobstoFinish' can print if it was a success or not.
-		samtools depth -b $PROJECT_BED -G 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/forward_depths &
-		samtools depth -b $PROJECT_BED -g 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/reverse_depths &
+		# -g means include, and -G means exclude. 0x10 means reverse strands
+		samtools depth -b $BEG_BED -G 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/forward_beg_depths &
+		samtools depth -b $BEG_BED -g 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/reverse_beg_depths &
+		samtools depth -b $END_BED -G 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/forward_end_depths &
+		samtools depth -b $END_BED -g 0x10 $PTRIM_BAM > ${OUTPUT_DIR}/coverages/reverse_end_depths &
 	fi
 	
 	# If the CDS bed is specified, then also use that.
@@ -233,25 +258,26 @@ fi
 	# Move the depths files to the output dir. This way, they will only be in the output dir if samtools depth finished successfully on everything
 	mv ${OUTPUT_DIR}/coverages/* $OUTPUT_DIR 2>/dev/null
 	rmdir ${OUTPUT_DIR}/coverages 2>/dev/null
-	
-	# get the number of amplicons that have the 10th forward strand base covered at $AMP_COV_CUTOFF
-	forward_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_beg_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th reverse strand base covered at $AMP_COV_CUTOFF
-	reverse_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_beg_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th forward strand base from the end covered at $AMP_COV_CUTOFF
-	forward_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_end_depths | wc -c 2>/dev/null`
-	# get the number of amplicons that have the 10th reverse strand base from the end covered at $AMP_COV_CUTOFF
-	reverse_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_end_depths | wc -c 2>/dev/null`
+fi	
 
-	num_amps=`tail -n +2 $AMP | wc -l`
-	
-	# add up the beginning of the forward reads depths with the end of the reverse reads depths to get the "30x coverage at beginning of amplicon"
-	begin_amp_cov=$(( (forward_begbpCov + reverse_endbpCov) / 2 ))
-	#echo "$begin_amp_cov"
-	# add up the end of the forward reads depths with the beginning of the reverse reads depths to get the "30x coverage at end of amplicon"
-	end_amp_cov=$(( (forward_endbpCov + reverse_begbpCov) / 2 ))
-	#echo "$end_amp_cov"
-fi
+# The depth files should already be generated by this point, so we can just get the stats we need here
+# get the number of amplicons that have the 10th forward strand base covered at $AMP_COV_CUTOFF
+forward_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_beg_depths | wc -c 2>/dev/null`
+# get the number of amplicons that have the 10th reverse strand base covered at $AMP_COV_CUTOFF
+reverse_begbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_beg_depths | wc -c 2>/dev/null`
+# get the number of amplicons that have the 10th forward strand base from the end covered at $AMP_COV_CUTOFF
+forward_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/forward_end_depths | wc -c 2>/dev/null`
+# get the number of amplicons that have the 10th reverse strand base from the end covered at $AMP_COV_CUTOFF
+reverse_endbpCov=`awk -v cutoff=$AMP_COV_CUTOFF '{ if($3 >= cutoff) printf "."}' ${OUTPUT_DIR}/reverse_end_depths | wc -c 2>/dev/null`
+
+num_amps=`tail -n +2 $AMP | wc -l`
+
+# add up the beginning of the forward reads depths with the end of the reverse reads depths to get the "30x coverage at beginning of amplicon"
+begin_amp_cov=$(( (forward_begbpCov + reverse_endbpCov) / 2 ))
+#echo "$begin_amp_cov"
+# add up the end of the forward reads depths with the beginning of the reverse reads depths to get the "30x coverage at end of amplicon"
+end_amp_cov=$(( (forward_endbpCov + reverse_begbpCov) / 2 ))
+#echo "$end_amp_cov"
 
 # filter the VCF file to then get the TS_TV ratio
 python ${QC_SCRIPTS}/QC_Filter.py $VCF ${OUTPUT_DIR}/filtered.vcf --single $DEPTH_CUTOFF >>$log
@@ -321,6 +347,7 @@ echo "$RUN_DIR finished getting run info at `date`" >>$log
 
 # cleanup and finished
 if [ "$CLEANUP" == "True" ]; then
-	rm -rf $OUTPUT_DIR
+	# Keep the depth files so that we can use them for later calculations
+	rm -rf $OUTPUT_DIR/tvc${TVC_VERSION}_out
 fi
 

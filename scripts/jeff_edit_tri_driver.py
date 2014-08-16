@@ -105,7 +105,13 @@ class JobManager:
                         #see if it is the right type
                         #logging.debug('%s - Looking at %s' % (getTimestamp(), os.path.join(root, filename)))
                         jsonData = open(os.path.join(root, filename))
-                        fileData = json.load(jsonData)
+                        try:
+                            fileData = json.load(jsonData)
+                        except ValueError:
+                            print "\nERROR: The JSON file: %s could not be loaded by python as a JSON file.\n"%os.path.join(root, filename) + \
+                                  "Please ensure that the JSON file is not currently open in vim and that it is formatted correctly. Otherwise, delete it."
+                            sys.exit(1)
+
                     
                         #since other json files may be around, let's be sure they have the analysis type flag
                         #can use this to filter things too
