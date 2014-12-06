@@ -47,7 +47,7 @@ def update_metrics(json_file, metrics):
 			print "Unable to load the string %s into JSON"%metric
 
 	# dump the json file
-	with open(options.json, 'w') as out:
+	with open(json_file, 'w') as out:
 		json.dump(jsonData, out, sort_keys=True, indent = 2)
 
 if __name__ == "__main__":
