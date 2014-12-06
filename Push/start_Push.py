@@ -50,12 +50,13 @@ class Push_Data:
 		#print run
 		#print self.headers['run_num']
 		# first get the proton and run_num
-		if len(run[self.headers["run_num"]].split('-')) > 1:
-			proton = run[self.headers["run_num"]].split('-')[0]
-			run_num = run[self.headers["run_num"]].split('-')[1]
+		if len(run[self.headers["run_id"]].split('-')) > 1:
+			proton = run[self.headers["run_id"]].split('-')[0]
+			run_id = run[self.headers["run_id"]].split('-')[1]
 		else:
 			proton = run[self.headers["proton"]]
-			run_num = run[self.headers["run_num"]]
+			run_id = run[self.headers["run_id"]]
+		run_num = run[self.headers["run_num"]]
 
 		run_path = ''
 		if self.ex_json['sample_type'] == 'tumor_normal':
@@ -82,7 +83,7 @@ class Push_Data:
 			push_command = "qsub -N Push_%s push_Data.sh "%run[self.headers['sample']] + \
 				 "--user_server %s "%self.options.server + \
 				 "--dest_path %s "%run_path + \
-				 "--run_id  %s "%run[self.headers['run_id']] + \
+				 "--run_id  %s "%run_id + \
 				 "--run_json  %s "%run_json + \
 				 "--sample_json  %s "%sample_json + \
 				 "--proton_name %s "%proton + \
