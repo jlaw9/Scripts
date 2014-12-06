@@ -256,7 +256,7 @@ if [ "$COPIED" == "True" ]; then
 	fi
 	python addToJson.py --json $RUN_JSON \
 		--metric '{"orig_path":"'"$RUN_PATH"'"}' \
-		--metric '{"analysis":{"files":["'"$FILE_NAME"'"]}' \
+		--metric '{"analysis":{"files":["'"$FILE_NAME"'"]}}' \
 		--metric '{"ts_version":"'"$TS_version"'"}'
 		#--metric '{"torrent_suite_link":"http://'"TS_version"'"}'
 	# push the Json File
