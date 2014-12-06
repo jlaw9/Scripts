@@ -33,18 +33,23 @@ def getJsonFiles(json_pattern, sample_dir, key_values=None):
 
 # @param json_file the json file to update
 # @metrics a list of metrics to update or add to the json file
-def update_metrics(json_file, metrics):
+def update_metrics(json_file, metrics, ex_json):
 	# load the given json file
 	jsonData = json.load(open(json_file))
-	for metric in metrics:
-		print "Adding/updating " + metric + " to the json file %s."%json_file
-		# Union the two dictionaries together. If a field is found in both dictionaries, then whatever's in extraJson will overwrite what is in jsonData.
-		# Example: dict1 = { "a":1, "b": 2}		dict2 = { "b":3, "c": 4}  dict(dict1.items() + dict2.items()) 	{'a': 1, 'c': 4, 'b': 3}
-		try:
-			newData = json.loads(metric)
-			jsonData = dict(jsonData.items() + newData.items())
-		except ValueError:
-			print "Unable to load the string %s into JSON"%metric
+	if metrics:
+		for metric in metrics:
+			print "Adding/updating " + metric + " to the json file %s."%json_file
+			# Union the two dictionaries together. If a field is found in both dictionaries, then whatever's in extraJson will overwrite what is in jsonData.
+			# Example: dict1 = { "a":1, "b": 2}		dict2 = { "b":3, "c": 4}  dict(dict1.items() + dict2.items()) 	{'a': 1, 'c': 4, 'b': 3}
+			try:
+				newData = json.loads(metric)
+				jsonData = dict(jsonData.items() + newData.items())
+			except ValueError:
+				print "Unable to load the string %s into JSON"%metric
+
+	elif ex_json:
+		exJsonData = json.load(open(ex_json))
+		jsonData = dict(exJsonData.items() + jsonData.items())
 
 	# dump the json file
 	with open(json_file, 'w') as out:
@@ -57,6 +62,7 @@ if __name__ == "__main__":
 	parser.add_option('-j', '--json', dest='json', help="The name of the .json file to add info to.")
 	parser.add_option('-k', '--json_key_value', dest='json_key_value', action="append", help="Any number of key:value pairs can be used to filter json files found")
 	parser.add_option('-m', '--metric', dest='metrics', action="append", help="info to add to a json file. string is loaded into json so must use JSON format. (See push_Data.sh for an example)")
+	parser.add_option('-e', '--ex_json', dest='ex_json', help="The json file(s) and the exapmle_json file will be intersected")
 	parser.add_option('-a', '--add_run_to_sample', dest='add_run', action="store_true", help="the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.")
 	parser.add_option('-p', '--push_sample_json', dest='push_sample_json', action="store_true", help="push the sample's json file to the server because it hasn't been copied yet.")
 	parser.add_option('-s', '--server', dest='server', help="server where the sample's json file is located")
@@ -118,7 +124,7 @@ if __name__ == "__main__":
 		
 
 	# if the metrics option is specified, udate the metrics for the json files specified
-	elif options.metrics:
+	elif options.metrics or options.ex_json:
 		# if the user specified directories to look in, then find all of the json files in those directories
 		if options.sample_dirs:
 			for sample_dir in options.sample_dirs:
@@ -128,8 +134,8 @@ if __name__ == "__main__":
 				else:
 					json_files = getJsonFiles(options.json, sample_dir)
 				for json_file in json_files:
-					update_metrics(json_file, options.metrics)
+					update_metrics(json_file, options.metrics, options.ex_json)
 		# otherwise just update the single json file
 		else:
-			update_metrics(options.json, options.metrics)
+			update_metrics(options.json, options.metrics, options.ex_json)
 
