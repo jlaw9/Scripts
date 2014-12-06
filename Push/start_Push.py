@@ -80,7 +80,7 @@ class Push_Data:
 			sample_json = self.write_sample_json(run[self.headers['sample']], "%s/%s_%s.json"%(run_path, run[self.headers['sample']], run_name))
 		
 			# submit the push_Data script to SGE to copy the sample.
-			push_command = "qsub -N Push_%s push_Data.sh "%run[self.headers['sample']] + \
+			push_command = "qsub -N Push_%s_%s push_Data.sh "%(run[self.headers['sample']], run_name) + \
 				 "--user_server %s "%self.options.server + \
 				 "--dest_path %s "%run_path + \
 				 "--run_id  %s "%run_id + \
