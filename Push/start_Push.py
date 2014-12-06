@@ -71,7 +71,7 @@ class Push_Data:
 		else:
 			run_path = "%s/%s/Run%s"%(self.options.destination, run[self.headers["sample"]], run_num)
 			run_name = "Run" + run_num
-			run_type = "normal"
+			run_type = "germline"
 		# check if the proton names or pgm names match. They should be None if this is not a proton
 		if self.options.proton == proton:
 			# first write the new run's json file
