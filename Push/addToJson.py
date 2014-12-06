@@ -7,6 +7,7 @@ import json
 from optparse import OptionParser
 import ast
 
+# @param systemCall the command to run
 def runCommandLine(systemCall):
 	#run the call and return the status
 	print 'Starting %s' % (systemCall)
