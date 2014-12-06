@@ -71,7 +71,7 @@ function check_TVC_Version {
 #Writes to output the result of finding and pushing the file
 function find_and_Push_File {
 	# this variable will only be set to True if the file was actually copied.
-	COPIED="True"
+	COPIED="False"
 	if [ "`find $1 -maxdepth 0 2>/dev/null`" ]; then
 		FILE_NAME=`find $1 -type f -printf "%f\n"`
 		if ssh ${USER_SERVER} stat ${DEST_PATH}/${FILE_NAME} \> /dev/null 2\>\&1; then

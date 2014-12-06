@@ -12,6 +12,7 @@
             "normal_min_base_coverage": "30", 
 			"normal_tvc_json":"/rawdata/support_files/parameter_sets/ampliseqexome_germline_highstringency_p1_4.0_20130920_parameters.json",
             "normal_wt_cutoff": ".2", 
+            "pool_dropout": true, 
             "priority": "1", 
 			"project_bed":"/rawdata/support_files/BED/AmpliSeq-Exome.bed",
 			"qc_merged_bed":"/rawdata/support_files/BED/AmpliSeq-Exome_merged.bed",
