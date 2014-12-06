@@ -15,27 +15,29 @@ def runCommandLine(systemCall):
 	return(status)
 
 # @param sample_dir the dir in which to find the json files used to find the vcf files to pool the variants
-def getJsonFiles(json_pattern, sample_dir, key=None, value=None):
+def getJsonFiles(json_pattern, sample_dir, key_values=None):
 	json_files = [] # list of all of the json files found
 	# first, find all of the sample's json files
 	for root, dirnames, filenames in os.walk(sample_dir):
 		for filename in fnmatch.filter(filenames, json_pattern):
 			json_file = os.path.join(root, filename)
-			if key:
-				json_data = json.load(open(json_file))
-				if key in json_data and json_data[key] == value:
-					json_files.append(json_file)
+			if key_values:
+				for key_value in key_values:
+					key_value = key_value.split(":")
+					json_data = json.load(open(json_file))
+					if key_value[0] in json_data and json_data[key_value[0]] == key_value[1]:
+						json_files.append(json_file)
 			else:
 				json_files.append(json_file)
 	return json_files
 
-# @param json the json file to update
+# @param json_file the json file to update
 # @metrics a list of metrics to update or add to the json file
-def update_metrics(json, metrics)
+def update_metrics(json_file, metrics):
 	# load the given json file
-	jsonData = json.load(open(json))
+	jsonData = json.load(open(json_file))
 	for metric in metrics:
-		print "Adding/updating " + metric + " to the json data."
+		print "Adding/updating " + metric + " to the json file %s."%json_file
 		# Union the two dictionaries together. If a field is found in both dictionaries, then whatever's in extraJson will overwrite what is in jsonData.
 		# Example: dict1 = { "a":1, "b": 2}		dict2 = { "b":3, "c": 4}  dict(dict1.items() + dict2.items()) 	{'a': 1, 'c': 4, 'b': 3}
 		try:
@@ -53,7 +55,7 @@ if __name__ == "__main__":
 	parser = OptionParser()
 
 	parser.add_option('-j', '--json', dest='json', help="The name of the .json file to add info to.")
-	parser.add_option('-k', '--json_key_value', dest='json_key_value', help="A key:value required to update the json file found")
+	parser.add_option('-k', '--json_key_value', dest='json_key_value', action="append", help="Any number of key:value pairs can be used to filter json files found")
 	parser.add_option('-m', '--metric', dest='metrics', action="append", help="info to add to a json file. string is loaded into json so must use JSON format. (See push_Data.sh for an example)")
 	parser.add_option('-a', '--add_run_to_sample', dest='add_run', action="store_true", help="the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.")
 	parser.add_option('-p', '--push_sample_json', dest='push_sample_json', action="store_true", help="push the sample's json file to the server because it hasn't been copied yet.")
@@ -67,7 +69,7 @@ if __name__ == "__main__":
 		print "--USAGE-ERROR-- --json is required"
 		parser.print_help()
 		sys.exit(1)
-	if not os.path.isfile(options.json): 
+	if not options.sample_dirs and not os.path.isfile(options.json): 
 		print "--USAGE-ERROR-- %s not found"%options.json
 		parser.print_help()
 		sys.exit(1)
@@ -122,12 +124,12 @@ if __name__ == "__main__":
 			for sample_dir in options.sample_dirs:
 				# check if there is a key:value to use as a filter
 				if options.json_key_value:
-					json_files = getJsonFiles(options.json, sample_dir, options.json_key_value.split(":")[0], options.json_key_value.split(":")[1])
+					json_files = getJsonFiles(options.json, sample_dir, options.json_key_value)
 				else:
 					json_files = getJsonFiles(options.json, sample_dir)
 				for json_file in json_files:
-					update_metric(json_file, options.metrics)
+					update_metrics(json_file, options.metrics)
 		# otherwise just update the single json file
 		else:
-			update_metric(options.json, options.metrics)
+			update_metrics(options.json, options.metrics)
 
