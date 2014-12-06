@@ -266,10 +266,10 @@ if [ "$COPIED" == "True" ]; then
 	# checking to see if a file exists over ssh in python is not easy, so I did it here.
 	if ssh ${USER_SERVER} stat ${SAMPLE_JSON} \> /dev/null 2\>\&1; then
 		# the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.
-		python addToJson.py --json "$RUN_JSON" --add_run_to_sample --server "$USER_SERVER"
+		python update_json_tool.py --json "$RUN_JSON" --add_run_to_sample --server "$USER_SERVER"
 	# else push a new sample json file through addToJson.
 	else
-		python addToJson.py --json "$RUN_JSON" --push_sample_json --server "$USER_SERVER"
+		python update_json_tool.py --json "$RUN_JSON" --push_sample_json --server "$USER_SERVER"
 	fi
 fi
 
