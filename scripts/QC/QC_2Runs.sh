@@ -117,8 +117,8 @@ function setupVCF {
 		#	use the files already here.
 		# the vcf files are not here. Exit with a file not found error. # Maybe I could call the run TVC script instead?
 		checkFiles "${1}/tvc*_out/TSVC_variants.vcf" 
-		cp ${1}/tvc_out/TSVC_variants.vcf.gz ${TEMP_DIR}/Run${2}.vcf.gz
-		cp ${1}/tvc_out/TSVC_variants.vcf.gz.tbi ${TEMP_DIR}/Run${2}.vcf.gz.tbi
+		cp ${1}/tvc*_out/TSVC_variants.vcf.gz ${TEMP_DIR}/Run${2}.vcf.gz
+		cp ${1}/tvc*_out/TSVC_variants.vcf.gz.tbi ${TEMP_DIR}/Run${2}.vcf.gz.tbi
 	else
 		checkFiles "${1}/*.vcf"
 		# what if there are multiple vcf files in the dir? Just take the first one it finds for now.
@@ -532,13 +532,15 @@ else
 	
 	# This script takes the two VCF files generated from running TVC using the same hotspot file, matches them and outputs the info to the csv and the json_out file.
 	 # total_possible_bases is calculated in the  setupBed function.
+	  # The ouptut json file will be used to generate the 3x3 QC tables.
 	python ${QC_SCRIPTS}/QC_Compare_VCFs.py \
 		--vcfs ${OUTPUT_DIR}/VCF1${CHR}_Final.vcf ${OUTPUT_DIR}/VCF2${CHR}_Final.vcf \
 		--jsons $JSON1 $JSON2 \
 		--gt_cutoffs $WT_CUTOFF1 $HOM_CUTOFF1 $WT_CUTOFF2 $HOM_CUTOFF2 \
 		--bases $total_eligible_bases $total_possible_bases \
 		--out_csv ${OUTPUT_DIR}/matched_variants${CHR}.csv \
-		--json_out ${JSON_OUT} # This json file will be used to generate the QC spreadsheet.
+		--json_out ${JSON_OUT} \
+		--chr "$CHR" # This option will add a prefix of the chromosome used. If $CHR is blank or nothing, no prefix will be added. That way both chr1 and all exome data can be run together without any problems That way both chr1 and all exome data can be run together without any problems
 	if [ $? -ne 0 ]; then
 		echo "ERROR: $OUTPUT_DIR QC_Compare_VCFs.py had a problem!! " 1>&2
 		exit 

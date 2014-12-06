@@ -4,6 +4,7 @@
 
 import sys
 import os.path
+import os
 from subprocess import Popen, PIPE
 import subprocess
 import re
@@ -85,7 +86,9 @@ else:
 		#print '%s converted to %s successfully!'%(pdfFile, pdfText)
 	else:
 		print "Could not convert to PDF... check file path given."
-		#sys.exit(1)
+		# remove the blank text file and quit.
+		os.remove(pdfText)
+		sys.exit(1)
 
 # check if this is a barcoded run.
 #if 'barcode' in runData:

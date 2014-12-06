@@ -39,6 +39,7 @@ USAGE: bash QC_getRunInfo.sh
 	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)
 	-cb | --cds_bed <path/to/CDS_bed> (Optional. Only available if the Run has a PTRIM.bam. Run GATK on the CDS region of the bed file)
+	-pl | --pool_dropout	(Optional. Will include the pool dropout script.)
 	-cl | --cleanup (Optional. Will delete the file specified as --out_dir after generating the QC metrics needed.)
 EOF
 exit 8
@@ -138,6 +139,11 @@ do
 			CDS_BED=$2
 			RUNNING="$RUNNING --cds_bed: $2 "
 			shift 2
+			;;
+		-pl | --pool_dropout)
+			POOL_DROPOUT="True"
+			RUNNING="$RUNNING --pool_dropout "
+			shift
 			;;
 		-cl | --cleanup)
 			CLEANUP="True"
@@ -304,19 +310,27 @@ else
 	JSON="${RUN_DIR}/${run_name}.json_read"
 fi
 
-# Check if this run has a backupPDF.pdf
-if [ "`find ${RUN_DIR}/backupPDF.pdf -type f 2>/dev/null`" ]; then
+# Check if this run has a reportPDF.pdf
+if [ "`find ${RUN_DIR}/report.pdf -type f 2>/dev/null`" ]; then
 	# add the pdf file to QC_printRunInfo.py
-	python ${QC_SCRIPTS}/QC_parse_TS_PDF.py -j $JSON -p ${RUN_DIR}/backupPDF.pdf -o $OUTPUT_DIR >> $log 2>&1
+	#python ${QC_SCRIPTS}/QC_parse_TS_PDF.py -j $JSON -p ${RUN_DIR}/backupPDF.pdf -o $OUTPUT_DIR >> $log 2>&1
+	python ${QC_SCRIPTS}/QC_parse_TS_PDF.py -j $JSON -p ${RUN_DIR}/report.pdf -o $OUTPUT_DIR >> $log 2>&1
 	if [ $? -ne 0 ]; then
 		echo "	ERROR: QC_parse_TS_PDF.py was unsuccessful. See $OUTPUT_DIR/getRunInfo.log for details" 1>&2
 		ERRORS="True"
 	else
 		echo "$RUN_DIR Gathered the pdf info at `date`" >>$log
 	fi
-# If no backupPDF is found, then hopefully these metrics were already gathered. 
-#else
-	#echo "TS API is not yet available"
+# If no reportPDF is found, then check if there is a backupPDF. If not, hopefully these metrics were already gathered. 
+elif [ "`find ${RUN_DIR}/backupPDF.pdf -type f 2>/dev/null`" ]; then
+	python ${QC_SCRIPTS}/QC_parse_TS_PDF.py -j $JSON -p ${RUN_DIR}/backupPDF.pdf -o $OUTPUT_DIR >> $log 2>&1
+    if [ $? -ne 0 ]; then
+		echo "  ERROR: QC_parse_TS_PDF.py was unsuccessful. See $OUTPUT_DIR/getRunInfo.log for details" 1>&2
+		ERRORS="True"
+	else
+		echo "$RUN_DIR Gathered the pdf info at `date`" >>$log
+	fi
+
 fi
 
 #echo "$VCF is now getting var info"
@@ -333,6 +347,19 @@ if [ $? -ne 0 ]; then
 	ERRORS="True"
 #else
 #	echo "$RUN_DIR Gathered the vcf info at `date`">> $log
+fi
+
+# parameter for pool dropout to only run on exon or otherwise specified data.
+if [ "$POOL_DROPOUT" == "True" ]; then
+	#run Matt's script to add pool info to the json file 
+	echo "generating median read length info for each pool"
+	python2.7  ${QC_SCRIPTS}/pool_dropout.py \
+		-c ${OUTPUT_DIR}/reverse_beg_depths \
+		-c ${OUTPUT_DIR}/forward_beg_depths \
+		-j $JSON \
+		-o ${OUTPUT_DIR} \
+		-b "${PROJECT_BED}" \
+		-p 10 
 fi
 
 # If there were errors, then exit with a status of 1

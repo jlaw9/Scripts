@@ -37,6 +37,7 @@ USAGE: bash QC_sample.sh
 	-qo | --qc_2runs_only (Will skip QC_getRunInfo and run only QC_2Runs)
 	-bb | --beg_bed <path/to/startLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/endLoci.bed> (Required unless --no_run_info is specified. bed file with only the 10th pos from the end of the amplicons)
+	-pl | --pool_dropout	(Optional. Will include the pool dropout script.)
 	-cl | --cleanup (Will delete temporary files used to generate the QC metrics)
 EOF
 exit 8
@@ -67,6 +68,7 @@ TUMOR_NORMAL="False" # Treat the file system as Tumor / Normal pairs and generat
 TUMOR_TUMOR="False" # Treat the file system as Tumor / Tumor pairs and generate QC tables for them. 
 NORMAL_NORMAL="False" # Treat the file system as Normal / Normal pairs and generate QC tables for them. 
 GET_RUN_INFO="True" # Option to generate run information about each sample
+POOL_DROPOUT="False" # Option to delete the temporary files. Not yet implemented.
 CLEANUP="False" # Option to delete the temporary files. Not yet implemented.
 NO_ERRS="True" # used for cleanup
 AMP_COV_CUTOFF=30 # The minimum amount of coverage each amplicon needs to have. Default is 30
@@ -217,6 +219,11 @@ do
 			RUNNING="$RUNNING --subset_chr: $2, "
 			shift 2
 			;;
+		-pl | --pool_dropout)
+			POOL_DROPOUT="True"
+			RUNNING="$RUNNING --pool_dropout "
+			shift
+			;;
 		-cl | --cleanup)
 			CLEANUP="True"
 			RUNNING="$RUNNING --cleanup "
@@ -268,9 +275,14 @@ fi
 function QC_getRunInfo {
 	# QC_getRunInfo.sh gets the following metrics: % amps covered at the beg and end, Ts/Tv ratio,	# Total variants,	# HET variants, 	# HOM variants
 	# It also gets the metrics from the backupPDF.pdf if it is available.
+	# updated QC_getRunInfo includes Matt's pool drop-out script 
 	qcgetruninfo="bash ${QC_SCRIPTS}/QC_getRunInfo.sh --run_dir $1 --out_dir $2 --amp_cov_cutoff $AMP_COV_CUTOFF --depth_cutoff $3 --wt_hom_cutoff $4 $5 --beg_bed $BEG_BED --end_bed $END_BED  --project_bed $PROJECT_BED --ptrim_json $6"
 	if [ "$CDS_BED" != "" ]; then
 		qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
+	fi
+	# QC_getRunInfo's will run the pool dropout script 
+	if [ "$POOL_DROPOUT" == "True" ]; then
+		qcgetruninfo="$qcgetruninfo --pool_dropout "
 	fi
 	# QC_getRunInfo's cleanup will just cleanup the output of TVC if the PTRIM was generated
 	if [ "$CLEANUP" == "True" ]; then
@@ -300,11 +312,11 @@ function QC_2Runs {
 	if [ "$1" != "$2" ]; then
 		run1_name="`find $1 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
 		run2_name="`find $2 -maxdepth 0 -type d -printf "%f\n" 2>/dev/null`"
-		QCd="${SAMPLE_DIR}/QC/${run1_name}vs${run2_name}"
+		QCd="${SAMPLE_DIR}/QC/${CHR}${run1_name}vs${run2_name}"
 		if [ "`find ${SAMPLE_DIR}/QC/*_QC.json* -type f 2>/dev/null`" ]; then
 			json="`find ${SAMPLE_DIR}/QC/*_QC.json* -type f 2>/dev/null`"
 		else
-			json="${SAMPLE_DIR}/QC/results_QC.json_read"
+			json="${SAMPLE_DIR}/QC/results_QC.json"
 		fi
 		# QC these two runs. QC_2Runs.sh takes the two run dirs and finds a .bam, .vcf, and .cov.xls file in the same dir as the .bam file
 		# If there is a PRITM.bam, it uses that. If there is not, it uses the other .bam file available.
