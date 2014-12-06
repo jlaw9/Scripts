@@ -15,12 +15,18 @@ def runCommandLine(systemCall):
 	return(status)
 
 # @param sample_dir the dir in which to find the json files used to find the vcf files to pool the variants
-def getJsonFiles(json_pattern, sample_dir):
+def getJsonFiles(json_pattern, sample_dir, key=None, value=None):
 	json_files = [] # list of all of the json files found
 	# first, find all of the sample's json files
 	for root, dirnames, filenames in os.walk(sample_dir):
 		for filename in fnmatch.filter(filenames, json_pattern):
-			json_files.append(os.path.join(root, filename))
+			json_file = os.path.join(root, filename)
+			if key:
+				json_data = json.load(open(json_file))
+				if key in json_data and json_data[key] == value:
+					json_files.append(json_file)
+			else:
+				json_files.append(json_file)
 	return json_files
 
 # @param json the json file to update
@@ -47,6 +53,7 @@ if __name__ == "__main__":
 	parser = OptionParser()
 
 	parser.add_option('-j', '--json', dest='json', help="The name of the .json file to add info to.")
+	parser.add_option('-k', '--json_key_value', dest='json_key_value', help="A key:value required to update the json file found")
 	parser.add_option('-m', '--metric', dest='metrics', action="append", help="info to add to a json file. string is loaded into json so must use JSON format. (See push_Data.sh for an example)")
 	parser.add_option('-a', '--add_run_to_sample', dest='add_run', action="store_true", help="the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.")
 	parser.add_option('-p', '--push_sample_json', dest='push_sample_json', action="store_true", help="push the sample's json file to the server because it hasn't been copied yet.")
@@ -113,7 +120,11 @@ if __name__ == "__main__":
 		# if the user specified directories to look in, then find all of the json files in those directories
 		if options.sample_dirs:
 			for sample_dir in options.sample_dirs:
-				json_files = getJsonFiles(options.json, sample_dir)
+				# check if there is a key:value to use as a filter
+				if options.json_key_value:
+					json_files = getJsonFiles(options.json, sample_dir, options.json_key_value.split(":")[0], options.json_key_value.split(":")[1])
+				else:
+					json_files = getJsonFiles(options.json, sample_dir)
 				for json_file in json_files:
 					update_metric(json_file, options.metrics)
 		# otherwise just update the single json file
