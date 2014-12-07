@@ -49,7 +49,8 @@ def update_metrics(json_file, metrics, ex_json):
 
 	elif ex_json:
 		exJsonData = json.load(open(ex_json))
-		jsonData = dict(exJsonData.items() + jsonData.items())
+		jsonData['analysis']['settings'] = exJsonData['analysis']['settings']
+		#jsonData = dict(exJsonData.items() + jsonData.items())
 
 	# dump the json file
 	with open(json_file, 'w') as out:
