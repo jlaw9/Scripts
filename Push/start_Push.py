@@ -98,6 +98,7 @@ class Push_Data:
 		# Write the run's json file which will be used mainly to hold metrics.
 		jsonData = {
 			"json_file": "%s/%s"%(run_path,json_name), 
+			"json_type": "run",
 			"run_folder": run_path, 
 			"run_name": runName, 
 			"run_num": runNum, 
