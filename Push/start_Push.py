@@ -155,8 +155,10 @@ if __name__ == '__main__':
 	
 	# add the options to parse
 	parser.add_option('-s', '--server', dest='server', help='The server to push data to. <ionadmin@ipaddress>')
+	parser.add_option('-R', '--run_anyway', dest='run_anyway', help='if the server is not in the list of "accepted servers", push the data anyway')
 	parser.add_option('-d', '--destination', dest='destination', help='The destination path where the sample will be copied to.')
 	parser.add_option('-i', '--input', dest='input', help='The input csv file containing the metadata about each sample to be pushed.')
+	parser.add_option('-H', '--header', dest='header', action="store_true", help='use this option if the CSV has a header line.')
 	parser.add_option('-o', '--output_csv', dest='output_csv', default='Push_Results.csv', help='The results of copying will be placed in this file. Default: [%default]')
 	parser.add_option('-l', '--log', dest='log', default="Push.log", help='Default: [%default]')
 	#parser.add_option('-t', '--tumor_normal', dest='tn', action="store_true", help='If the project for which samples are being copied is a Tumor/Normal comparison project, use this option. \
@@ -187,14 +189,16 @@ if __name__ == '__main__':
 	# check if the IP address is valid. More IP addresses can be added overtime
 	# ips: pluto, mercury, triton, triton's external, lam, bonnie's pgm
 	valid_ips = ["ionadmin@192.168.200.42", "ionadmin@192.168.200.41", "ionadmin@192.168.200.131", "ionadmin@12.32.211.40", "ionadmin@192.168.200.214", "ionadmin@130.132.19.237"] 
-	if options.server not in valid_ips:
-		print "--USAGE-ERROR-- %s not a valid server or ipaddress to push to. If it is, sorry for being overly stringent. You can add the ip address you're trying to add to the list"%options.server
+	if options.server not in valid_ips and not options.run_anyway:
+		print "--USAGE-ERROR-- %s not a valid server or ipaddress to push to. If it is, sorry for being overly stringent. Use the -R option to run anyway. if the log file shows that nothing is being pushed, check your connection with the server."%options.server
 		parser.print_help()
 		sys.exit(1)
 
 	pusher = Push_Data(options)
 	with open(options.input, 'r') as input_file:
-		header_line = input_file.readline().strip()
+		header_line=''	
+		if options.header:
+			header_line = input_file.readline().strip()
 		pusher.find_header_indexes(header_line)
 		# push each run in the file
 		for run in input_file:

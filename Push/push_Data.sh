@@ -254,7 +254,7 @@ if [ "$COPIED" == "True" ]; then
 	if [ "$TS_version" == "" ]; then
 		TS_version="not_found"
 	fi
-	python addToJson.py --json $RUN_JSON \
+	python update_json_tool.py --json $RUN_JSON \
 		--metric '{"orig_path":"'"$RUN_PATH"'"}' \
 		--metric '{"analysis":{"files":["'"$FILE_NAME"'"]}}' \
 		--metric '{"ts_version":"'"$TS_version"'"}'
@@ -262,6 +262,8 @@ if [ "$COPIED" == "True" ]; then
 	# push the Json File
 	find_and_Push_File "${RUN_JSON}"
 
+	# sleep for a random number between 1-20 seconds hopefully so that sample's won't push their json file at the same time.
+	sleep $[ ( $RANDOM % 20 )  + 1 ]s
 	# if the sample's json file has already been written, add a run to it and recopy it over.
 	# checking to see if a file exists over ssh in python is not easy, so I did it here.
 	if ssh ${USER_SERVER} stat ${SAMPLE_JSON} \> /dev/null 2\>\&1; then
