@@ -175,7 +175,7 @@ if __name__ == '__main__':
 		parser.print_help()
 		sys.exit(1)
 	if not os.path.isfile(options.input) or not os.path.isfile(options.ex_json):
-		print "--USAGE-ERROR-- %s or %s not found"%options.input, options.ex_json
+		print "--USAGE-ERROR-- %s or %s not found"%(options.input, options.ex_json)
 		parser.print_help()
 		sys.exit(1)
 
