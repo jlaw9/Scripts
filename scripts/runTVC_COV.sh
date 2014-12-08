@@ -246,7 +246,7 @@ function runCov {
 # Runs TVC, then copies the .vcf file needed, and deletes the rest of the files generated.
 function runTVC {
 	mkdir -p ${OUTPUT_DIR}/tvc${TVC_VERSION}_out 2>/dev/null
-	checkBamIndex $BAM_FILE >> ${OUTPUT_DIR}/tvc${TVC_VERSION}_out/log.out
+	checkBamIndex $BAM_FILE ${OUTPUT_DIR}/tvc${TVC_VERSION}_out/log.out
 
 	echo "$BAM_FILE beginning TVC v${TVC_VERSION} at: `date`"
 	#now run TVC v4.2. 

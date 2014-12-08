@@ -42,7 +42,10 @@ class JobManager:
         logging.debug('%s - %s' % (getTimestamp(), fileData))
 
         #create the output folder
-        outputFolder = '%s/%s' %(fileData['sample_folder'], fileData['name'])
+        if 'name' in fileData:
+            outputFolder = '%s/%s' %(fileData['sample_folder'], fileData['name'])
+        else:
+            outputFolder = fileData['output_folder']
         logging.debug('%s - Creating output folder %s' % (getTimestamp(), outputFolder))
         fileData['output_folder'] = outputFolder
 
@@ -165,7 +168,7 @@ if (__name__ == "__main__"):
 	# add the arguments
 	parser.add_option('-s', '--sample_dir', dest='sample_dir', action='append', help='Recurse through the given directory and look for *.json jobs. [default: default=["/rawdata/projects", "/results/projects", "/Volumes/HD/mattdyer/Desktop/temp"]]')
 	parser.add_option('-S', '--software_dir', dest='software_dir', default="/rawdata/legos", help='The software root directory. [default: %default]')
-	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare'. Put a -j before each job type if running multiple jobs.")
+	parser.add_option('-j', '--job_filters', dest="job_filters", action="append", help="The type of job to start. Choices: 'qc_tvc', 'qc_compare', 'qc_sample'. Put a -j before each job type if running multiple jobs.")
 	parser.add_option('-r', '--requeue', dest="requeue", help="Will qdel jobs that have a status of 'queued' and re-submit them with the new specified queue, as well as start 'pending' jobs with the specified queue")
 	parser.add_option('-R', '--rerun', dest="rerun", help="Will 'rerun' jobs of the specified status type")
 	
@@ -177,11 +180,12 @@ if (__name__ == "__main__"):
 
 	# Check the job_filters
 	if not options.job_filters:
-		print "USAGE ERROR: -j (--job_filters) is required. Available choices: 'qc_tvc', 'qc_compare'. Use -h for help."
+		print "USAGE ERROR: -j (--job_filters) is required. Available choices: 'qc_tvc', 'qc_compare', 'qc_sample'. Use -h for help."
+		parser.print_help()
 		sys.exit(8)
 
 	for job_filter in options.job_filters:
-		if job_filter != "qc_tvc" and job_filter != "qc_compare":
+		if job_filter != "qc_tvc" and job_filter != "qc_compare" and job_filter != 'qc_sample':
 			print "USAGE ERROR: %s is not an available job filter. Use -h for help"%job_filter
 			sys.exit(8)
 

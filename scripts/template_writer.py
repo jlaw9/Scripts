@@ -34,6 +34,11 @@ class TemplateWriter:
             self.__writeStatusChange('running', job['json_file'], fileHandle, False)
             self.__writeQCCompareTemplate(job, fileHandle)
             self.__writeStatusChange('finished', job['json_file'], fileHandle, True)
+        elif job['analysis']['type'] == 'qc_sample':
+            self.__writeHeader(job, fileHandle)
+            self.__writeStatusChange('running', job['json_file'], fileHandle, False)
+            self.__writeQCSampleTemplate(job, fileHandle)
+            self.__writeStatusChange('finished', job['json_file'], fileHandle, True)
 
         #close the file handle
         fileHandle.close()
@@ -49,7 +54,10 @@ class TemplateWriter:
         #this is just a dummy holder for now
         fileHandle.write('#! /bin/bash\n')
         fileHandle.write('#$ -wd %s\n' % self.__outputDirectory)
-        fileHandle.write('#$ -N %s.%s.%s\n' % (job['project'], job['sample'], job['name']))
+        if 'sample' in job:
+            fileHandle.write('#$ -N %s.%s.%s\n' % (job['project'], job['sample'], job['name']))
+        else:
+            fileHandle.write('#$ -N %s.%s.%s\n' % (job['project'], job['sample_name'], job['analysis']['type']))
         fileHandle.write('#$ -V\n')
         fileHandle.write('#$ -S /bin/bash\n\n')
 
@@ -133,6 +141,15 @@ class TemplateWriter:
             fileHandle.write('bash %s/scripts/QC/QC_sample.sh --beg_bed %s --end_bed %s -s %s -all %s %s %s %s %s %s %s %s -a %s -b %s %s %s\n' % (self.__softwareDirectory, job['analysis']['settings']['beg_bed'], job['analysis']['settings']['end_bed'], job['sample_folder'], job['analysis']['settings']['normal_tvc_json'], job['analysis']['settings']['normal_min_base_coverage'], job['analysis']['settings']['normal_wt_cutoff'], job['analysis']['settings']['normal_hom_cutoff'], job['analysis']['settings']['tumor_tvc_json'], job['analysis']['settings']['tumor_min_base_coverage'], job['analysis']['settings']['tumor_wt_cutoff'], job['analysis']['settings']['tumor_hom_cutoff'], job['analysis']['settings']['min_amplicon_coverage'], job['analysis']['settings']['project_bed'], chrFlag, cleanupFlag))
         #add other types later
 
+
+    ## Write the code for running qc comparisons
+    # @param self The object pointer
+    # @param job The json job object
+    # @param file The file handle
+    def __writeQCSampleTemplate(self, job, fileHandle):
+		# the settings should all be contained within the json file.
+        fileHandle.write('python %s/scripts/QC/QC_sample.py --json %s \n'%(self.__softwareDirectory, job['json_file']))
+        #add other types later
 
 
     ## Write the code for running TVC
