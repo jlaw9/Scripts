@@ -34,7 +34,7 @@ USAGE: bash QC_getRunInfo.sh
 	-a | --amp_cov_cutoff <min_amp_coverage> (Cutoff for # of amplicon reads.) 
 	-d | --depth_cutoff <min_base_depth> (Cutoff for base depth)
 	-wh | --wt_hom_cutoff <WT_Cutoff> <HOM_Cutoff> (WT and HOM cutoffs)
-	-pb | --project_bed <path/to/project.bed	(To generate the PTRIM.bam. TEMP FOR WALES)
+	-pb | --project_bed <path/to/project.bed	(For the pool_dropout script. Also used to generate the PTRIM.bam if needed)
 	-pj | --ptrim_json <path/to/tvc_json>	(Regenerate the PTRIM.bam if it is not found. Used to calculate depths.)
 	-bb | --beg_bed <path/to/beginning_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos of the amplicons)
 	-eb | --end_bed <path/to/end_loci_bed> (Only available if the Run has a PTRIM.bam. Run GATK using the bed file with only the 10th pos from the end of the amplicons)

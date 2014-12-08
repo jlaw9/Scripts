@@ -142,7 +142,7 @@ class QC_Sample:
 				"--wt_hom_cutoff % % "%(self.sample_json['analysis']['settings']['%swt_cutoff'%pref], self.sample_json['analysis']['settings']['%shom_cutoff'%pref])+ \
 				"--beg_bed  % "%self.sample_json['analysis']['settings']['beg_bed'] + \
 				"--end_bed % "%self.sample_json['analysis']['settings']['end_bed'] + \
-				"--project_bed % "%self.sample_json['analysis']['settings']['project_bed'] + \
+				"--project_bed % "%str(self.sample_json['analysis']['settings']['project_bed']) + \
 				"--ptrim_json %/PTRIM.bam "%run_json['run_folder']
 		#if [ "$CDS_BED" != "" ]; then
 		#	qcgetruninfo="$qcgetruninfo --cds_bed $CDS_BED "
