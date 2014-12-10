@@ -158,30 +158,30 @@ if __name__ == '__main__':
 	parser = OptionParser()
 	
 	# add the options to parse
-	parser.add_option('-s', '--server', dest='server', help='The server to push data to. <ionadmin@ipaddress>')
-	parser.add_option('-R', '--run_anyway', dest='run_anyway', help='if the server is not in the list of "accepted servers", push the data anyway')
-	parser.add_option('-d', '--destination', dest='destination', help='The destination path where the sample will be copied to.')
-	parser.add_option('-i', '--input', dest='input', help='The input csv file containing the metadata about each sample to be pushed.')
+	parser.add_option('-s', '--server', dest='server', help='Required. The server to push data to. <ionadmin@ipaddress>')
+	parser.add_option('-d', '--destination', dest='destination', help='Required. The destination path where the sample will be copied to.')
+	parser.add_option('-i', '--input', dest='input', help='Required. The input csv file containing the metadata about each sample to be pushed.')
+	parser.add_option('-j', '--ex_json', dest='ex_json', help='Required. The example json file containing the settings necessary for this project. Should be different for every project. For help of how to create the example json file, see the protocls')
+	parser.add_option('-p', '--proton', dest='proton', help='Required. The name of the proton or pgm from which you are pushing the files. Options: "PLU", "MER", "NEP, "ROT"')
 	parser.add_option('-H', '--header', dest='header', action="store_true", help='use this option if the CSV has a header line.')
 	parser.add_option('-o', '--output_csv', dest='output_csv', default='Push_Results.csv', help='The results of copying will be placed in this file. Default: [%default]')
 	parser.add_option('-l', '--log', dest='log', default="Push.log", help='Default: [%default]')
+	parser.add_option('-R', '--run_anyway', dest='run_anyway', help='if the server is not in the list of "accepted servers", push the data anyway')
 	#parser.add_option('-t', '--tumor_normal', dest='tn', action="store_true", help='If the project for which samples are being copied is a Tumor/Normal comparison project, use this option. \
 	#		Otherwise file structure will be treated as a germline only study.')
-	parser.add_option('-j', '--example_json', dest='ex_json', help='The example json file containing the settings necessary for this project. Should be different for every project. For help of how to create the example json file, see the protocls')
-	parser.add_option('-p', '--proton', dest='proton', help='The name of the proton or pgm from which you are pushing the files. Options: "PLU", "MER", "NEP, "ROT"')
 
 
 	(options, args) = parser.parse_args()
 
 	# check to make sure the inputs are valid
-	if not options.input or not options.ex_json:
-		print "--USAGE-ERROR-- --input and --example_json required"
+	if not options.input or not options.ex_json or not options.destination or not options.proton:
+		print "USAGE-ERROR!: Options: --input,--example_json, --destination, and --proton are required"
 		parser.print_help()
-		sys.exit(1)
+		sys.exit(8)
 	if not os.path.isfile(options.input) or not os.path.isfile(options.ex_json):
-		print "--USAGE-ERROR-- %s or %s not found"%(options.input, options.ex_json)
+		print "USAGE-ERROR!: %s or %s not found"%(options.input, options.ex_json)
 		parser.print_help()
-		sys.exit(1)
+		sys.exit(4)
 
 	# check if the proton name is valid
 	valid_protons = ['PLU', 'MER', 'NEP', 'ROT']
