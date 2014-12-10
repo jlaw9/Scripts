@@ -18,16 +18,27 @@ def runCommandLine(systemCall):
 def getJsonFiles(json_pattern, sample_dir, key_values=None):
 	json_files = [] # list of all of the json files found
 	# first, find all of the sample's json files
+	if options.debug:
+		print "using %s to filter"%key_values
 	for root, dirnames, filenames in os.walk(sample_dir):
+		#print root, filenames
 		for filename in fnmatch.filter(filenames, json_pattern):
 			json_file = os.path.join(root, filename)
+			if options.debug:
+				print "looking at "+json_file
 			if key_values:
 				for key_value in key_values:
+					if options.debug:
+						print 'filtering with ', key_value
 					key_value = key_value.split(":")
 					json_data = json.load(open(json_file))
 					if key_value[0] in json_data and json_data[key_value[0]] == key_value[1]:
+						if options.debug:
+							print "found "+json_file
 						json_files.append(json_file)
 			else:
+				if options.debug:
+					print "found "+json_file
 				json_files.append(json_file)
 	return json_files
 
@@ -68,6 +79,7 @@ if __name__ == "__main__":
 	parser.add_option('-p', '--push_sample_json', dest='push_sample_json', action="store_true", help="push the sample's json file to the server because it hasn't been copied yet.")
 	parser.add_option('-s', '--server', dest='server', help="server where the sample's json file is located")
 	parser.add_option('-S', '--sample_dirs', dest='sample_dirs', action="append", help="will recursively look in the sample directories specified, find all of the json files matching what is passed in by the --json option and update them")
+	parser.add_option('-d', '--debug', dest='debug', action="store_true", help="add more print statements")
 
 	(options, args) = parser.parse_args()
 
@@ -90,9 +102,9 @@ if __name__ == "__main__":
 		# copy the sample's json file here and check if the copy was successful
 		copy_command = "scp Json_Files/%s %s:%s "%(sample_json_name, options.server, jsonData["sample_json"])
 		if runCommandLine(copy_command) == 0:
-			print "Json file copied successfully"
+			print "%s file copied successfully"%sample_json_name
 		else:
-			print "ERROR: Unable to copy the sample's json file"	
+			print "ERROR: Unable to copy the sample's %s json file"%sample_json_name
 			sys.exit(1)
 
 	elif options.add_run:
@@ -118,9 +130,10 @@ if __name__ == "__main__":
 
 			# copy the edited sample's json file back to the server
 			copy_command = "scp Json_Files/%s %s:%s "%(sample_json_name, options.server, runJsonData["sample_json"])
-			runCommandLine(copy_command)	
+			if runCommandLine(copy_command)	== 0:
+				print "Added a run to %s, and pushed successfully."%sample_json_name
 		else:
-			print "ERROR: Unable to copy the sample's json file"	
+			print "ERROR: Unable to copy the sample's json file!"
 			sys.exit(1)
 		
 

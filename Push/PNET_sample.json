@@ -30,6 +30,7 @@
         "test123@me.com"
     ], 
 	"json_file":"/mnt/Despina/projects/PNET/125/125.json",
+	"json_type":"sample",
 	"output_folder":"/mnt/Despina/projects/PNET/125/QC",
 	"project":"PNET",
 	"runs":["path/to/run1"],

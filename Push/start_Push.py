@@ -6,6 +6,7 @@ import sys
 import re
 from optparse import OptionParser
 import json
+import time
 
 
 # some global variables
@@ -76,7 +77,8 @@ class Push_Data:
 		if self.options.proton == proton:
 			# first write the new run's json file
 			run_json = self.write_run_json(run_num, run_name, run_type, run[self.headers['sample']], run_path)
-			# first write the sample's json file
+			# write the sample's json file
+			# technically this only needs to be done once, but we can just push it every time.
 			sample_json = self.write_sample_json(run[self.headers['sample']], "%s/%s_%s.json"%(run_path, run[self.headers['sample']], run_name))
 		
 			# submit the push_Data script to SGE to copy the sample.
@@ -98,6 +100,7 @@ class Push_Data:
 		# Write the run's json file which will be used mainly to hold metrics.
 		jsonData = {
 			"json_file": "%s/%s"%(run_path,json_name), 
+			"json_type": "run",
 			"run_folder": run_path, 
 			"run_name": runName, 
 			"run_num": runNum, 
@@ -130,7 +133,8 @@ class Push_Data:
 		# edit the sample's json file with this sample's info. The other metrics in the sample JSON file should already be set. 
 		self.ex_json["json_file"] = "%s/%s.json"%(sample_path, sample) 
 		self.ex_json["output_folder"] = "%s/QC"%sample_path 
-		self.ex_json["runs"] = [run_json]
+		# dont set the runs here as things can get overwritten. only set the runs once the bam file has been pushed.
+		#self.ex_json["runs"] = [run_json]
 		self.ex_json["sample_name"] = sample
 		self.ex_json["sample_folder"] = sample_path
 
@@ -175,7 +179,7 @@ if __name__ == '__main__':
 		parser.print_help()
 		sys.exit(1)
 	if not os.path.isfile(options.input) or not os.path.isfile(options.ex_json):
-		print "--USAGE-ERROR-- %s or %s not found"%options.input, options.ex_json
+		print "--USAGE-ERROR-- %s or %s not found"%(options.input, options.ex_json)
 		parser.print_help()
 		sys.exit(1)
 
@@ -203,5 +207,7 @@ if __name__ == '__main__':
 		# push each run in the file
 		for run in input_file:
 			pusher.push_run(run)
+			# stagger the push submits so they don't overwrite the sample's json file.
+			time.sleep(10)
 
 	print "Finished submitting runs to be pushed"
