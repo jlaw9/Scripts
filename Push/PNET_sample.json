@@ -33,7 +33,7 @@
 	"json_type":"sample",
 	"output_folder":"/mnt/Despina/projects/PNET/125/QC",
 	"project":"PNET",
-	"runs":["path/to/run1"],
+	"runs":[],
 	"sample_name":"125",
 	"sample_folder":"/mnt/Despina/projects/PNET/125",
 	"sample_status":"pushed",
