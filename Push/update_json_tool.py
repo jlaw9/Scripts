@@ -102,9 +102,9 @@ if __name__ == "__main__":
 		# copy the sample's json file here and check if the copy was successful
 		copy_command = "scp Json_Files/%s %s:%s "%(sample_json_name, options.server, jsonData["sample_json"])
 		if runCommandLine(copy_command) == 0:
-			print "Json file copied successfully"
+			print "%s file copied successfully"%sample_json_name
 		else:
-			print "ERROR: Unable to copy the sample's json file"	
+			print "ERROR: Unable to copy the sample's %s json file"%sample_json_name
 			sys.exit(1)
 
 	elif options.add_run:
@@ -130,9 +130,10 @@ if __name__ == "__main__":
 
 			# copy the edited sample's json file back to the server
 			copy_command = "scp Json_Files/%s %s:%s "%(sample_json_name, options.server, runJsonData["sample_json"])
-			runCommandLine(copy_command)	
+			if runCommandLine(copy_command)	== 0:
+				print "Added a run to %s, and pushed successfully."%sample_json_name
 		else:
-			print "ERROR: Unable to copy the sample's json file"	
+			print "ERROR: Unable to copy the sample's json file!"
 			sys.exit(1)
 		
 

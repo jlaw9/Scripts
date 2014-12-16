@@ -247,6 +247,12 @@ check_TVC_Version "${RUN_PATH}/plugin_out/variantCaller_out/drmaa_stdout.txt"
 # Create the Sample and run path
 create_ssh_Dir "${DEST_PATH}"
 
+# checking to see if a file exists over ssh in python is not easy, so I did it here.
+if ! ssh ${USER_SERVER} stat ${SAMPLE_JSON} \> /dev/null 2\>\&1; then
+	# push the sample's JSON file. 
+	python update_json_tool.py --json "$RUN_JSON" --push_sample_json --server "$USER_SERVER"
+fi
+
 #push the BAM file
 # if the run is not barcoded, then barcode variable will be empty, so rawlib.bam will be pushed.
 find_and_Push_File "${RUN_PATH}/${BARCODE}*rawlib.bam"
@@ -265,14 +271,8 @@ if [ "$COPIED" == "True" ]; then
 	# sleep for a random number between 1-20 seconds hopefully so that sample's won't push their json file at the same time.
 	sleep $[ ( $RANDOM % 20 )  + 1 ]s
 	# if the sample's json file has already been written, add a run to it and recopy it over.
-	# checking to see if a file exists over ssh in python is not easy, so I did it here.
-	if ssh ${USER_SERVER} stat ${SAMPLE_JSON} \> /dev/null 2\>\&1; then
-		# the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.
-		python update_json_tool.py --json "$RUN_JSON" --add_run_to_sample --server "$USER_SERVER"
-	# else push a new sample json file through addToJson.
-	else
-		python update_json_tool.py --json "$RUN_JSON" --push_sample_json --server "$USER_SERVER"
-	fi
+	# the run's json file has the path to it's sample's json file. It will copy the sample's json file from the other server and add the run to it.
+	python update_json_tool.py --json "$RUN_JSON" --add_run_to_sample --server "$USER_SERVER"
 fi
 
 #push the BAM.bai file
