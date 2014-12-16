@@ -22,7 +22,7 @@ def getJsonFiles(json_pattern, sample_dir, key_values=None):
 		print "using %s to filter"%key_values
 	for root, dirnames, filenames in os.walk(sample_dir):
 		#print root, filenames
-		for filename in fnmatch.filter(filenames, json_pattern):
+		for filename in fnmatch.filter(filenames, str(json_pattern)):
 			json_file = os.path.join(root, filename)
 			if options.debug:
 				print "looking at "+json_file
