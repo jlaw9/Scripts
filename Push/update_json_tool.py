@@ -123,6 +123,9 @@ if __name__ == "__main__":
 			
 			# set the status to 'pending' so that the runs will be QCd together.
 			sampleJsonData['status'] = 'pending'
+
+			# set the 'sample_status' to 'pushed' so that if the sample has already been merged and there is a new run, then the sample will re-QC and merge everything.
+			sampleJsonData['sample_status'] = 'pushed'
 			
 			# dump the json file
 			with open("Json_Files/"+sample_json_name, 'w') as out:
