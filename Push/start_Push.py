@@ -105,7 +105,7 @@ class Push_Data:
 			"run_name": runName, 
 			"run_num": runNum, 
 			"run_type": runType, 
-			"pass_fail_status": "pass", 
+			"pass_fail_status": "pending", 
 			"project": self.ex_json['project'], 
 			"proton": self.options.proton,
 			"sample": sample, 
