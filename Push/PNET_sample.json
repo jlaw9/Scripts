@@ -3,8 +3,17 @@
         "settings": {
 			"beg_bed":"/rawdata/support_files/BED/startLoci_Ampliseq.bed",
 			"capture_type":"AmpliSeq",
-            "cleanup": false, 
-      		"chromosomes_to_analyze": ["all", "chr1"], 
+            "cleanup": true, 
+      		"chromosomes_to_analyze": ["chr1"], 
+      		"chromosomes_to_analyze_merged": ["all"], 
+			"cutoffs": {
+				"error_rate": 3.0e-5,
+				"exp_median_read_length": 196, 
+				"perc_exp_median_read_length": 0.70, 
+				"begin_end_amp_cov": 0.5,
+				"run_amp_cov": 0.5,
+				"merged_amp_cov": 0.9
+			},
 			"end_bed":"/rawdata/support_files/BED/endLoci_Ampliseq.bed",
 			"mark_dups": false,
             "min_amplicon_coverage": "30", 
@@ -31,12 +40,13 @@
     ], 
 	"json_file":"/mnt/Despina/projects/PNET/125/125.json",
 	"json_type":"sample",
-	"output_folder":"/mnt/Despina/projects/PNET/125/QC",
+	"results_qc_json": "/mnt/Despina/projects/PNET/125/QC",
+	"qc_folder":"/mnt/Despina/projects/PNET/125/QC",
 	"project":"PNET",
 	"runs":[],
 	"sample_name":"125",
 	"sample_folder":"/mnt/Despina/projects/PNET/125",
 	"sample_status":"pushed",
 	"sample_type":"tumor_normal",
-	"status":"copying"
+	"status":"pending"
 }

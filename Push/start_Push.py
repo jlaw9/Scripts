@@ -99,6 +99,10 @@ class Push_Data:
 		json_name = "%s_%s.json"%(sample,runName)
 		# Write the run's json file which will be used mainly to hold metrics.
 		jsonData = {
+				#TODO
+			"analysis": {
+				"files": ["rawlib.bam"]
+			},
 			"json_file": "%s/%s"%(run_path,json_name), 
 			"json_type": "run",
 			"run_folder": run_path, 
@@ -112,6 +116,10 @@ class Push_Data:
 			"sample_folder": "%s/%s"%(self.options.destination, sample),
 			"sample_json": "%s/%s/%s.json"%(self.options.destination, sample, sample),
 		}
+
+		# TODO If this is a barcoded run, save the barcode
+		#if self.options.barcode:
+		#	jsonData['barcode'] = self.options.barcode
 
 		# make sure hte JsonFiles directory exists
 		if not os.path.isdir("Json_Files"):
@@ -128,11 +136,14 @@ class Push_Data:
 	# @param sample the name of the current sample
 	# @param run_path the path of the current run
 	def write_sample_json(self, sample, run_json):
+		# TODO is this a normal or FFPE sample?
 		sample_path = "%s/%s"%(self.options.destination, sample)
 
 		# edit the sample's json file with this sample's info. The other metrics in the sample JSON file should already be set. 
 		self.ex_json["json_file"] = "%s/%s.json"%(sample_path, sample) 
-		self.ex_json["output_folder"] = "%s/QC"%sample_path 
+		self.ex_json["results_qc_json"] = "%s/QC/results_QC.json"%sample_path 
+		self.ex_json["qc_folder"] = "%s/QC"%sample_path 
+		self.ex_json["output_folder"] = sample_path 
 		# dont set the runs here as things can get overwritten. only set the runs once the bam file has been pushed.
 		#self.ex_json["runs"] = [run_json]
 		self.ex_json["sample_name"] = sample
