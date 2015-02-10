@@ -120,6 +120,8 @@ if __name__ == "__main__":
 
 			# append the current run to this sample's list of runs.
 			sampleJsonData['runs'].append(runJsonData['json_file'])
+			# make the list of runs into a set and then list again to delete any run duplicates
+			sampleJsonData['runs'] = list(set(sampleJsonData['runs']))
 			
 			# set the status to 'pending' so that the runs will be QCd together.
 			sampleJsonData['status'] = 'pending'
