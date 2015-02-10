@@ -12,7 +12,7 @@ import time
 # some global variables
 PLUTO_BACKUP_PATH="/mnt/Charon/archivedReports"
 MERCURY_BACKUP_PATH="/mnt/Triton/archivedReports"
-PGM_BACKUP_PATH="/media/Backup_02/archivedReports"
+PGM_BACKUP_PATH="/media/Backup_05/archivedReports"
 
 class Push_Data:
 	def __init__(self, options):
@@ -76,7 +76,7 @@ class Push_Data:
 		# check if the proton names or pgm names match. They should be None if this is not a proton
 		if self.options.proton == proton:
 			# first write the new run's json file
-			run_json = self.write_run_json(run_num, run_name, run_type, run[self.headers['sample']], run_path)
+			run_json = self.write_run_json(run_num, run_name, run_type, run[self.headers['sample']], run_path, run[self.headers['barcode']])
 			# write the sample's json file
 			# technically this only needs to be done once, but we can just push it every time.
 			sample_json = self.write_sample_json(run[self.headers['sample']], "%s/%s_%s.json"%(run_path, run[self.headers['sample']], run_name))
@@ -95,7 +95,7 @@ class Push_Data:
 				 push_command += " --barcode %s "%run[self.headers['barcode']]
 			status = self.runCommandLine(push_command)
 
-	def write_run_json(self, runNum, runName, runType, sample, run_path):
+	def write_run_json(self, runNum, runName, runType, sample, run_path, barcode=''):
 		json_name = "%s_%s.json"%(sample,runName)
 		# Write the run's json file which will be used mainly to hold metrics.
 		jsonData = {
@@ -117,9 +117,9 @@ class Push_Data:
 			"sample_json": "%s/%s/%s.json"%(self.options.destination, sample, sample),
 		}
 
-		# TODO If this is a barcoded run, save the barcode
-		#if self.options.barcode:
-		#	jsonData['barcode'] = self.options.barcode
+		# If this is a barcoded run, save the barcode
+		if re.search("Ion", barcode):
+			 jsonData['barcode'] = barcode
 
 		# make sure hte JsonFiles directory exists
 		if not os.path.isdir("Json_Files"):
@@ -219,6 +219,6 @@ if __name__ == '__main__':
 		for run in input_file:
 			pusher.push_run(run)
 			# stagger the push submits so they don't overwrite the sample's json file.
-			time.sleep(10)
+			time.sleep(3)
 
 	print "Finished submitting runs to be pushed"
