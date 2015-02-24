@@ -9,7 +9,7 @@
 			"cutoffs": {
 				"error_rate": 3.0e-5,
 				"exp_median_read_length": 196, 
-				"perc_exp_median_read_length": 0.70, 
+				"perc_exp_median_read_length": 0.75, 
 				"begin_end_amp_cov": 0.5,
 				"run_amp_cov": 0.5,
 				"merged_amp_cov": 0.9
@@ -27,10 +27,10 @@
 			"qc_merged_bed":"/rawdata/support_files/BED/AmpliSeq-Exome_merged.bed",
 			"qc_unmerged_bed":"/rawdata/support_files/BED/AmpliSeq-Exome_unmerged.bed",
             "queue": "all.q", 
-            "tumor_hom_cutoff": ".7", 
+            "tumor_hom_cutoff": ".8", 
             "tumor_min_base_coverage": "30", 
 			"tumor_tvc_json":"/rawdata/support_files/parameter_sets/ampliseqexome_somatic_highstringency_p1_4.0_20130920_parameters.json",
-            "tumor_wt_cutoff": ".1", 
+            "tumor_wt_cutoff": ".2", 
             "type": "all_tumor_normal"
         }, 
         "type": "qc_sample"
