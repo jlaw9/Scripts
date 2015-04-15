@@ -20,7 +20,7 @@ for sample in $samples; do
 		final_dir=""
 		# check to see if this sample has a merged dir.
 		if [ "`find ${sample}/Merged -maxdepth 0 -type d 2>/dev/null`" ]; then
-			#final_dir="${sample}/Merged"
+			final_dir="${sample}/Merged"
 			echo "	$sample_name has a Merged dir"
 		else
 			for run in `find ${sample}/Run* -maxdepth 0 -type d`; do
@@ -34,9 +34,9 @@ for sample in $samples; do
 		if [ "$final_dir" != "" ]; then
 			# only one file should be matched for each of these commands
 			# TODO need to fix the vcf check
-			if [ `find $final_dir/TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null` ]; then
+			if [ `find $final_dir/*TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null` ]; then
 				echo "pushing $final_dir"
-				vcf=`find $final_dir/TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null | head -n 1`
+				vcf=`find $final_dir/*TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null | head -n 1`
 				vcf2="Einstein/${sample_name}/${sample_name}.vcf"
 
 				cov=`find $final_dir/*.amplicon.cov.xls -maxdepth 0 -type f 2>/dev/null | head -n 1`
@@ -49,10 +49,15 @@ for sample in $samples; do
 				bam2="Einstein/${sample_name}/${bam_name}"
 				bai2="$bam2.bai"
 
-				#json=`find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null | head -n 1`
-				#json2="Einstein/${sample_name}/${sample_name}.json"
+				json=''
+				json2=''
+				if [ `find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null` ]; then
+					json=`find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null | head -n 1`
+					json2="Einstein/${sample_name}/${sample_name}.json"
+				fi
 				# now push this sample to s3
 				qsub -N push_$sample_name -o push_merged.log -e push_merged.log /home/ionadmin/TRI_Scripts/Data_Management/push_files_s3.sh $vcf $vcf2 $cov $cov2 $bam $bam2 $bai $bai2 $json $json2
+				#echo "qsub -N push_$sample_name -o push_merged.log -e push_merged.log /home/ionadmin/TRI_Scripts/Data_Management/push_files_s3.sh $vcf $vcf2 $cov $cov2 $bam $bam2 $bai $bai2 $json $json2"
 				# this is a test
 				#bash push_files_s3.sh $vcf $vcf2 $cov $cov2 $bam $bam2 $bai $bai2 $json $json2
 			fi
