@@ -3,11 +3,13 @@
 
 # ignore the temp files
 *.swp
-*~
+*~*
 
 # ignore spreadsheets
 *.csv
 *.xlsx
+*.vcf
+*.log
 
 # ignore OS generated files
 .DS_Store
@@ -17,3 +19,4 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
