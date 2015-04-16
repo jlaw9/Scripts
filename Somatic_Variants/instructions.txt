@@ -1,0 +1,28 @@
+How to use Ozlem's Scripts to annotate somatic variants. This example was run on Triton.
+
+
+  1. I copied a sample Radiogenomics dataset (~15G total) to my directory. I think it's easier to start with a smaller example.
+  2. 
+    1. cp -r /rawdata/projects/Radiogenomics/pair_004 /home/ionadmin/jeff/Annovar_Test/
+
+    2. cd ~/jeff/Annovar_Test/pair_004/QC_merged
+    3. mkdir annovar_test
+    4. cd annovar_test
+  3. Pull the somatic variants out of the matched_variants.csv.
+  4. 
+    1. grep -E "WT.+HET" ../matched_variants.csv > somatic.csv
+  5. Get the variant information for the somatic.csv file. It looks like her script matches somatic.csv and VCF2_Final.vcf, then outputs somatic.vcf
+  6. 
+    1. python2.7 getVCF_v2.py somatic.csv ../VCF2_Final.vcf somatic.vcf
+  7. Annotate the somatic variants with table annovar. I know we updated some of the annovar code in the file /home/ionadmin/software/annovar/annotate_variation.pl starting on line 1552
+  8. 
+    1.  ../annovar/convert2annovar.pl --format vcf4old --snpqual 0 somatic.vcf > somatic_input.vcf
+    2.  ../annovar/table_annovar.pl somatic_input.vcf /home/ionadmin/software/annovar/humandb_ucsc/ --outfile annovar_somatic_table --buildver hg19 --protocol refGene,1000g2012apr_all,snp129NonFlagged,snp137NonFlagged,cosmic68,ljb23_all --operation g,f,f,f,f,f --remove --nastring . 
+
+  9. Add the allele frequencies and such to the annotated somatic variants
+  10. 
+    1.  python2.7 updateAnnovarTable_v3.py somatic.csv annovar_somatic_table.hg19_multianno.txt transcriptList.txt annovar_summary.txt 
+
+    2. 
+      1. Ozlem's notes about the transcriptList.txt file: I believe this is the canonical transcript list for whole exome (I wish I had time to double-check though!) so please keep in mind that I did not have a chance to double-check: /results/ozlem/pnet_merge_analysis/transcriptList.txt.        Just noticed that somatic.vcf has duplicate entries, will need to correct this 
+  11. Apply filters on the annovar_summary.txt file. 
