@@ -38,11 +38,11 @@
     "emails": [
         "test123@me.com"
     ], 
-	"json_file":"/mnt/Despina/projects/PNET/125/125.json",
+	"json_file":"/mnt/Despina/projects/PNET/B_025/B_025.json",
 	"json_type":"sample",
-	"results_qc_json": "/mnt/Despina/projects/PNET/125/QC",
-	"qc_folder":"/mnt/Despina/projects/PNET/125/QC",
-	"output_folder":"/mnt/Despina/projects/PNET/125",
+	"results_qc_json": "/mnt/Despina/projects/PNET/B_025/QC",
+	"qc_folder":"/mnt/Despina/projects/PNET/B_025/QC",
+	"output_folder":"/mnt/Despina/projects/PNET/B_025",
 	"project":"PNET",
 	"runs":[],
 	"sample_name":"125",
