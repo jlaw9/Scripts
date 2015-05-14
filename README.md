@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-TRI_Scripts
+TRI Dev
 ===========
-This repository is meant to store the TRI scripts that aren't yet set in stone
-#test
-#test2
-#test3
-#test git push origin master
-=======
-legos
-=====
->>>>>>> 0a62e8b74e01c766de80bdc7e673582b581a17db
+This repository contains scripts created by Jeff L or Ozlem Y for various TRI and Yale projects.
+
+The [TRI Dev Wiki](https://github.com/jlaw9/TRI_Dev/wiki) contains documentation outlining the usage and instructions for the scripts stored here.
+The wiki also contains various other protocols and documents such as [How to mount a drive]() and [PGM Troubleshooting]()
+
+Contact Jeff Law at jlaw@childhooddiseases.org for questions.
