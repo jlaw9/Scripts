@@ -2,9 +2,7 @@ Push
 ====
 
 ## Script Overview
-The [push scripts](https://github.com/jlaw9/TRI_Dev/tree/master/Push) are stored in the TRI_Dev repository.
-
-The script [*start_Push.py*](https://github.com/jlaw9/TRI_Dev/tree/master/Push/start_Push.py) takes as input a CSV (See example below) which has all of the run or sample information necessary to push or copy sequencing files of a sample from a Torrent Suite sequencing PGM or Proton to a specific project/sample/run directory on another server. 
+The script *start_Push.py* takes as input a CSV (See example below) which has all of the run or sample information necessary to push or copy sequencing files of a sample from a Torrent Suite sequencing PGM or Proton to a specific project/sample/run directory on another server. 
 
 > Important note: This is simply a push script meaning only files where the script is located and run can be copied to another location.   
 
