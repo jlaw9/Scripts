@@ -29,9 +29,7 @@ ID,Plate Name,Plate Cell,Case/Control,ROT ID,Barcode No,Status
 This is the format of the input to _start\_Push.py_. If no barcodes are provided, then the script will adapt accordingly.
 
 > Important Note:  If using a mac, excel will add a funny character to the end of the line on a CSV. This will cause linux to read the file incorrectly. To prep the CSV for linux, open the CSV in [_vim_](file:///tmp/d20150412-3-m06vk1/Bioinformatics_Glossary.docx#Vim) and type the following two commands:
-
-	:set fileformat=unix
-	:%s/\r/\r/g
+> `:set fileformat=unix` and `:%s/\r/\r/g`
 
 **Server Information:** If you are pushing a large number of runs from one server to another, you do not want to have to type in the password for every file that is copied. See [Passwordless SSH Keys](https://github.com/jlaw9/TRI_Dev/wiki/Passwordless-SSH-Keys) for instructions on how to store an ssh-key from one server to another to bypass having to enter a password.
 
