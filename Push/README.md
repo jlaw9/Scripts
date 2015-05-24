@@ -1,5 +1,5 @@
-Push
-====
+Push Scripts
+============
 
 ## Script Overview
 The script *start_Push.py* takes as input a CSV (See example below) which has all of the run or sample information necessary to push or copy sequencing files of a sample from a Torrent Suite sequencing PGM or Proton to a specific project/sample/run directory on another server. 
