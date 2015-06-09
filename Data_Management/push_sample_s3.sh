@@ -34,7 +34,7 @@ for sample in $samples; do
 		if [ "$final_dir" != "" ]; then
 			# only one file should be matched for each of these commands
 			# TODO need to fix the vcf check
-			if [ `find $final_dir/*TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null` ]; then
+			if [ "`find $final_dir/*TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null`" ]; then
 				echo "pushing $final_dir"
 				vcf=`find $final_dir/*TSVC_variants.vcf -maxdepth 0 -type f 2>/dev/null | head -n 1`
 				vcf2="Einstein/${sample_name}/${sample_name}.vcf"
@@ -51,7 +51,7 @@ for sample in $samples; do
 
 				json=''
 				json2=''
-				if [ `find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null` ]; then
+				if [ "`find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null`" ]; then
 					json=`find $final_dir/*.json* -maxdepth 0 -type f 2>/dev/null | head -n 1`
 					json2="Einstein/${sample_name}/${sample_name}.json"
 				fi
