@@ -7,13 +7,13 @@ It finds the completed samples, and the pushes them using `push_files_s3.sh`
 
 `push_files_s3.sh` pushes any file(s) to amazon s3 storage. 
 The amazon [AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
-uploads the files for you. Here are the steps I ran to set it up:
+uploads the files for you. Here are the steps I ran to set it up. **Do not share the Access Key ID and Secret Acess Key with anyone!**
 
 	sudo pip install awscli
 	sudo pip install --upgrade awscli
 	aws configure
-		AWS Access Key ID [None]: AKIIOSFONN7EXAMPLE
-		AWS Secret Access Key [None]: wJalrXUtnEMI/KMEG/bPxRiCYEXAMPLEKEY
+		AWS Access Key ID [None]: EXAMPLEAKIIOSFONN7
+		AWS Secret Access Key [None]: EXAMPLEKEYwJalrXUtnEMI/KMEG/bPxRiCY
 		Default region name [None]: us-west-2
 		Default output format [None]: json
 
