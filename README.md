@@ -7,4 +7,6 @@ The wiki also contains various other protocols and documents such as:
 - [How to mount an external hard drive](https://github.com/jlaw9/TRI_Dev/wiki/Troubleshooting_Guide#how-to-mount-an-external-usb-or-hard-drive) 
 - [PGM Troubleshooting]()
 
+See also the repository [TRI_Scripts](https://github.com/jlaw9/TRI_Scripts/wiki) for the TRI QC, Driver, and Annotation scripts.
+
 Contact Jeff Law at jlaw@childhooddiseases.org for questions.
