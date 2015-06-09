@@ -17,7 +17,7 @@ uploads the files for you. Here are the steps I ran to set it up:
 		Default region name [None]: us-west-2
 		Default output format [None]: json
 
-You can access the actual data at: [[https://console.aws.amazon.com/s3/home?region=us-west-2#]]
+You can access the actual data at the [Amazon AWS Console](https://console.aws.amazon.com/s3/home?region=us-west-2#)
 
 `open_einstein.py` is a small script I made to open all of the samples I pushed to s3 so I could check to make sure
 they all pushed correctly. I also ran the bash command below to check to make sure the BAM file I pushed was the same 
