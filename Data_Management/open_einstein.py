@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# opens the samples pushed to s3 storage in a web browser  
+# made to run on a mac
+
 import webbrowser
 import time
 
