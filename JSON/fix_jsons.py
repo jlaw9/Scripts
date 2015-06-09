@@ -53,8 +53,10 @@ class Fix_Jsons:
 			# fix the PNET samples
 			sample_name = sample_path.split('/')[-1]
 			sample_json = "%s/%s.json"%(sample_path, sample_name)
-			self.ffpe = True
+			self.ffpe = None
+			self.pnet = None
 			try:
+				# if the name of the sample is not an integer, then the try/except block will fail
 				if int(sample_name) > 99:
 					print "Fresh sample"
 					shutil.move("%s/%s.json"%(sample_path, sample_name), "%s/A_%s.json"%(sample_path, sample_name))
@@ -72,6 +74,7 @@ class Fix_Jsons:
 					new_sample_json = "%s/B_0%s.json"%(sample_path, sample_name)
 					self.ffpe = True 
 				sample_json = new_sample_json
+				self.pnet = True
 			except ValueError:
 				pass
 			new_sample_path = "%s/%s"%(self.options.new_path, sample_path.split('/')[-1])	
@@ -125,6 +128,7 @@ class Fix_Jsons:
 				runs += glob.glob(run_path)
 		else:
 			runs = glob.glob("%s/Run[0-9]/*.json"%sample_path)
+			runs += glob.glob("%s/Run[0-9]/*.json_read"%sample_path)
 		print "found runs:",runs
 		return runs
 
@@ -132,53 +136,58 @@ class Fix_Jsons:
 	def fix_run_json(self, sample_path, sample_name, run):
 		run_json = json.load(open(run))
 		# if this run is already good to go, then skip it.
-		if 'json_type' in run_json:
-			return run
+		#if 'json_type' in run_json:
+		#	return run
+		#else:
+		#run_path = '/'.join(run.split('/')[:-1])
+		if self.ex_json['sample_type'] == 'tumor_normal':
+			run_path = "%s/%s/%s"%(sample_path, run.split('/')[-3], run.split('/')[-2])
+			run_type = run_path.split('/')[-2].lower()
 		else:
-			run_path = '/'.join(run.split('/')[:-1])
-			# fix the vcf file
-			if os.path.isfile("%s/tvc4.2_out/TSVC_variants.vcf"%run_path):
-				shutil.move("%s/tvc4.2_out/TSVC_variants.vcf"%run_path, "%s/4.2_TSVC_variants.vcf"%run_path)
+			run_path = "%s/%s"%(sample_path, run.split('/')[-2])
+			run_type = 'germline'
+		# fix the vcf file
+		if os.path.isfile("%s/tvc4.2_out/TSVC_variants.vcf"%run_path):
+			shutil.move("%s/tvc4.2_out/TSVC_variants.vcf"%run_path, "%s/4.2_TSVC_variants.vcf"%run_path)
+		try:
 			bam_name = glob.glob("%s/*.bam"%run_path)[0].split('/')[-1]
-			run_name = run.split('/')[-2]
-			run_num = run_path[-1]
-			json_name = "%s_%s.json"%(sample_name,run_name)
-			if self.ex_json['sample_type'] == 'tumor_normal':
-				run_type = run_path.split('/')[-2].lower()
-			else:
-				run_type = 'germline'
-			# Write the run's json file which will be used mainly to hold metrics.
-			jsonData = {
-				"analysis": {
-					"files": [bam_name]
-				},
-				"run_data": run_json['run_data'],
-				"json_file": "%s/%s"%(run_path,json_name), 
-				"json_type": "run",
-				"run_folder": run_path, 
-				"run_name": run_name, 
-				"run_num": run_num, 
-				"run_type": run_type, 
-				"pass_fail_status": "pending", 
-				"project": self.ex_json['project'], 
-				"sample": sample_name, 
-				"sample_folder": sample_path,
-				"sample_json": "%s/%s.json"%(sample_path, sample_name)
-			}
+		except IndexError:
+			bam_name = ''
+		run_name = run.split('/')[-2]
+		run_num = run_path[-1]
+		json_name = "%s_%s.json"%(sample_name,run_name)
+		# Write the run's json file which will be used mainly to hold metrics.
+		jsonData = {
+			"analysis": {
+				"files": [bam_name]
+			},
+			"run_data": run_json['run_data'],
+			"json_file": "%s/%s"%(run_path,json_name), 
+			"json_type": "run",
+			"run_folder": run_path, 
+			"run_name": run_name, 
+			"run_num": run_num, 
+			"run_type": run_type, 
+			"pass_fail_status": "pending", 
+			"project": self.ex_json['project'], 
+			"sample": sample_name, 
+			"sample_folder": sample_path,
+			"sample_json": "%s/%s.json"%(sample_path, sample_name)
+		}
 
-			# If this is a barcoded run, save the barcode
-			if re.search("Ion", bam_name):
-				jsonData['barcode'] = '_'.join(bam_name.split('_')[:-1])
+		# If this is a barcoded run, save the barcode
+		if re.search("Ion", bam_name):
+			jsonData['barcode'] = '_'.join(bam_name.split('_')[:-1])
 
-			if "report_name" in run_json:
-				jsonData['orig_path'] = run_json['report_name']
+		if "report_name" in run_json:
+			jsonData['orig_path'] = run_json['report_name']
 
-			# dump the json file
-			self.write_json(run, jsonData)
-			# move the json file
-			new_run_path = "%s/%s"%(run_path, json_name)
-			shutil.move(run, new_run_path)
-			return new_run_path
+		# dump the json file
+		self.write_json(run, jsonData)
+		# move the json file
+		new_run_path = "%s/%s"%(run_path, json_name)
+		shutil.move(run, new_run_path)
+		return new_run_path
 
 	# fix the paths in the json files
 	def fix_paths(self, orig_path, sample_path, sample_name, json_files):
@@ -192,22 +201,28 @@ class Fix_Jsons:
 						# fix the run paths
 						self.fix_paths(orig_path, sample_path, sample_name, json_data['runs'])
 						for run in json_data['runs']:
-							if self.ffpe:
-								if re.search("B_0", run.split('/')[-1]):
-									new_runs.append(run)
+							if self.pnet:
+								if self.ffpe:
+									if re.search("B_0", run.split('/')[-1]):
+										new_runs.append(run)
+									else:
+										new_run = "%s/B_0%s"%('/'.join(run.replace(orig_path, sample_path).split('/')[:-1]), run.split("/")[-1])
+										new_runs.append(new_run)
+										if os.path.isfile(run):
+											shutil.move(run, new_run)
 								else:
-									new_run = "%s/B_0%s"%('/'.join(run.replace(orig_path, sample_path).split('/')[:-1]), run.split("/")[-1])
-									new_runs.append(new_run)
-									if os.path.isfile(run):
-										shutil.move(run, new_run)
+									if re.search("A_", run.split('/')[-1]):
+										new_runs.append(run)
+									else:
+										new_run = "%s/A_%s"%('/'.join(run.replace(orig_path, sample_path).split('/')[:-1]), run.split("/")[-1])
+										new_runs.append(new_run)
+										if os.path.isfile(run):
+											shutil.move(run, new_run)
 							else:
-								if re.search("A_", run.split('/')[-1]):
-									new_runs.append(run)
-								else:
-									new_run = "%s/A_%s"%('/'.join(run.replace(orig_path, sample_path).split('/')[:-1]), run.split("/")[-1])
-									new_runs.append(new_run)
-									if os.path.isfile(run):
-										shutil.move(run, new_run)
+								new_run = "%s/%s"%('/'.join(run.replace(orig_path, sample_path).split('/')[:-1]), run.split("/")[-1])
+								new_runs.append(new_run)
+								if os.path.isfile(run):
+									shutil.move(run, new_run)
 						json_data['runs'] =  new_runs
 					elif isinstance(json_data[key], str):
 						json_data[key] = json_data[key].replace(orig_path, sample_path)
@@ -271,7 +286,10 @@ class Fix_Jsons:
 		pass
 
 	def fix_results_QC_json(self, sample_path):
+		sample_name = sample_path.split('/')[-1]
 		# fix the results_QC.json path
+		if os.path.isfile("%s/QC/%s_QC.json"%(sample_path, sample_name)):
+			shutil.move("%s/QC/%s_QC.json"%(sample_path, sample_name), "%s/QC/results_QC.json"%sample_path)
 		if os.path.isfile("%s/QC/results_QC.json_read"%sample_path):
 			shutil.move("%s/QC/results_QC.json_read"%sample_path, "%s/QC/results_QC.json"%sample_path)
 		if os.path.isfile("%s/QC/results_QC.json"%sample_path):
@@ -285,7 +303,8 @@ class Fix_Jsons:
 					#if qc_comp[-1] == qc_comp[-2]:
 					shutil.move("/".join(qc_comp), "%s/chr1%s"%("/".join(qc_comp[:-1]), qc_comp[-1]))
 			results_QC = json.load(open("%s/QC/results_QC.json"%sample_path))
-			new_results = {'QC_comparisons':{'chr1': {'normal_normal': {}, 'normal_tumor': {}, 'tumor_tumor': {}}}}
+			new_results = {'QC_comparisons':{'chr1': {'germline_germline': {}}}}
+			#new_results = {'QC_comparisons':{'chr1': {'normal_normal': {}, 'normal_tumor': {}, 'tumor_tumor': {}}}}
 			#new_results = {'QC_comparisons':{'all': {'normal_normal': {}, 'normal_tumor': {}, 'tumor_tumor': {}}}}
 			if 'all' in results_QC['QC_comparisons'] or 'chr1' in results_QC['QC_comparisons']:
 				pass
@@ -293,7 +312,7 @@ class Fix_Jsons:
 				for QC_comp in results_QC['QC_comparisons']:
 					#if ('chr' in results_QC['QC_comparisons'][QC_comp] and results_QC['QC_comparisons'][QC_comp]['chr'] == True) or self.options.chr1:
 					# just add to the chr1 for now.
-					new_results['QC_comparisons']['chr1']['%s_%s'%(results_QC['QC_comparisons'][QC_comp]['run1_type'], results_QC['QC_comparisons'][QC_comp]['run2_type'])][QC_comp] = results_QC['QC_comparisons'][QC_comp]
+					new_results['QC_comparisons']['chr1']['germline_germline'] = results_QC['QC_comparisons'][QC_comp]
 					#else:
 					#	new_results['QC_comparisons']['all']['%s_%s'%(results_QC['QC_comparisons'][QC_comp]['run1_type'], results_QC['QC_comparisons'][QC_comp]['run2_type'])][QC_comp] = results_QC['QC_comparisons'][QC_comp]
 				new_results['sample_name'] = results_QC['sample']
@@ -364,7 +383,7 @@ if __name__ == "__main__":
 	parser = OptionParser()
 	
 	# add the options to parse
-	parser.add_option('-n', '--new_path', dest='new_path', help='The new path of the sample. set the new path of the sample and fix the paths of the sample and run jsons (if theyre there)')
+	parser.add_option('-n', '--new_folder', dest='new_path', help='The new /path/to/folder/directory of the sample. set the new path of the sample and fix the paths of the sample and run jsons (if theyre there)')
 	parser.add_option('-m', '--move', dest='move', action="store_true", help='actually move the sample to this new path')
 	parser.add_option('-s', '--sample', dest='sample', help='move the specified sample')
 	parser.add_option('-p', '--project', dest='project', help='find all of the samples in a specified directory, then either move them (-n), or make json files (-j)')
