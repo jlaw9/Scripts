@@ -27,13 +27,10 @@ class Push_Data:
 
 		if self.options.proton == "PLU":
 			self.backup_path = PLUTO_BACKUP_PATH
-			self.ip = "192.168.200.42"
 		elif self.options.proton == "MER" or self.options.proton == "NEP":
 			self.backup_path = MERCURY_BACKUP_PATH
-			self.ip = "192.168.200.41"
 		elif self.options.proton == "ROT":
 			self.backup_path = PGM_BACKUP_PATH
-			self.ip = "130.132.19.237"
 	
 	# this function is meant to ensure the right columns are used to gather the run metadata when pushing a run.
 	# @param header_line the header line of the CSV to push. not yet implemented
@@ -46,10 +43,7 @@ class Push_Data:
 
 	# @param run the line of the CSV 
 	def push_run(self, run):
-		#print "pushing run: ", run.strip()
 		run = run.strip().split(",")
-		#print run
-		#print self.headers['run_num']
 		# first get the proton and run_num
 		if len(run[self.headers["run_id"]].split('-')) > 1:
 			proton = run[self.headers["run_id"]].split('-')[0]
@@ -177,7 +171,6 @@ if __name__ == '__main__':
 	parser.add_option('-H', '--header', dest='header', action="store_true", help='use this option if the CSV has a header line.')
 	parser.add_option('-o', '--output_csv', dest='output_csv', default='Push_Results.csv', help='The results of copying will be placed in this file. Default: [%default]')
 	parser.add_option('-l', '--log', dest='log', default="Push.log", help='Default: [%default]')
-	parser.add_option('-R', '--run_anyway', dest='run_anyway', help='if the server is not in the list of "accepted servers", push the data anyway')
 	#parser.add_option('-t', '--tumor_normal', dest='tn', action="store_true", help='If the project for which samples are being copied is a Tumor/Normal comparison project, use this option. \
 	#		Otherwise file structure will be treated as a germline only study.')
 
@@ -194,21 +187,6 @@ if __name__ == '__main__':
 		parser.print_help()
 		sys.exit(4)
 
-	# check if the proton name is valid
-	valid_protons = ['PLU', 'MER', 'NEP', 'ROT']
-	if options.proton not in valid_protons:
-		print "--USAGE-ERROR-- %s not a valid proton"%options.proton
-		parser.print_help()
-		sys.exit(1)
-
-	# check if the IP address is valid. More IP addresses can be added overtime
-	# ips: pluto, mercury, triton, triton's external, lam, bonnie's pgm
-	valid_ips = ["ionadmin@192.168.200.42", "ionadmin@192.168.200.41", "ionadmin@192.168.200.131", "ionadmin@12.32.211.40", "ionadmin@192.168.200.214", "ionadmin@130.132.19.237"] 
-	if options.server not in valid_ips and not options.run_anyway:
-		print "--USAGE-ERROR-- %s not a valid server or ipaddress to push to. If it is, sorry for being overly stringent. Use the -R option to run anyway. if the log file shows that nothing is being pushed, check your connection with the server."%options.server
-		parser.print_help()
-		sys.exit(1)
-
 	pusher = Push_Data(options)
 	with open(options.input, 'r') as input_file:
 		header_line=''	
@@ -219,6 +197,6 @@ if __name__ == '__main__':
 		for run in input_file:
 			pusher.push_run(run)
 			# stagger the push submits so they don't overwrite the sample's json file.
-			time.sleep(3)
+			#time.sleep(3)
 
 	print "Finished submitting runs to be pushed"
