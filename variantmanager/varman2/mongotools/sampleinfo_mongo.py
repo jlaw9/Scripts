@@ -85,7 +85,6 @@ def is_fully_annotated(sample, db=None):
 def get_vcf_files():
     sample_info = get_sample_info()
 
-    print sample_info
     vcf_files = {}
     for id in sample_info:
         vcf_files.update({id: sample_info[id]['VCF']})
