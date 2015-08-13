@@ -160,7 +160,7 @@ if __name__ == "__main__":
                                                'follow this format exactly, no quotes for strings are necessary.',
                             action='store', nargs='*')
     parser_add.add_argument('-f', '--sample_info', help='A file specifying sample info informatin to add to the sample info.',
-                            action='store', nargs='*')
+                            action='store')
     parser_add.add_argument('-e', '--email', help='Emails to send the resulting csv to.',
                             action='store', nargs='*')
 

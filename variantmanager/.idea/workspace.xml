@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b51ea2b3-3d87-4e38-ba70-d9a0899b52fd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/varman2/add.py" afterPath="$PROJECT_DIR$/varman2/add.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/launch_varman.py" afterPath="$PROJECT_DIR$/launch_varman.py" />
     </list>
     <ignored path="variantmanager.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="launch_varman.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="launch_varman.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/launch_varman.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="78" column="71" selection-start-line="78" selection-start-column="71" selection-end-line="78" selection-end-column="71" />
+            <state vertical-scroll-proportion="0.54971856">
+              <caret line="162" column="28" selection-start-line="162" selection-start-column="28" selection-end-line="162" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -50,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="add.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/varman2/add.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4052533">
+            <state vertical-scroll-proportion="0.0">
               <caret line="22" column="43" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
               <folding />
             </state>
@@ -199,9 +199,9 @@
         <option value="$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py" />
         <option value="$PROJECT_DIR$/varman2/mongotools/hotspot_mongo.py" />
         <option value="$PROJECT_DIR$/varman2/hotspot.py" />
-        <option value="$PROJECT_DIR$/launch_varman.py" />
         <option value="$PROJECT_DIR$/varman2/argexecutor.py" />
         <option value="$PROJECT_DIR$/varman2/add.py" />
+        <option value="$PROJECT_DIR$/launch_varman.py" />
       </list>
     </option>
   </component>
@@ -988,14 +988,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/launch_varman.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="78" column="71" selection-start-line="78" selection-start-column="71" selection-end-line="78" selection-end-column="71" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/varman2/load_variants.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1016,8 +1008,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/varman2/add.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4052533">
+        <state vertical-scroll-proportion="0.0">
           <caret line="22" column="43" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/launch_varman.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.54971856">
+          <caret line="162" column="28" selection-start-line="162" selection-start-column="28" selection-end-line="162" selection-end-column="28" />
           <folding />
         </state>
       </provider>
