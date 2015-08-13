@@ -147,11 +147,11 @@ if __name__ == "__main__":
                                                      'see readme for more information.', required=True)
     # Specify the options for the parser_add
     parser_add.set_defaults(which="add")
-    parser_add.add_argument('-1', help='Multiple key:value arguments with new sample information to be added'
+    parser_add.add_argument('-1','--one_sample', help='Multiple key:value arguments with new sample information to be added'
                                                'it must be formatted in a specific way, key1:value1 key2:value2 '
                                                'follow this format exactly, no quotes for strings are necessary.',
                             action='store', nargs='*')
-    parser_add.add_argument('-f', help='A file specifying sample info informatin to add to the sample info.',
+    parser_add.add_argument('-f', '--sample_info', help='A file specifying sample info informatin to add to the sample info.',
                             action='store', nargs='*')
     parser_add.add_argument('-e', '--email', help='Emails to send the resulting csv to.',
                             action='store', nargs='*')
