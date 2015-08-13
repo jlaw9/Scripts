@@ -33,6 +33,14 @@ class LoadVariants:
 
             vcf_files = sampleinfo_mongo.get_vcf_files()
 
+            # CHECK IF THE VCFS ARE ALL VALID BEFORE STARTING
+            for sample in vcf_files:
+                vcf_file = vcf_files[sample]
+                if not os.path.isfile(vcf_file):
+                    self.__log_invalid_vcf_file(vcf_file)
+                    sys.exit(1)
+
+
             pending_vcf_files = []
             for sample in vcf_files:
 
@@ -199,10 +207,13 @@ class LoadVariants:
         self.logger.info('Variants successfully loaded for %s.' % sample)
 
     def __log_hotspot_sample_already_loaded(self, sample):
-        self.logger.debug('Hotspot variants have already been loaded from sample %s' % (sample))
+        self.logger.debug('Hotspot variants have already been loaded from sample %s' % sample)
 
     def __log_adding_hotspot_sample_to_queue(self, sample, vcf_file):
         self.logger.info('Found unloaded hotspot sample %s in file %s. Adding to queue.' % (sample, vcf_file))
+
+    def __log_invalid_vcf_file(self, vcf_file):
+        self.logger.info('A vcf file that was submitted is not valid: %s' % vcf_file)
 
 
 
