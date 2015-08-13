@@ -32,7 +32,7 @@ class ArgExecutor:
         self.args = args
 
     def add(self):
-        new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['new_sample']]
+        new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['one_sample']]
         new_sample = dict(new_sample)
 
         adder = Add()
