@@ -19,7 +19,7 @@ class Add:
         self.project_config = config_mongo.get_project_config()
         self.logger = Logger.get_logger()
 
-    def add(self, new_sample_dict):
+    def add_one_sample(self, new_sample_dict):
         if 'SAMPLE' not in new_sample_dict:
             self.logger.info("The new sample entry does not contain a SAMPLE key.")
             sys.exit()
@@ -30,6 +30,8 @@ class Add:
             sample = new_sample_dict["SAMPLE"]
             if not variants_mongo.is_sample_loaded(sample, "orig"):
                 self.__load_variants(sample)
+    def add_sample_info(self):
+
 
     def __load_variants(self, sample):
         self.logger.info("Loading the variants from the new sample.")

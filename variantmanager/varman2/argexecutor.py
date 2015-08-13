@@ -32,24 +32,29 @@ class ArgExecutor:
         self.args = args
 
     def add(self):
-        new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['one_sample']]
-        new_sample = dict(new_sample)
 
-        adder = Add()
-        adder.add(new_sample)
-        if len(self.args['email']) > 0:
+        if self.args['one_sample'] is not None:
+            new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['one_sample']]
+            new_sample = dict(new_sample)
 
-            if not sampleinfo_mongo.is_fully_annotated(new_sample['SAMPLE']):
-                annotate = Annotate()
-                annotate.annotate_sample(new_sample['SAMPLE'], 'orig')
+            adder = Add()
+            adder.add_one_sample(new_sample)
+            if len(self.args['email']) > 0:
 
-            output_files = Output()
-            final_file = output_files.sample_variants_csv(new_sample['SAMPLE'], 'orig')
+                if not sampleinfo_mongo.is_fully_annotated(new_sample['SAMPLE']):
+                    annotate = Annotate()
+                    annotate.annotate_sample(new_sample['SAMPLE'], 'orig')
 
-            message = "Here are all the variants for the sample %s with their QC status." % new_sample['SAMPLE']
-            for address in self.args['email']:
-                self.__log_sending_email(address)
-                output_bash.email_file(message, final_file, address)
+                output_files = Output()
+                final_file = output_files.sample_variants_csv(new_sample['SAMPLE'], 'orig')
+
+                message = "Here are all the variants for the sample %s with their QC status." % new_sample['SAMPLE']
+                for address in self.args['email']:
+                    self.__log_sending_email(address)
+                    output_bash.email_file(message, final_file, address)
+
+        elif self.args['sample_info'] is not None:
+            print self.args['sample_info']
 
     def delete(self):
         delete = Delete()

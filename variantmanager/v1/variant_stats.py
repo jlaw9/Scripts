@@ -324,7 +324,7 @@ class VariantStats:
                                                 pass_count, fail_count, unknown_count]})
             else:
                 mydict[dict_key][0] += 1
-                mydict[dict_key][1].add(unique_var_id)
+                mydict[dict_key][1].add_one_sample(unique_var_id)
                 mydict[dict_key][2] += allele_frq
                 mydict[dict_key][3] += read_depth
                 mydict[dict_key][4] += sig_diff_count
@@ -463,7 +463,7 @@ class VariantStats:
                                                 pass_count, fail_count, unknown_count]})
             else:
                 mydict[dict_key][0] += 1
-                mydict[dict_key][1].add(unique_var_id)
+                mydict[dict_key][1].add_one_sample(unique_var_id)
                 mydict[dict_key][2] += allele_frq
                 mydict[dict_key][3] += read_depth
                 mydict[dict_key][4] += sig_diff_count
