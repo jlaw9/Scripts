@@ -46,6 +46,7 @@ class Add:
 
                 for line in infile:
                     new_sample = {header[i]: line.strip().split()[i] for i in range(len(line.strip().split()))}
+                    new_sample.update({"PROJECT": self.project_config['project_name']})
                     sampleinfo_mongo.add_new_sample(new_sample, db)
 
             client.close()
