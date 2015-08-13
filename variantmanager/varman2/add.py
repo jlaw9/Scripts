@@ -47,8 +47,6 @@ class Add:
 
             client.close()
 
-
-
     def __load_variants(self, sample):
         self.logger.info("Loading the variants from the new sample.")
         load_vars = LoadVariants('orig')

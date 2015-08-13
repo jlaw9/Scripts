@@ -54,7 +54,6 @@ class ArgExecutor:
 
         elif self.args['sample_info'] is not None:
 
-            print self.args['sample_info']
             adder.add_sample_info(self.args['sample_info'])
 
     def delete(self):
