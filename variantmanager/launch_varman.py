@@ -71,6 +71,8 @@ class VariantManager:
                   "a config file for this project to begin managing it.")
             sys.exit()
 
+        print args
+        sys.exit()
         if args['add'] is not None:
             print "You chose to add"
             sys.exit()
