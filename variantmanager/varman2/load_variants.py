@@ -43,7 +43,7 @@ class LoadVariants:
 
             pending_vcf_files = []
             for sample in vcf_files:
-
+                print sample
                 vcf_file = vcf_files[sample]
 
                 is_loaded = variants_mongo.is_sample_loaded(sample, self.variant_type, db)
