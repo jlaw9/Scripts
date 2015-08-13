@@ -42,7 +42,7 @@ class Add:
             db, client = mongo.get_connection()
 
             with open(sample_info_file, 'r') as infile:
-                header = infile.strip().split()
+                header = infile.readline().strip().split()
                 print header
 
             client.close()
