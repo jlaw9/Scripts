@@ -45,8 +45,7 @@ class Add:
                 header = infile.readline().strip().split()
 
                 for line in infile:
-                    new_sample = {header[i]: line.strip().split()[i]
-                                  for i in range(len(line.strip().split())) for line in infile}
+                    new_sample = {header[i]: line.strip().split()[i] for i in range(len(line.strip().split()))}
                     print new_sample
             client.close()
 
