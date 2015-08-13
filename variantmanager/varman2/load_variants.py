@@ -32,8 +32,7 @@ class LoadVariants:
             client, db = mongo.get_connection()
 
             vcf_files = sampleinfo_mongo.get_vcf_files()
-            print vcf_files
-            sys.exit()
+
             pending_vcf_files = []
             for sample in vcf_files:
 
