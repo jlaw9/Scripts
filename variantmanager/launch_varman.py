@@ -71,6 +71,10 @@ class VariantManager:
                   "a config file for this project to begin managing it.")
             sys.exit()
 
+        if args['add'] is not None:
+            print "You chose to add"
+            sys.exit()
+
     def __parse_config(self, config_file):
         out_dict = {}
 
