@@ -39,12 +39,15 @@ class Add:
             sys.exit(1)
 
         else:
-            db, client = mongo.get_connection()
+            client, db = mongo.get_connection()
 
             with open(sample_info_file, 'r') as infile:
                 header = infile.readline().strip().split()
-                print header
 
+                for line in infile:
+                    new_sample = {header[i]: line.strip().split()[i]
+                                  for i in range(len(line.strip().split())) for line in infile}
+                    print new_sample
             client.close()
 
     def __load_variants(self, sample):
