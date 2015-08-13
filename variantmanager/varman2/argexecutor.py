@@ -31,11 +31,6 @@ class ArgExecutor:
         self.logger = Logger.get_logger()
         self.args = args
 
-    def setup_project(self):
-        self.logger.info("Setting up project and loading the sample_info file into the database...")
-        input_man = SampleInputManager()
-        input_man.load_sample_info_from_file()
-
     def add(self):
         new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['new_sample']]
         new_sample = dict(new_sample)

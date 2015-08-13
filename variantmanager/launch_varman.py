@@ -42,10 +42,7 @@ class VariantManager:
         self.logger = Logger.get_logger()
 
         argexecute = ArgExecutor(self.args)
-        if self.args['which'] == 'setup':
-            argexecute.setup_project()
-
-        elif self.args['which'] == 'add':
+        if self.args['which'] == 'add':
             argexecute.add()
 
         elif self.args['which'] == 'delete':
