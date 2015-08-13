@@ -30,8 +30,18 @@ class Add:
             sample = new_sample_dict["SAMPLE"]
             if not variants_mongo.is_sample_loaded(sample, "orig"):
                 self.__load_variants(sample)
-    def add_sample_info(self):
-        pass
+
+    def add_sample_info(self, sample_info_file):
+        db, client = mongo.get_connection()
+
+        with open(sample_info_file, 'r') as infile:
+            header = infile.strip().split()
+            print header
+
+
+        client.close()
+
+
 
     def __load_variants(self, sample):
         self.logger.info("Loading the variants from the new sample.")

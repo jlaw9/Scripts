@@ -5,7 +5,6 @@
 
 from varman2.mongotools import config_mongo, variants_mongo, sampleinfo_mongo
 from varman2 import Logger
-from sample_info_manager import SampleInputManager
 from add import Add
 from delete import Delete
 from load_variants import LoadVariants
@@ -32,12 +31,12 @@ class ArgExecutor:
         self.args = args
 
     def add(self):
+        adder = Add()
 
         if self.args['one_sample'] is not None:
             new_sample = [tuple(entry.strip('}').strip('{').strip(',').split(':')) for entry in self.args['one_sample']]
             new_sample = dict(new_sample)
 
-            adder = Add()
             adder.add_one_sample(new_sample)
             if len(self.args['email']) > 0:
 
@@ -54,8 +53,9 @@ class ArgExecutor:
                     output_bash.email_file(message, final_file, address)
 
         elif self.args['sample_info'] is not None:
+
             print self.args['sample_info']
-            sys.exit()
+            adder.add_sample_info(self.args['sample_info'])
 
     def delete(self):
         delete = Delete()

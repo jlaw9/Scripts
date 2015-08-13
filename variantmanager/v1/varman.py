@@ -12,7 +12,6 @@ from bash_commands import BashCommands
 from load_variants import LoadVariants
 from mongo_tools import MongoTools
 from plink_tools import Plink
-from varman2.sample_info_manager import SampleInputManager
 from hotspot import Hotspot
 
 __author__ = 'mdurrant'
