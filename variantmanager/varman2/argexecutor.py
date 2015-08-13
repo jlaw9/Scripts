@@ -55,6 +55,7 @@ class ArgExecutor:
 
         elif self.args['sample_info'] is not None:
             print self.args['sample_info']
+            sys.exit()
 
     def delete(self):
         delete = Delete()

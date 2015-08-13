@@ -31,7 +31,7 @@ class Add:
             if not variants_mongo.is_sample_loaded(sample, "orig"):
                 self.__load_variants(sample)
     def add_sample_info(self):
-
+        pass
 
     def __load_variants(self, sample):
         self.logger.info("Loading the variants from the new sample.")
