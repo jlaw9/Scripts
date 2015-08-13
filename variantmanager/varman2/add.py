@@ -8,6 +8,7 @@ from varman2 import Logger
 from varman2.load_variants import LoadVariants
 from bashcommands import bash, hotspot_bash
 from multiprocessing import Process
+import os
 
 # -----------------------------------------------------------
 # ----------- FUNCTIONS DEFINED HERE ------------------------
@@ -32,14 +33,19 @@ class Add:
                 self.__load_variants(sample)
 
     def add_sample_info(self, sample_info_file):
-        db, client = mongo.get_connection()
 
-        with open(sample_info_file, 'r') as infile:
-            header = infile.strip().split()
-            print header
+        if not os.path.isfile(sample_info_file):
+            self.__log_invalid_file(sample_info_file)
+            sys.exit(1)
 
+        else:
+            db, client = mongo.get_connection()
 
-        client.close()
+            with open(sample_info_file, 'r') as infile:
+                header = infile.strip().split()
+                print header
+
+            client.close()
 
 
 
@@ -47,3 +53,6 @@ class Add:
         self.logger.info("Loading the variants from the new sample.")
         load_vars = LoadVariants('orig')
         load_vars.load_single(sample)
+
+    def __log_invalid_file(self, file_path):
+        self.logger.error("The file path you provided is invalid: %s" % file_path)
