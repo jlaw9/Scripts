@@ -95,7 +95,6 @@ class VariantManager:
                 ref_fasta = config_file['ref_fasta']
                 tvc_params = config_file['tvc_params']
                 project_bed = config_file['project_bed']
-                sample_info = config_file['sample_info']
                 bash.make_dir(output_dir)
 
             except KeyError:
@@ -106,8 +105,8 @@ class VariantManager:
             bash.make_file(log_file)
 
             config_data = {'log_file': log_file, 'output_dir': output_dir, 'project_name': args['project_name'],
-                           'ref_fasta': ref_fasta, 'tvc_params': tvc_params, 'project_bed': project_bed,
-                           'sample_info': sample_info}
+                           'ref_fasta': ref_fasta, 'tvc_params': tvc_params, 'project_bed': project_bed
+                            }
             config_mongo.create_project_config(config_data)
 
 # start here when the script is launched
