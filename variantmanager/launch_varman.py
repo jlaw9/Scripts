@@ -71,10 +71,8 @@ class VariantManager:
                   "a config file for this project to begin managing it.")
             sys.exit()
 
-        print args
-        sys.exit()
-        if args['add'] is not None:
-            print "You chose to add"
+        if args['which'] == "add" and args['one_sample'] is not None and args['sample_info'] is not None:
+            print "You may only choose --one_sample or --sample_info, not both"
             sys.exit()
 
     def __parse_config(self, config_file):
