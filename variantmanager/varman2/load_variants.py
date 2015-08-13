@@ -40,7 +40,6 @@ class LoadVariants:
                     self.__log_invalid_vcf_file(vcf_file)
                     sys.exit(1)
 
-
             pending_vcf_files = []
             for sample in vcf_files:
 
