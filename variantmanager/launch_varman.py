@@ -75,6 +75,10 @@ class VariantManager:
             print "You may only choose --one_sample or --sample_info, not both"
             sys.exit()
 
+        if args['which'] == "add" and args['one_sample'] is None and args['sample_info'] is None:
+            print "You must choose either --one_sample or --sample_info"
+            sys.exit()
+
     def __parse_config(self, config_file):
         out_dict = {}
 
