@@ -221,6 +221,11 @@ class Hotspot:
 
         dup_dict = {}
         for hotspot in hotspots:
+            """
+            We are skipping multi-allelic variants because they are too difficult to work with
+            """
+            if len(hotspot['ALT']) > 1:
+                continue
 
             chrom, pos, ref, alt = str(hotspot['CHROM']), str(hotspot['POS']), hotspot['REF'], ",".join(hotspot['ALT'])
             dict_key = "|".join([chrom, pos])
@@ -249,7 +254,7 @@ class Hotspot:
                 """
                 We are skipping multi-allelic variants because they are too difficult to work with
                 """
-                if len(hotspot['ALT']) > 0:
+                if len(hotspot['ALT']) > 1:
                     continue
 
                 chrom, pos, ref, alt = str(hotspot['CHROM']), str(hotspot['POS']), hotspot['REF'], ",".join(hotspot['ALT'])
