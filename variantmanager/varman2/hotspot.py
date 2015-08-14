@@ -246,6 +246,11 @@ class Hotspot:
         dup_dict = {}
         for hotspot in hotspots:
             if "ANNOTATION" not in hotspot.keys():
+                """
+                We are skipping multi-allelic variants because they are too difficult to work with
+                """
+                if len(hotspot['ALT']) > 0:
+                    continue
 
                 chrom, pos, ref, alt = str(hotspot['CHROM']), str(hotspot['POS']), hotspot['REF'], ",".join(hotspot['ALT'])
                 dict_key = "|".join([chrom, pos])
