@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b51ea2b3-3d87-4e38-ba70-d9a0899b52fd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/varman2/load_variants.py" afterPath="$PROJECT_DIR$/varman2/load_variants.py" />
-    </list>
+    <list default="true" id="b51ea2b3-3d87-4e38-ba70-d9a0899b52fd" name="Default" comment="" />
     <ignored path="variantmanager.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -40,12 +38,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="load_variants.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="load_variants.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/varman2/load_variants.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.30800822">
-              <caret line="44" column="36" selection-start-line="44" selection-start-column="36" selection-end-line="44" selection-end-column="36" />
-              <folding />
+            <state vertical-scroll-proportion="-8.407408">
+              <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+              <folding>
+                <element signature="e#493#536#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -94,11 +94,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="hotspot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="hotspot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/varman2/hotspot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="65" column="13" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.5523256">
+              <caret line="232" column="66" selection-start-line="232" selection-start-column="66" selection-end-line="232" selection-end-column="66" />
               <folding>
                 <element signature="e#52#61#0" expanded="true" />
               </folding>
@@ -184,7 +184,6 @@
         <option value="$PROJECT_DIR$/varman2/annotate.py" />
         <option value="$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py" />
         <option value="$PROJECT_DIR$/varman2/mongotools/hotspot_mongo.py" />
-        <option value="$PROJECT_DIR$/varman2/hotspot.py" />
         <option value="$PROJECT_DIR$/launch_varman.py" />
         <option value="$PROJECT_DIR$/varman2/sample_info_manager.py" />
         <option value="$PROJECT_DIR$/v1/varman.py" />
@@ -192,6 +191,7 @@
         <option value="$PROJECT_DIR$/varman2/add.py" />
         <option value="$PROJECT_DIR$/varman2/mongotools/sampleinfo_mongo.py" />
         <option value="$PROJECT_DIR$/varman2/load_variants.py" />
+        <option value="$PROJECT_DIR$/varman2/hotspot.py" />
       </list>
     </option>
   </component>
@@ -251,24 +251,6 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="variantmanager">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="mongotools">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -557,7 +539,7 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34698796" sideWeight="0.49713877" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34457833" sideWeight="0.49713877" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891566" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24578314" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -927,16 +909,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/hotspot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="65" column="13" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
-          <folding>
-            <element signature="e#52#61#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/varman2/genotypetools.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -999,9 +971,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/varman2/load_variants.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30800822">
-          <caret line="44" column="36" selection-start-line="44" selection-start-column="36" selection-end-line="44" selection-end-column="36" />
-          <folding />
+        <state vertical-scroll-proportion="-8.407408">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#493#536#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/varman2/hotspot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5523256">
+          <caret line="232" column="66" selection-start-line="232" selection-start-column="66" selection-end-line="232" selection-end-column="66" />
+          <folding>
+            <element signature="e#52#61#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

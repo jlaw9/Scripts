@@ -1,15 +1,18 @@
 #! /usr/bin/env python2.7
 
 # Goal: Now that all of the variants from all files that successsfully ran annovar.
+try:
+    import sys
+    import os
+    import vcf
+    from varman2.mongotools import config_mongo, sampleinfo_mongo, variants_mongo, hotspot_mongo, mongo
+    from varman2 import Logger
+    from QC import QC
+    import genotypetools
+    from glob import glob
 
-import sys
-import os
-import vcf
-from varman2.mongotools import config_mongo, sampleinfo_mongo, variants_mongo, hotspot_mongo, mongo
-from varman2 import Logger
-from QC import QC
-import genotypetools
-from glob import glob
+except ImportError:
+    print("ERROR: Not all dependences are loaded, please make sure the following modules are loaded:")
 
 from bashcommands import bash, hotspot_bash
 from multiprocessing import Process
@@ -39,7 +42,6 @@ class LoadVariants:
                 if not os.path.isfile(vcf_file):
                     self.__log_invalid_vcf_file(vcf_file)
                     sys.exit(1)
-
 
             pending_vcf_files = []
             for sample in vcf_files:

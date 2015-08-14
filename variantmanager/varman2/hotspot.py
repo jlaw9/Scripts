@@ -231,6 +231,10 @@ class Hotspot:
                 dup_dict[dict_key].append(hotspot)
             else:
                 chrom, pos, ref, alt = self.__return_best_hotspot(dup_dict)
+                if chrom == 23:
+                    chrom = 'X'
+                elif chrom == 24:
+                    chrom = 'Y'
                 list_entry = [chrom, pos, '.', str(ref), str(alt)]
                 variant = list_entry + ['.', '.', '.', '.', '.']
                 out_file.write("\t".join([str(val) for val in variant]) + "\n")
