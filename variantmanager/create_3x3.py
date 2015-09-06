@@ -11,7 +11,7 @@ class Create3x3:
     def run(self):
         for file_path in [self.normal_vcf, self.tumor_vcf, self.run_depths]:
             if not os.path.isfile(file_path):
-                print "One of the files you gave was invalid"
+                print "One of the files you gave was invalid: %s" % file_path
                 sys.exit()
 
 if __name__ == '__main__':
