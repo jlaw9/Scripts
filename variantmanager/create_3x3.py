@@ -12,7 +12,14 @@ class Create3x3:
         for file_path in [self.normal_vcf, self.tumor_vcf, self.run_depths]:
             if not os.path.isfile(file_path):
                 print "One of the files you gave was invalid: %s" % file_path
-                sys.exit()
+
+        eligible_bases = self.get_eligible_bases()
+
+    def get_eligible_bases(self):
+        with open(self.run_depths,'r') as infile:
+            for line in infile:
+                print line
+
 
 if __name__ == '__main__':
     """

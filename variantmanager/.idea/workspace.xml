@@ -47,7 +47,7 @@
         <entry file="file://$PROJECT_DIR$/create_3x3.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.58027077">
-              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+              <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
               <folding>
                 <element signature="e#20#35#0" expanded="true" />
               </folding>
@@ -932,7 +932,7 @@
     <entry file="file://$PROJECT_DIR$/create_3x3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.58027077">
-          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+          <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
           <folding>
             <element signature="e#20#35#0" expanded="true" />
           </folding>
