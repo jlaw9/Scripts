@@ -30,9 +30,10 @@ class Create3x3:
     def get_change_counts(self):
         self.change_counts = {'WT_WT':0, 'WT_HET':0, "WT_HOM":0,'HET_WT':0, 'HET_HET':0, "HET_HOM":0, \
                 'HOM_WT':0, 'HOM_HET':0, "HOM_HOM":0}
-        for line in open(self.matched_variants, 'r'):
-            line = line.strip().split()
-            print line
+        with open(self.matched_variants, 'r') as infile:
+            for line in infile:
+                line = line.strip().split()
+                print line
 
 
 
