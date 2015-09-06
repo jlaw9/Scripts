@@ -33,9 +33,9 @@ class Create3x3:
         with open(self.matched_variants, 'r') as infile:
             header = infile.readline().strip().split("\t")
             print header
-            sys.exit()
+
             for line in infile:
-                line = line.strip().split()
+                line = {header[i]:line.strip().split()[i] for i in line.strip().split()}
                 print line
 
 
