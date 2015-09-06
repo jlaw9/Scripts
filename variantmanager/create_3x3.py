@@ -22,7 +22,7 @@ class Create3x3:
             for line in infile:
                 line = line.strip().split()
                 line[1], line[2], line[3] = int(line[1]), int(line[2]), int(line[3])
-                if line[2] >= 30:
+                if line[2] >= 30 and line[3] >= 30:
                     eligible_bases += 1
 
 
@@ -33,7 +33,7 @@ class Create3x3:
 if __name__ == '__main__':
     """
     test command on triton:
-    python create_3x3.py -n /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014//VCF1_Final.vcf -t /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014//VCF2_Final.vcf -rd /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths
+    python create_3x3.py -n /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014//VCF1_Final.vcf -t /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014//VCF2_Final.vcf -rd /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths
 
     """
     parser = argparse.ArgumentParser(description='VariantManager is a software suite that provides '
