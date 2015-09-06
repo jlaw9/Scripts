@@ -14,7 +14,7 @@ class Create3x3:
                 print "One of the files you gave was invalid: %s" % file_path
 
         run_title = "all: " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[0][3:] + \
-                    "  -  vs  -  " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[1]
+                    "    -  vs  -    " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[1]
 
         eligible_bases = self.get_eligible_bases()
         three_by_three = self.generate_three_by_three(eligible_bases)
