@@ -1,5 +1,6 @@
 __author__ = 'matt'
 import argparse
+import os, sys
 
 class Create3x3:
     def __init__(self, normal_vcf, tumor_vcf, run_depths):
@@ -8,12 +9,17 @@ class Create3x3:
         self.run_depths = run_depths
 
     def run(self):
-        print self.normal_vcf
-        print self.tumor_vcf
-        print self.run_depths
+        for file_path in [self.normal_vcf, self.tumor_vcf, self.run_depths]:
+            if not os.path.isfile(file_path):
+                print "One of the files you gave was invalid"
+                sys.exit()
 
 if __name__ == '__main__':
+    """
+    test command on triton:
+    python create_3x3.py -n /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/VCF1_Final.vcf -t /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/VCF2_Final.vcf -rd /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Run_depths
 
+    """
     parser = argparse.ArgumentParser(description='VariantManager is a software suite that provides '
                                                  'several variant managing services.')
 
