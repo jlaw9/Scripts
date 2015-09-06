@@ -15,6 +15,7 @@ class Create3x3:
 
         eligible_bases = self.get_eligible_bases()
         change_counts = self.get_change_counts()
+        print change_counts
 
     def get_eligible_bases(self):
         eligible_bases = 0
@@ -28,22 +29,41 @@ class Create3x3:
         return eligible_bases
 
     def get_change_counts(self):
-        self.change_counts = {'WT_WT':0, 'WT_HET':0, "WT_HOM":0,'HET_WT':0, 'HET_HET':0, "HET_HOM":0, \
+        change_counts = {'WT_WT':0, 'WT_HET':0, "WT_HOM":0,'HET_WT':0, 'HET_HET':0, "HET_HOM":0, \
                 'HOM_WT':0, 'HOM_HET':0, "HOM_HOM":0}
         with open(self.matched_variants, 'r') as infile:
             header = infile.readline().strip().split("\t")
             print header
 
             for line in infile:
-                line = {header[i]:line.strip().split()[i] for i in range(len(line.strip().split()))}
-                print line
+                var = {header[i]: line.strip().split()[i] for i in range(len(line.strip().split()))}
+                if var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'WT':
+                    self.change_counts['WT_WT'] += 1
+                elif var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'HET':
+                    self.change_counts['WT_HET'] += 1
+                elif var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'HOM':
+                    self.change_counts['WT_HOM'] += 1
+                elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'WT':
+                    self.change_counts['HET_WT'] += 1
+                elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'HET':
+                    self.change_counts['HET_HET'] += 1
+                elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'HOM':
+                    self.change_counts['HET_HOM'] += 1
+                elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'WT':
+                    self.change_counts['HOM_WT'] += 1
+                elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'HET':
+                    self.change_counts['HOM_HET'] += 1
+                elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'HOM':
+                    self.change_counts['HOM_HOM'] += 1
+
+            return change_counts
 
 
 
 if __name__ == '__main__':
     """
     test command on triton:
-    python create_3x3.py -rd /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths -mv /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/matched_variants.csv
+    python2.7 create_3x3.py -rd /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths -mv /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/matched_variants.csv
 
     """
     parser = argparse.ArgumentParser(description='VariantManager is a software suite that provides '
