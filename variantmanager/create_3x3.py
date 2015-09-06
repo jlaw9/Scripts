@@ -14,7 +14,7 @@ class Create3x3:
                 print "One of the files you gave was invalid: %s" % file_path
 
         eligible_bases = self.get_eligible_bases()
-        three_by_three = self.get_change_counts(eligible_bases)
+        three_by_three = self.generate_three_by_three(eligible_bases)
 
         print three_by_three
 
@@ -29,7 +29,7 @@ class Create3x3:
 
         return eligible_bases
 
-    def get_change_counts(self, eligible_bases):
+    def generate_three_by_three(self, eligible_bases):
         change_counts = {'WT_WT':0, 'WT_HET':0, "WT_HOM":0,'HET_WT':0, 'HET_HET':0, "HET_HOM":0, \
                 'HOM_WT':0, 'HOM_HET':0, "HOM_HOM":0}
         with open(self.matched_variants, 'r') as infile:
@@ -59,6 +59,10 @@ class Create3x3:
                     change_counts['HOM_HOM'] += 1
 
             change_counts['WT_WT'] = (eligible_bases - sum(change_counts.values())) + change_counts['WT_WT']
+            change_counts['error_count'] = change_counts['HET_WT'] + change_counts['HOM_WT'] + change_counts['HOM_HET']
+            change_counts['error_rate'] = float(change_counts['error_count']) / float(eligible_bases)
+            change_counts['total_eligible_bases'] = eligible_bases
+
             return change_counts
 
 
