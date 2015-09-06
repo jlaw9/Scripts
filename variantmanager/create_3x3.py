@@ -13,7 +13,7 @@ class Create3x3:
             if not os.path.isfile(file_path):
                 print "One of the files you gave was invalid: %s" % file_path
 
-        run_title = os.path.abspath(self.run_depths).split("/")
+        run_title = os.path.abspath(self.run_depths).split("/")[-2]
         print run_title
         sys.exit()
 
