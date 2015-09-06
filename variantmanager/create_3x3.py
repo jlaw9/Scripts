@@ -14,13 +14,12 @@ class Create3x3:
                 print "One of the files you gave was invalid: %s" % file_path
 
         run_title = os.path.abspath(self.run_depths).split("/")[-2].split('vs')[0] + \
-                    " - vs -" + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[1]
-        print run_title
-        sys.exit()
+                    " - vs - " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[1]
 
         eligible_bases = self.get_eligible_bases()
         three_by_three = self.generate_three_by_three(eligible_bases)
 
+        print run_title
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: null"
         print "# of GTs reassigned: null"
