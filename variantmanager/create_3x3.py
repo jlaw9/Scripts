@@ -16,7 +16,12 @@ class Create3x3:
         eligible_bases = self.get_eligible_bases()
         three_by_three = self.generate_three_by_three(eligible_bases)
 
-        print three_by_three
+        print "error rate: %s" % three_by_three['error_rate']
+        print "% available bases: null" % three_by_three['']
+        print "# of GTs reassigned: null" % three_by_three['']
+        print "\tWT\tHET\tHOM"
+        print "WT\t%d\t%d\%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
+                                     sum([three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM']]))
 
     def get_eligible_bases(self):
         eligible_bases = 0
