@@ -34,6 +34,7 @@ class Create3x3:
                                         sum([three_by_three['WT_HET'], three_by_three['HET_HET'], three_by_three['HOM_HET']]),
                                         sum([three_by_three['WT_HOM'], three_by_three['HET_HOM'], three_by_three['HOM_HOM']]),
                                         three_by_three['total_eligible_bases'])
+        print
 
 
     def get_eligible_bases(self):
