@@ -1,14 +1,9 @@
-import subprocess
-project_name = 'Wales'
-sample = 'case2_A11'
-vcf = '/rawdata/projects/Wales/case2_A11/Run1/4.2_TSVC_variants.vcf'
-bam = '/rawdata/projects/Wales/case2_A11/Run1/IonXpress_011_rawlib.bam'
+from pymongo import MongoClient
 
-varman_command = "varman -p %s add SAMPLE:%s VCF:%s BAM:%s" % (project_name, sample, vcf, bam)
+client = MongoClient()
 
-print 'VariantManager command executed: %s' % varman_command
+db = client['varman']
+collection = db['Wales_hotspot']
 
-child = subprocess.Popen(varman_command.split())
-streamdata = child.communicate()[0]
-rc = child.returncode
-print 'Return Code: %s' % rc
+for doc in collection.find():
+	print doc
