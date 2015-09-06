@@ -20,7 +20,7 @@ class Create3x3:
         print "% available bases: null"
         print "# of GTs reassigned: null"
         print "\tWT\tHET\tHOM"
-        print "WT\t%d\t%d\%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
+        print "WT\t%d\t%d\t%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
                                      sum([three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM']]))
 
     def get_eligible_bases(self):
