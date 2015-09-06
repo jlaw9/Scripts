@@ -24,6 +24,7 @@ class Create3x3:
                 line[1], line[2], line[3] = int(line[1]), int(line[2]), int(line[3])
                 if line[2] >= 30:
                     eligible_bases += 1
+                    print eligible_bases
 
         return eligible_bases
 
