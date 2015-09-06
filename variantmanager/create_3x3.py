@@ -35,7 +35,7 @@ class Create3x3:
             print header
 
             for line in infile:
-                line = {header[i]:line.strip().split()[i] for i in line.strip().split()}
+                line = {header[i]:line.strip().split()[i] for i in range(len(line.strip().split()))}
                 print line
 
 
