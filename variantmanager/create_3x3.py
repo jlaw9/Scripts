@@ -14,6 +14,7 @@ class Create3x3:
                 print "One of the files you gave was invalid: %s" % file_path
 
         eligible_bases = self.get_eligible_bases()
+        print eligible_bases
 
     def get_eligible_bases(self):
         eligible_bases = 0
@@ -21,7 +22,10 @@ class Create3x3:
             for line in infile:
                 line = line.strip().split()
                 line[1], line[2], line[3] = int(line[1]), int(line[2]), int(line[3])
-                print line
+                if line[2] >= 30:
+                    eligible_bases += 1
+
+        return eligible_bases
 
 
 if __name__ == '__main__':
