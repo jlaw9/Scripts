@@ -33,6 +33,7 @@ class Create3x3:
                 'HOM_WT':0, 'HOM_HET':0, "HOM_HOM":0}
         with open(self.matched_variants, 'r') as infile:
             header = infile.readline().strip().split("\t")
+            header = [val.strip() for val in header]
             print header
 
             for line in infile:
