@@ -24,7 +24,7 @@ class Create3x3:
                 line[1], line[2], line[3] = int(line[1]), int(line[2]), int(line[3])
                 if line[2] >= 30:
                     eligible_bases += 1
-                    print eligible_bases
+
 
         return eligible_bases
 
@@ -39,9 +39,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='VariantManager is a software suite that provides '
                                                  'several variant managing services.')
 
-    parser.add_argument('-n','--normal_vcf', help='', required=True)
-    parser.add_argument('-t','--tumor_vcf', help='', required=True)
-    parser.add_argument('-rd','--run_depths', help='', required=True)
+    parser.add_argument('-n', '--normal_vcf', help='', required=True)
+    parser.add_argument('-t', '--tumor_vcf', help='', required=True)
+    parser.add_argument('-rd', '--run_depths', help='', required=True)
 
     args = parser.parse_args()
 
