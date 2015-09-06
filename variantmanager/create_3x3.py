@@ -31,6 +31,9 @@ class Create3x3:
         self.change_counts = {'WT_WT':0, 'WT_HET':0, "WT_HOM":0,'HET_WT':0, 'HET_HET':0, "HET_HOM":0, \
                 'HOM_WT':0, 'HOM_HET':0, "HOM_HOM":0}
         with open(self.matched_variants, 'r') as infile:
+            header = infile.readline().strip().split("\t")
+            print header
+            sys.exit()
             for line in infile:
                 line = line.strip().split()
                 print line
