@@ -39,23 +39,23 @@ class Create3x3:
             for line in infile:
                 var = {header[i]: line.strip().split()[i] for i in range(len(line.strip().split()))}
                 if var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'WT':
-                    self.change_counts['WT_WT'] += 1
+                    change_counts['WT_WT'] += 1
                 elif var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'HET':
-                    self.change_counts['WT_HET'] += 1
+                    change_counts['WT_HET'] += 1
                 elif var['Run1 GT'] == 'WT' and var['Run2 GT'] == 'HOM':
-                    self.change_counts['WT_HOM'] += 1
+                    change_counts['WT_HOM'] += 1
                 elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'WT':
-                    self.change_counts['HET_WT'] += 1
+                    change_counts['HET_WT'] += 1
                 elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'HET':
-                    self.change_counts['HET_HET'] += 1
+                    change_counts['HET_HET'] += 1
                 elif var['Run1 GT'] == 'HET' and var['Run2 GT'] == 'HOM':
-                    self.change_counts['HET_HOM'] += 1
+                    change_counts['HET_HOM'] += 1
                 elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'WT':
-                    self.change_counts['HOM_WT'] += 1
+                    change_counts['HOM_WT'] += 1
                 elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'HET':
-                    self.change_counts['HOM_HET'] += 1
+                    change_counts['HOM_HET'] += 1
                 elif var['Run1 GT'] == 'HOM' and var['Run2 GT'] == 'HOM':
-                    self.change_counts['HOM_HOM'] += 1
+                    change_counts['HOM_HOM'] += 1
 
             return change_counts
 
