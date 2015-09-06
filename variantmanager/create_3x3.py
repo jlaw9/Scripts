@@ -16,7 +16,7 @@ class Create3x3:
         eligible_bases = self.get_eligible_bases()
 
     def get_eligible_bases(self):
-        eligible_bases =
+        eligible_bases = 0
         with open(self.run_depths,'r') as infile:
             for line in infile:
                 line = line.strip().split()
