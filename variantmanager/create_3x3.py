@@ -13,7 +13,7 @@ class Create3x3:
             if not os.path.isfile(file_path):
                 print "One of the files you gave was invalid: %s" % file_path
 
-        run_title = os.path.abspath(self.run_depths).split("/")[-2].split('vs')[0] + \
+        run_title = "all: " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[0][3:] + \
                     " - vs - " + os.path.abspath(self.run_depths).split("/")[-2].split('vs')[1]
 
         eligible_bases = self.get_eligible_bases()
@@ -88,7 +88,7 @@ class Create3x3:
 if __name__ == '__main__':
     """
     test command on triton:
-    python2.7 create_3x3.py -rd /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths -mv /mnt/Despina/projects/PNET/A_146/QC/718A_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/matched_variants.csv
+    python2.7 create_3x3.py -rd /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/Both_Runs_depths -mv /mnt/Despina/projects/PNET/A_146/QC/allA_146_Normal_Merged_11262014vsA_146_Tumor_Merged_11132014/matched_variants.csv
 
     """
     parser = argparse.ArgumentParser(description='VariantManager is a software suite that provides '
