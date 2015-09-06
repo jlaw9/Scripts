@@ -18,7 +18,7 @@ class Create3x3:
     def get_eligible_bases(self):
         with open(self.run_depths,'r') as infile:
             for line in infile:
-                print line
+                print line.strip().split()
 
 
 if __name__ == '__main__':
