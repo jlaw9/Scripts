@@ -31,11 +31,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="misctools.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="misctools.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/varman2/misctools.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.07481297">
-              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="20" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="create_3x3.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/create_3x3.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.029013539">
+              <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="launch_varman.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/launch_varman.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="178" column="40" selection-start-line="149" selection-start-column="4" selection-end-line="178" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -47,6 +67,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -56,8 +77,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/v2/mongodb/mongotools/config.py" />
-        <option value="$PROJECT_DIR$/v2/mongodb/mongotools/sampleinfo.py" />
         <option value="$PROJECT_DIR$/v2/varman.py" />
         <option value="$PROJECT_DIR$/v2/varman_logger.py" />
         <option value="$PROJECT_DIR$/v2/logger.py" />
@@ -107,6 +126,8 @@
         <option value="&lt;7551c1bd-54ce-4acb-b504-9c72c91f1d85&gt;/rawdata/scripts/TRI_Scripts/Somatic_Variants/tmp/misctools.py" />
         <option value="&lt;7551c1bd-54ce-4acb-b504-9c72c91f1d85&gt;/rawdata/scripts/TRI_Scripts/Somatic_Variants/tmp/updateAnnovarTable_MD.py" />
         <option value="$PROJECT_DIR$/varman2/annotate.py" />
+        <option value="$PROJECT_DIR$/varman2/create_3x3.py" />
+        <option value="$PROJECT_DIR$/create_3x3.py" />
       </list>
     </option>
   </component>
@@ -152,38 +173,6 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT USER_OBJECT="variantmanager">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="variantmanager">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="variantmanager">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="annovar">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -250,8 +239,8 @@
       <recent name="$PROJECT_DIR$/v2" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/varman2" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/varman2" />
       <recent name="$PROJECT_DIR$/v2/mongodb/tools" />
       <recent name="$PROJECT_DIR$/v2/mongodb" />
       <recent name="$PROJECT_DIR$/v2" />
@@ -274,6 +263,17 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/varman2/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <module name="" />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
@@ -499,7 +499,7 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3433735" sideWeight="0.49713877" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3433735" sideWeight="0.49713877" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891566" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -564,13 +564,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/varman2/output.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="31" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/varman2/mongotools/variants_mongo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -867,14 +860,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/launch_varman.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.713733">
-          <caret line="136" column="12" selection-start-line="136" selection-start-column="12" selection-end-line="136" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/varman2/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -926,8 +911,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/varman2/misctools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.07481297">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="20" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/launch_varman.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="178" column="40" selection-start-line="149" selection-start-column="4" selection-end-line="178" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/create_3x3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.029013539">
+          <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
           <folding />
         </state>
       </provider>
