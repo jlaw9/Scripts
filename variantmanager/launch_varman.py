@@ -27,6 +27,7 @@ class VariantManager:
         :return: None
         """
 
+        # This sets the project name for several different modules to use.
         self.args = args
         varman2.set_project_name(args['project_name'])
 
@@ -41,6 +42,7 @@ class VariantManager:
         Logger.create_logger(self.project_config['log_file'], 'a')
         self.logger = Logger.get_logger()
 
+        # This executes the correct argument specified by the user
         argexecute = ArgExecutor(self.args)
         if self.args['which'] == 'add':
             argexecute.add()
@@ -65,7 +67,13 @@ class VariantManager:
 
     @staticmethod
     def __argcheck(args):
-        # Checking the prerequisites for the config file
+        """
+        This is a function that will check some of the arguments given to catch any bad
+        arguments that were not caught earlier by the parser.
+
+        :param args: These are the args as parsed by the parser at the bottom of this script.
+        :return:
+        """
         if not config_mongo.has_config() and args['config'] is None:
             print("ERROR: The project does not exist in the the database, you must use the setup option and input "
                   "a config file for this project to begin managing it.")
@@ -80,6 +88,11 @@ class VariantManager:
             sys.exit()
 
     def __parse_config(self, config_file):
+        """
+        :param config_file: path to the configuration file so that it can be loaded parsed
+        prior to loading into the database
+        :return outdict: A dictionary representing the specified configuration file is returned.
+        """
         out_dict = {}
 
         with open(config_file, 'r') as input_file:
@@ -91,7 +104,15 @@ class VariantManager:
         return out_dict
 
     def __setup_project_analysis(self, args):
+        """
+        This function will set up a project analysis by actually calling mongo db classes
+        to create a project configuration file. It also creates the log_file if it doesn't
+        already exist.
 
+        :param args: These are the args as parsed by the parser at the bottom of this script.
+        :return:
+        """
+        # If a config file already exists, this will be skipped entirely.
         if not config_mongo.has_config():
 
             config_file = self.__parse_config(args['config'])
@@ -109,9 +130,11 @@ class VariantManager:
             log_file = output_dir + "/project.log"
             bash.make_file(log_file)
 
+            # This is the new config file that will be created.
             config_data = {'log_file': log_file, 'output_dir': output_dir, 'project_name': args['project_name'],
                            'ref_fasta': ref_fasta, 'tvc_params': tvc_params, 'project_bed': project_bed
                             }
+
             config_mongo.create_project_config(config_data)
 
 # start here when the script is launched
@@ -148,18 +171,21 @@ if __name__ == "__main__":
     parser_output = subparsers.add_parser('output', help='Output information of interest')
     parser_nothing = subparsers.add_parser('nothing')
 
-
     # Specifying options for the parser_setup
     parser_setup.set_defaults(which="setup")
     parser_setup.add_argument('-c', '--config', help='The path to the configuration file to be used by the project, '
                                                      'see readme for more information.', required=True)
     # Specify the options for the parser_add
     parser_add.set_defaults(which="add")
-    parser_add.add_argument('-1','--one_sample', help='Multiple key:value arguments with new sample information to be added'
-                                               'it must be formatted in a specific way, key1:value1 key2:value2 '
-                                               'follow this format exactly, no quotes for strings are necessary.',
+
+    parser_add.add_argument('-1','--one_sample', help='Multiple key:value arguments with new sample information to be '
+                                                      'added it must be formatted in a specific way, key1:value1 '
+                                                      'key2:value2 follow this format exactly, no quotes for strings '
+                                                      'are necessary. This will typically be formatted as SAMPLE:samp1 '
+                                                      'VCF:vcf1.vcf BAM:bam1.vcf',
                             action='store', nargs='*')
-    parser_add.add_argument('-f', '--sample_info', help='A file specifying sample info informatin to add to the sample info.',
+    parser_add.add_argument('-f', '--sample_info', help='A file specifying sample info information to add to the '
+                                                        'sample info.',
                             action='store')
     parser_add.add_argument('-e', '--email', help='Emails to send the resulting csv to.',
                             action='store', nargs='*')

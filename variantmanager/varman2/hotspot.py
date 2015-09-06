@@ -178,7 +178,7 @@ class Hotspot:
                                                            'DOCUMENT')
 
         else:
-            self.__log_serious_hotspot_discrepancy('THE NUMBER OF DOCUMENTS WITH MATCHING THE '
+            self.__log_serious_hotspot_discrepancy('THE NUMBER OF DOCUMENTSG THE '
                                                    'ALLELE GROUP IS NOT 1')
 
     def perform_hotspot(self):

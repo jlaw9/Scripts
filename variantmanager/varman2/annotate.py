@@ -2,14 +2,20 @@ from glob import glob
 from varman2.mongotools import config_mongo, annotate_mongo, mongo, sampleinfo_mongo
 from bashcommands import annovar_bash, bash
 from varman2 import Logger
-import sys, os
+import os
 from varman2 import misctools, vcftools
 
 class Annotate:
     def __init__(self):
+        """
+        This init method is different in that it will create the annotation_dir config parameter if it doesn't
+        already exist. This is not necessarily the most elegant way to do this, but it works.
+        :return:
+        """
         self.project_config = config_mongo.get_project_config()
         self.logger = Logger.get_logger()
 
+        # Creates the annotation_dir if needed and loads it into the config file
         self.annotations_dir = '%s/annotations' % self.project_config['output_dir']
         if 'annotation_dir' not in self.project_config or not\
                 os.path.isdir(self.project_config['annotation_dir']):
@@ -31,15 +37,33 @@ class Annotate:
         return annovar_output
 
     def annotate_sample(self, sample, type):
+        """
+        This will annotate a sample and load it into the database.
 
+        :param sample: This is the name of the snmple to be annotated.
+        :type sample: str
+        :param type: This is the type of the sample to be annotated, either hotspot or orig.
+        :type type: str
+        :return:
+        """
+
+        # This creates a vcf for annotation based on the sample and returns the vcf path.
         vcf_path = vcftools.create_vcf_for_annotation(sample, type, self.annotations_dir)
 
         self.__log_performing_sample_annotation()
+
+        # annotates the file, saves the annotations to the mongodb, and changes status of the sample in the
+        # sample info collection to "FULLY ANNOTATED"
         annovar_output = annovar_bash.annotate_annovar(vcf_path, vcf_path)
         self.save_annotations(annovar_output)
         sampleinfo_mongo.change_sample_field(sample, "FULLY_ANNOTATED", True)
 
     def save_annotations(self, annovar_vcf):
+        """
+        This will save the annotations of a sample in the database.
+        :param annovar_vcf:
+        :return:
+        """
         self.__log_saving_annotations()
 
         self.project_config = config_mongo.get_project_config()
@@ -50,7 +74,7 @@ class Annotate:
             line = annov_in.readline()
             if not line.startswith("#CHROM"):
 
-                while line.startswith('##'):
+                while line.startswith('##'):  # this reads through the junk lines
                     line = annov_in.readline()
                 header = line.strip().strip("#").split("\t")
 
@@ -62,6 +86,13 @@ class Annotate:
         client.close()
 
     def __process_annovar_line(self, line, header):
+        """
+        This is what processes a vcf line to extract the information of interest.
+
+        :param line: This is the line to process.
+        :param header: This is the vcf header to use to query fields.
+        :return:
+        """
         line = line.strip().split("\t")
         line = {header[n]: line[n] for n in range(len(line))}
 
@@ -94,4 +125,6 @@ class Annotate:
 
     def __log_saving_annotations(self):
         self.logger.info('Saving the annotations to the database')
+
+
 
