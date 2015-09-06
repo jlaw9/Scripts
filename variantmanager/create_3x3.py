@@ -29,11 +29,7 @@ class Create3x3:
         print "Sum:\t%d\t%d\t%d\t%d" % (sum([three_by_three['WT_WT'], three_by_three['HET_WT'], three_by_three['HOM_WT']]),
                                         sum([three_by_three['WT_HET'], three_by_three['HET_HET'], three_by_three['HOM_HET']]),
                                         sum([three_by_three['WT_HOM'], three_by_three['HET_HOM'], three_by_three['HOM_HOM']]),
-                                        three_by_three['eligible_bases'])
-
-
-
-
+                                        three_by_three['total_eligible_bases'])
 
 
     def get_eligible_bases(self):
