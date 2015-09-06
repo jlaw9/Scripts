@@ -19,9 +19,22 @@ class Create3x3:
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: null"
         print "# of GTs reassigned: null"
-        print "\tWT\tHET\tHOM"
+        print "\tWT\tHET\tHOM\tSum:"
         print "WT\t%d\t%d\t%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
                                      sum([three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM']]))
+        print "HET\t%d\t%d\t%d\t%d" % (three_by_three['HET_WT'], three_by_three['HET_HET'], three_by_three['HET_HOM'],
+                                     sum([three_by_three['HET_WT'], three_by_three['HET_HET'], three_by_three['HET_HOM']]))
+        print "HOM\t%d\t%d\t%d\t%d" % (three_by_three['HOM_WT'], three_by_three['HOM_HET'], three_by_three['HOM_HOM'],
+                                     sum([three_by_three['HOM_WT'], three_by_three['HOM_HET'], three_by_three['HOM_HOM']]))
+        print "Sum:\t%d\t%d\t%d\t%d" % (sum([three_by_three['WT_WT'], three_by_three['HET_WT'], three_by_three['HOM_WT']]),
+                                        sum([three_by_three['WT_HET'], three_by_three['HET_HET'], three_by_three['HOM_HET']]),
+                                        sum([three_by_three['WT_HOM'], three_by_three['HET_HOM'], three_by_three['HOM_HOM']]),
+                                        three_by_three['eligible_bases'])
+
+
+
+
+
 
     def get_eligible_bases(self):
         eligible_bases = 0
