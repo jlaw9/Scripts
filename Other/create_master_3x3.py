@@ -8,4 +8,5 @@ matches = []
 for root, dirnames, filenames in os.walk(sys.argv[1]):
     matches += glob(root+"/results_QC.json")
 
-print matches
+for match in matches:
+    print match
