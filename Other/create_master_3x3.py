@@ -23,6 +23,7 @@ for match in matches:
         print match.split("/")[-3]
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: %s" % three_by_three['perc_avail_bases']
+        print three_by_three['reassigned_GTs']
         print "# of GTs reassigned: %s" % three_by_three['reassigned_GTs']
         print "\tWT\tHET\tHOM\tSum:"
         print "WT\t%d\t%d\t%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
