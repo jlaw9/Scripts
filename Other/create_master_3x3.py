@@ -13,7 +13,9 @@ for match in matches:
     if "QC/results" in match:
         results_file = json.load(open(match,'r'))
 
-        three_by_three = results_file['QC_comparisons']['all']['normal_tumor']
+        title = results_file['QC_comparisons']['all']['normal_tumor'].keys()[0]
+        print title
+        continue
 
         print three_by_three.keys()
         print match.split("/")[-2]
