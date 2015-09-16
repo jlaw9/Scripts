@@ -21,7 +21,7 @@ for match in matches:
         three_by_three = results_file['QC_comparisons']['all']['normal_tumor'][title]
         print title
         print "error rate: %s" % three_by_three['error_rate']
-        print "\% available bases: %s" % three_by_three['perc_avail_bases']
+        print "%% available bases: %s" % three_by_three['perc_avail_bases']
         print "# of GTs reassigned: %s" % three_by_three['reassigned_GTs']
         print "\tWT\tHET\tHOM\tSum:"
         print "WT\t%d\t%d\t%d\t%d" % (three_by_three['WT_WT'], three_by_three['WT_HET'], three_by_three['WT_HOM'],
