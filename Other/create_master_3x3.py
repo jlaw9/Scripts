@@ -2,6 +2,7 @@ __author__ = 'matt'
 
 import os
 import sys
+import json
 from glob import glob
 
 matches = []
@@ -10,4 +11,5 @@ for root, dirnames, filenames in os.walk(sys.argv[1]):
 
 for match in matches:
     if "QC/results" in match:
-        print match
+        results_file = json.load(match)
+        print results_file
