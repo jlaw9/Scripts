@@ -9,6 +9,7 @@ matches = []
 for root, dirnames, filenames in os.walk(sys.argv[1]):
     matches += glob(root+"/results_QC.json")
 
+file_count = 0
 for match in matches:
     if "QC/results" in match:
         results_file = json.load(open(match,'r'))
@@ -18,6 +19,7 @@ for match in matches:
         if "N-" in title or "T-" in title:
             continue
 
+        file_count += 1
         three_by_three = results_file['QC_comparisons']['all']['normal_tumor'][title]
         print title
         print "error rate: %s" % three_by_three['error_rate']
@@ -35,3 +37,5 @@ for match in matches:
                                         sum([three_by_three['WT_HOM'], three_by_three['HET_HOM'], three_by_three['HOM_HOM']]),
                                         three_by_three['total_eligible_bases'])
         print
+
+print "FILE COUNT %s" % file_count
