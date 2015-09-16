@@ -1,0 +1,600 @@
+all: B_068_Normal_Merged_02182015    -  vs  -    B_068_Tumor_Merged_02192015
+error rate: 4.23806149593e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54223258	662	8	54223928
+HET	9	26692	918	27619
+HOM	2	12	18534	18548
+Sum:	54223269	27366	19460	54270095
+
+all: B_073_Normal_Merged_02242015    -  vs  -    B_073_Tumor_Merged_02242015
+error rate: 3.25954183337e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55175133	353	1	55175487
+HET	8	28832	1085	29925
+HOM	1	9	17063	17073
+Sum:	55175142	29194	18149	55222485
+
+all: B_071_Normal_Merged_02242015    -  vs  -    B_071_Tumor_Merged_02252015
+error rate: 6.83863488592e-05
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55108543	394	47	55108984
+HET	3737	16994	10731	31462
+HOM	4	31	16726	16761
+Sum:	55112284	17419	27504	55157207
+
+all: B_074_Normal_Merged_02242015    -  vs  -    B_074_Tumor_Merged_02252015
+error rate: 4.16795473079e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55135660	327	2	55135989
+HET	11	29603	159	29773
+HOM	1	11	17167	17179
+Sum:	55135672	29941	17328	55182941
+
+all: B_075_Normal_Merged_03172015    -  vs  -    B_075_Tumor_Merged_03182015
+error rate: 2.1027093503e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53692699	1618	4	53694321
+HET	68	27239	1728	29035
+HOM	4	41	16789	16834
+Sum:	53692771	28898	18521	53740190
+
+all: B_076_Normal_Merged_03172015    -  vs  -    B_076_Tumor_Merged_03182015
+error rate: 6.73896654961e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54857740	639	1	54858380
+HET	25	29018	590	29633
+HOM	1	11	16536	16548
+Sum:	54857766	29668	17127	54904561
+
+all: B_079_Normal_Merged_03142015    -  vs  -    B_079_Tumor_Merged_03152015
+error rate: 4.53037252347e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55134931	276	0	55135207
+HET	10	29901	226	30137
+HOM	2	13	17741	17756
+Sum:	55134943	30190	17967	55183100
+
+all: B_060_Normal_Merged_02282015    -  vs  -    B_060_Tumor_Merged_03022015
+error rate: 6.93335841993e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54760745	706	3	54761454
+HET	11	26983	884	27878
+HOM	1	26	18135	18162
+Sum:	54760757	27715	19022	54807494
+
+all: B_066_Normal_Merged_03022015    -  vs  -    B_066_Tumor_Merged_03032015
+error rate: 7.73036587157e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54154929	612	25	54155566
+HET	392	23513	5416	29321
+HOM	2	25	16919	16946
+Sum:	54155323	24150	22360	54201833
+
+all: B_067_Normal_Merged_03142015    -  vs  -    B_067_Tumor_Merged_03142015
+error rate: 1.3417884139e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54349652	495	1	54350148
+HET	13	37788	60	37861
+HOM	1	59	16932	16992
+Sum:	54349666	38342	16993	54405001
+
+all: A_398_Normal_Merged_02212015    -  vs  -    A_398_Tumor_Merged_02222015
+error rate: 6.17445766696e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55007963	341	0	55008304
+HET	16	38094	173	38283
+HOM	3	15	18960	18978
+Sum:	55007982	38450	19133	55065565
+
+all: B_052_Normal_Merged_03052015    -  vs  -    B_052_Tumor_Merged_03052015
+error rate: 4.68221173809e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	51852647	198	1	51852846
+HET	158	28123	79	28360
+HOM	1	84	17259	17344
+Sum:	51852806	28405	17339	51898550
+
+all: B_052_Normal_Merged_03172015    -  vs  -    B_052_Tumor_Merged_03182015
+error rate: 1.44795987651e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53821993	967	1	53822961
+HET	9	28748	71	28828
+HOM	2	67	17038	17107
+Sum:	53822004	29782	17110	53868896
+
+all: B_065_Normal_Merged_03052015    -  vs  -    B_065_Tumor_Merged_03052015
+error rate: 1.45842701188e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54121317	388	1	54121706
+HET	3	29256	126	29385
+HOM	2	74	16782	16858
+Sum:	54121322	29718	16909	54167949
+
+all: A_141_Normal_Merged_11172014    -  vs  -    A_141_Tumor_Merged_11172014
+error rate: 6.10626533725e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53996923	753	2	53997678
+HET	14	27699	799	28512
+HOM	2	17	16644	16663
+Sum:	53996939	28469	17445	54042853
+
+all: A_146_Normal_Merged_11262014    -  vs  -    A_146_Tumor_Merged_11132014
+error rate: 2.95545935199e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	52741087	1365	59	52742511
+HET	51	25648	385	26084
+HOM	19	86	14973	15078
+Sum:	52741157	27099	15417	52783673
+
+all: A_173_Normal_Merged_11172014    -  vs  -    A_173_Tumor_Merged_11172014
+error rate: 4.61903672428e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54076963	1048	2	54078013
+HET	11	28752	169	28932
+HOM	1	13	16880	16894
+Sum:	54076975	29813	17051	54123839
+
+all: A_186_Normal_Merged_11162014    -  vs  -    A_186_Tumor_Merged_11162014
+error rate: 9.42871669546e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	52984199	564	3	52984766
+HET	17	27499	951	28467
+HOM	5	28	16220	16253
+Sum:	52984221	28091	17174	53029486
+
+all: A_137_Normal_Merged_02232015    -  vs  -    A_137_Tumor_Merged_02222015
+error rate: 6.37871367115e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54822756	709	2	54823467
+HET	9	28787	155	28951
+HOM	2	24	17553	17579
+Sum:	54822767	29520	17710	54869997
+
+all: A_204_Normal_Merged_11152014    -  vs  -    A_204_Tumor_Merged_11152014
+error rate: 3.5211677408e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53913913	385	2	53914300
+HET	7	27317	539	27863
+HOM	1	11	17197	17209
+Sum:	53913921	27713	17738	53959372
+
+all: A_221_Normal_Merged_11172014    -  vs  -    A_221_Tumor_Merged_11172014
+error rate: 1.34802435236e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53366208	764	8	53366980
+HET	51	26966	1395	28412
+HOM	0	21	16085	16106
+Sum:	53366259	27751	17488	53411498
+
+all: A_227_Normal_Merged_03242015    -  vs  -    A_227_Tumor_Merged_04072015
+error rate: 0.0001014964505
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55242186	1379	37	55243602
+HET	5559	14433	10469	30461
+HOM	3	50	18458	18511
+Sum:	55247748	15862	28964	55292574
+
+all: A_227_Normal_Merged_03242015    -  vs  -    A_227_Tumor_Merged_04102015
+error rate: 1.76214984919e-05
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54543057	372	10	54543439
+HET	944	19255	10143	30342
+HOM	3	15	18607	18625
+Sum:	54544004	19642	28760	54592406
+
+all: A_260_Normal_Merged_11182014    -  vs  -    A_260_Tumor_Merged_11182014
+error rate: 0.000150748278412
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54667541	956	64	54668561
+HET	8184	12671	7455	28310
+HOM	2	62	16791	16855
+Sum:	54675727	13689	24310	54713726
+
+all: A_263_Normal_Merged_11162014    -  vs  -    A_263_Tumor_Merged_11162014
+error rate: 4.22697006118e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54366171	374	0	54366545
+HET	8	28798	179	28985
+HOM	2	13	16953	16968
+Sum:	54366181	29185	17132	54412498
+
+all: A_268_Normal_Merged_11172014    -  vs  -    A_268_Tumor_Merged_11172014
+error rate: 8.64818841981e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54300737	505	2	54301244
+HET	23	27527	853	28403
+HOM	0	24	16971	16995
+Sum:	54300760	28056	17826	54346642
+
+all: A_271_Normal_Merged_11122014    -  vs  -    A_271_Tumor_Merged_11122014
+error rate: 6.06835159536e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54323053	635	2	54323690
+HET	8	38613	168	38789
+HOM	7	18	17997	18022
+Sum:	54323068	39266	18167	54380501
+
+all: A_286_Normal_Merged_11102014    -  vs  -    A_286_Tumor_Merged_11122014
+error rate: 1.06286945899e-05
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54710292	1545	38	54711875
+HET	524	20012	7996	28532
+HOM	2	56	16965	17023
+Sum:	54710818	21613	24999	54757430
+
+all: A_322_Normal_Merged_11112014    -  vs  -    A_322_Tumor_Merged_11112014
+error rate: 1.15891523063e-05
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53367725	473	29	53368227
+HET	573	20595	6505	27673
+HOM	6	40	16071	16117
+Sum:	53368304	21108	22605	53412017
+
+all: A_350_Normal_Merged_11102014    -  vs  -    A_350_Tumor_Merged_11102014
+error rate: 9.4090408374e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54157894	420	5	54158319
+HET	25	28120	188	28333
+HOM	4	22	16509	16535
+Sum:	54157923	28562	16702	54203187
+
+all: A_358_Normal_Merged_11102014    -  vs  -    A_358_Tumor_Merged_11102014
+error rate: 6.74266511818e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53346058	373	2	53346433
+HET	13	28133	151	28297
+HOM	2	21	16598	16621
+Sum:	53346073	28527	16751	53391351
+
+all: A_373_Normal_Merged_01292015    -  vs  -    A_373_Tumor_Merged_02202015
+error rate: 5.65755642927e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54040477	623	20	54041120
+HET	242	27834	716	28792
+HOM	25	39	16979	17043
+Sum:	54040744	28496	17715	54086955
+
+all: B_025_Normal_Merged_01282015    -  vs  -    B_025_Tumor_Merged_01302015
+error rate: 1.26929199665e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54313834	550	5	54314389
+HET	51	28634	892	29577
+HOM	1	17	17030	17048
+Sum:	54313886	29201	17927	54361014
+
+all: B_027_Normal_Merged_02082015    -  vs  -    B_027_Tumor_Merged_02082015
+error rate: 1.31805855019e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	52304141	931	4	52305076
+HET	19	28379	152	28550
+HOM	4	46	16047	16097
+Sum:	52304164	29356	16203	52349723
+
+all: B_030_Normal_Merged_02082015    -  vs  -    B_030_Tumor_Merged_02082015
+error rate: 1.67168994896e-05
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54747728	1343	2	54749073
+HET	22	27393	200	27615
+HOM	4	890	17268	18162
+Sum:	54747754	29626	17470	54794850
+
+all: A_344_Normal_Merged_02052015    -  vs  -    A_344_Tumor_Merged_02052015
+error rate: 5.11417860356e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54703252	252	5	54703509
+HET	10	29025	161	29196
+HOM	2	16	17027	17045
+Sum:	54703264	29293	17193	54749750
+
+all: A_359_Normal_Merged_02182015    -  vs  -    A_359_Tumor_Merged_02182015
+error rate: 1.08988561946e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54088281	395	4	54088680
+HET	24	29046	221	29291
+HOM	3	32	16115	16150
+Sum:	54088308	29473	16340	54134121
+
+all: B_039_Normal_Merged_04202015    -  vs  -    B_039_Tumor_Merged_04202015
+error rate: 7.62579650083e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55027914	693	4	55028611
+HET	27	30074	214	30315
+HOM	2	13	17273	17288
+Sum:	55027943	30780	17491	55076214
+
+all: B_040_Normal_Merged_01302015    -  vs  -    B_040_Tumor_Merged_01312015
+error rate: 9.13076309309e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53616094	2681	1	53618776
+HET	13	28169	649	28831
+HOM	1	35	17094	17130
+Sum:	53616108	30885	17744	53664737
+
+all: B_044_Normal_Merged_04302015    -  vs  -    B_044_Tumor_Merged_05012015
+error rate: 3.57181087889e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55384213	1268	19	55385500
+HET	154	23037	8333	31524
+HOM	6	38	16998	17042
+Sum:	55384373	24343	25350	55434066
+
+all: B_048_Normal_Merged_03142015    -  vs  -    B_048_Tumor_Merged_03152015
+error rate: 7.68773616451e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54584983	1157	7	54586147
+HET	63	28346	211	28620
+HOM	4	353	17344	17701
+Sum:	54585050	29856	17562	54632468
+
+all: B_053_Normal_Merged_04152015    -  vs  -    B_053_Tumor_Merged_04152015
+error rate: 9.76906951862e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54203996	697	1	54204694
+HET	19	30097	270	30386
+HOM	2	32	17750	17784
+Sum:	54204017	30826	18021	54252864
+
+all: B_053_Normal_Merged_04202015    -  vs  -    B_053_Tumor_Merged_04212015
+error rate: 8.56804224154e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54807553	772	2	54808327
+HET	17	29755	147	29919
+HOM	4	26	16729	16759
+Sum:	54807574	30553	16878	54855005
+
+all: B_054_Normal_Merged_02222015    -  vs  -    B_054_Tumor_Merged_02232015
+error rate: 5.11491113691e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54694110	737	3	54694850
+HET	9	29898	165	30072
+HOM	1	18	16968	16987
+Sum:	54694120	30653	17136	54741909
+
+all: B_055_Normal_Merged_04072015    -  vs  -    B_055_Tumor_Merged_04092015
+error rate: 9.51166757677e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55673467	711	6	55674184
+HET	30	21034	6855	27919
+HOM	2	21	18913	18936
+Sum:	55673499	21766	25774	55721039
+
+all: B_056_Normal_Merged_02082015    -  vs  -    B_056_Tumor_Merged_02082015
+error rate: 8.59062373265e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54663565	637	3	54664205
+HET	28	28586	1005	29619
+HOM	2	17	16969	16988
+Sum:	54663595	29240	17977	54710812
+
+all: B_057_Normal_Merged_04062015    -  vs  -    B_057_Tumor_Merged_04072015
+error rate: 6.33676628552e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55185667	647	2	55186316
+HET	11	29694	172	29877
+HOM	2	22	17002	17026
+Sum:	55185680	30363	17176	55233219
+
+all: B_059_Normal_Merged_01232015    -  vs  -    B_059_Tumor_Merged_01302015
+error rate: 7.56881865288e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54123624	589	5	54124218
+HET	19	27554	1086	28659
+HOM	0	22	16717	16739
+Sum:	54123643	28165	17808	54169616
+
+all: A_400_Normal_Merged_02082015    -  vs  -    A_400_Tumor_Merged_02082015
+error rate: 1.01664617632e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54053652	522	8	54054182
+HET	25	22443	6385	28853
+HOM	4	26	16386	16416
+Sum:	54053681	22991	22779	54099451
+
+all: A_401_Normal_Merged_02052015    -  vs  -    A_401_Tumor_Merged_02062015
+error rate: 5.2850043378e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54825539	804	4	54826347
+HET	9	29305	140	29454
+HOM	5	15	16414	16434
+Sum:	54825553	30124	16558	54872235
+
+all: A_456_Normal_Merged_06052015    -  vs  -    A_456_Tumor_Merged_06052015
+error rate: 9.21026644085e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54241562	491	2	54242055
+HET	13	29181	124	29318
+HOM	2	35	15836	15873
+Sum:	54241577	29707	15962	54287246
+
+all: B_070_Normal_Merged_03112015    -  vs  -    B_070_Tumor_Merged_03122015
+error rate: 7.61920684492e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	55076078	381	6	55076465
+HET	18	27658	2337	30013
+HOM	1	23	17346	17370
+Sum:	55076097	28062	19689	55123848
+
+all: B_033_Normal_Merged_04102015    -  vs  -    B_033_Tumor_Merged_04102015
+error rate: 3.42589213101e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54828358	1152	17	54829527
+HET	157	23001	6470	29628
+HOM	2	29	17031	17062
+Sum:	54828517	24182	23518	54876217
+
+all: B_036_Normal_Merged_04022015    -  vs  -    B_036_Tumor_Merged_04042015
+error rate: 1.1521836508e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	49426159	414	1	49426574
+HET	21	26942	654	27617
+HOM	1	35	17053	17089
+Sum:	49426181	27391	17708	49471280
+
+all: B_035_Normal_Merged_04082015    -  vs  -    B_035_Tumor_Merged_04092015
+error rate: 1.0730646187e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	51208082	524	4	51208610
+HET	20	28987	288	29295
+HOM	2	33	17128	17163
+Sum:	51208104	29544	17420	51255068
+
+all: B_035_Normal_Merged_04232015    -  vs  -    B_035_Tumor_Merged_04092015
+error rate: 1.02478242518e-06
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53621961	1158	3	53623122
+HET	22	29726	189	29937
+HOM	2	31	16837	16870
+Sum:	53621985	30915	17029	53669929
+
+all: B_069_Normal_Merged_04172015    -  vs  -    B_069_Tumor_Merged_04172015
+error rate: 7.16385142613e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54393257	479	8	54393744
+HET	19	27732	891	28642
+HOM	1	19	17584	17604
+Sum:	54393277	28230	18483	54439990
+
+all: A_445_Normal_Merged_04222015    -  vs  -    A_445_Tumor_Merged_04232015
+error rate: 6.97648655985e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54423283	541	5	54423829
+HET	13	28150	329	28492
+HOM	6	19	16332	16357
+Sum:	54423302	28710	16666	54468678
+
+all: A_125_Normal_Merged_02182015    -  vs  -    A_125_Tumor_Merged_02182015
+error rate: 6.55638133907e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	53337700	725	7	53338432
+HET	0	25753	1891	27644
+HOM	0	35	16995	17030
+Sum:	53337700	26513	18893	53383106
+
+all: B_078_Normal_Merged_02262015    -  vs  -    B_078_Tumor_Merged_02272015
+error rate: 4.40167483728e-07
+% available bases: null
+# of GTs reassigned: null
+	WT	HET	HOM	Sum:
+WT	54478670	397	6	54479073
+HET	0	27270	1195	28465
+HOM	0	24	17138	17162
+Sum:	54478670	27691	18339	54524700
+
