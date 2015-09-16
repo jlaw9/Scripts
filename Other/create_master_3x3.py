@@ -15,7 +15,7 @@ for match in matches:
 
         title = max(results_file['QC_comparisons']['all']['normal_tumor'].keys(), key=len)
 
-        if "N-" not in title and "T-" not in title:
+        if "N-" in title or "T-" in title:
             continue
 
         three_by_three = results_file['QC_comparisons']['all']['normal_tumor'][title]
