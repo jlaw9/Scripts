@@ -13,7 +13,7 @@ for match in matches:
     if "QC/results" in match:
         results_file = json.load(open(match,'r'))
 
-        title = results_file['QC_comparisons']['all']['normal_tumor'].keys()
+        title = max(results_file['QC_comparisons']['all']['normal_tumor'].keys(), key=len)
         print title
         continue
 
