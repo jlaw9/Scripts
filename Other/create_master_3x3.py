@@ -14,6 +14,8 @@ for match in matches:
         results_file = json.load(open(match,'r'))
 
         three_by_three = results_file['QC_comparisons']['all']
+        print match, esults_file['QC_comparisons']['all'].keys()
+        continue
         print match.split("/")[-2]
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: %s" % three_by_three['perc_avail_bases']
