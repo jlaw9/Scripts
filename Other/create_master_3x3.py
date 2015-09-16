@@ -12,4 +12,4 @@ for root, dirnames, filenames in os.walk(sys.argv[1]):
 for match in matches:
     if "QC/results" in match:
         results_file = json.load(open(match,'r'))
-        print match, results_file.keys()
+        print match, results_file['QC_comparisons'].keys()
