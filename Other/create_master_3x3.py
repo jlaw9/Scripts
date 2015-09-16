@@ -18,7 +18,7 @@ for match in matches:
         if "N-" not in title and "T-" not in title:
             continue
 
-        three_by_three = results_file['QC_comparisons']['all']['normal_tumor']['title']
+        three_by_three = results_file['QC_comparisons']['all']['normal_tumor'][title]
         print title
         print match.split("/")[-3]
         print "error rate: %s" % three_by_three['error_rate']
