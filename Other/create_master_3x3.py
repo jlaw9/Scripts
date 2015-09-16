@@ -11,5 +11,5 @@ for root, dirnames, filenames in os.walk(sys.argv[1]):
 
 for match in matches:
     if "QC/results" in match:
-        results_file = json.load(match)
+        results_file = json.load(open(match,'r'))
         print results_file
