@@ -14,10 +14,12 @@ for match in matches:
         results_file = json.load(open(match,'r'))
 
         title = max(results_file['QC_comparisons']['all']['normal_tumor'].keys(), key=len)
-        print title
-        continue
 
-        print three_by_three.keys()
+        if "N-" not in title and "T-" not in title:
+            continue
+
+        print title
+
         print match.split("/")[-2]
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: %s" % three_by_three['perc_avail_bases']
