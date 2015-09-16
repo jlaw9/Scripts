@@ -15,6 +15,7 @@ for match in matches:
 
         three_by_three = results_file['QC_comparisons']['all']['normal_tumor']
 
+        print three_by_three.keys()
         print match.split("/")[-2]
         print "error rate: %s" % three_by_three['error_rate']
         print "% available bases: %s" % three_by_three['perc_avail_bases']
