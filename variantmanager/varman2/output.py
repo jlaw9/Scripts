@@ -128,7 +128,7 @@ class Output:
             client, db = mongo.get_connection()
             total_loaded_samples = variants_mongo.count_samples()
 
-            for var in variants_mongo.get_sample_vars(sample, type, db):
+            for var in variants_mongo.get_sample_vars(sample, 'orig', db):
                 new_variant = {}
                 chrom, pos, ref, alt = var['CHROM'], var['POS'], var['REF'], var['ALT']
                 al1, al2 = genotypetools.get_genotype_alleles(ref, alt, var['GT_calc'])
