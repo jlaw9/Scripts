@@ -110,7 +110,6 @@ class Annotate:
                 for line in annov_in:
 
                     chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
-                    print chrom, pos, ref, alt, annotations
                     annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
 
         client.close()
