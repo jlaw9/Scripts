@@ -72,7 +72,7 @@ def create_vcf_for_annotation_all_samples(out_dir):
                     gt = './.'
 
                 list_entry = [chrom, pos, '.', str(ref), str(alt)]
-                variant = list_entry + ['.', '.', 'DP=%s' % var['READ_DEPTH'], 'GT', gt]
+                variant = list_entry + ['.', '.', '.', 'GT', gt]
                 out_file.write("\t".join([str(val) for val in variant]) + "\n")
         client.close()
 
