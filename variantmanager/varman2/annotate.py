@@ -92,13 +92,16 @@ class Annotate:
 
         with open(annovar_vcf, "r") as annov_in:
             line = annov_in.readline()
+            print line
             if not line.startswith("#CHROM"):
 
                 while line.startswith('##'):  # this reads through the junk lines
                     line = annov_in.readline()
                 header = line.strip().strip("#").split("\t")
+                print header
 
                 for line in annov_in:
+                    print line
 
                     chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
                     print chrom, pos, ref, alt, annotations
