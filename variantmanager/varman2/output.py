@@ -116,6 +116,8 @@ class Output:
 
     def output_all_variants(self):
         annotate = Annotate()
+        annotate.save_annotations("/rawdata/projects/Wales/Wales_VarMan/Wales_VarMan/annotations/all_samples.vcf.hg19_multianno.vcf")
+        sys.exit()
         annotate.annotate_all_variants()
 
         out_path = "%s/%s.csv" % ( self.output_files_dir, "all_variants")
