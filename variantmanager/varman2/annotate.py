@@ -53,6 +53,7 @@ class Annotate:
         # annotates the file, saves the annotations to the mongodb, and changes status of the sample in the
         # sample info collection to "FULLY ANNOTATED"
         annovar_output = annovar_bash.annotate_annovar(vcf_path, vcf_path)
+        print annovar_output
         self.save_annotations(annovar_output)
 
     def annotate_sample(self, sample, type):
