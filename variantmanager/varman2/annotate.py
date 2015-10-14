@@ -108,7 +108,6 @@ class Annotate:
 
                 header = line.strip().strip("#").split("\t")
                 for line in annov_in:
-                    print line
 
                     chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
                     print chrom, pos, ref, alt, annotations
