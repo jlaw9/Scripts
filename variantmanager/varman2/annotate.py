@@ -49,15 +49,11 @@ class Annotate:
 
         # This creates a vcf for annotation based on the sample and returns the vcf path.
         vcf_path = vcftools.create_vcf_for_annotation_all_samples(self.annotations_dir)
-        sys.exit()
-
-        self.__log_performing_sample_annotation()
 
         # annotates the file, saves the annotations to the mongodb, and changes status of the sample in the
         # sample info collection to "FULLY ANNOTATED"
         annovar_output = annovar_bash.annotate_annovar(vcf_path, vcf_path)
         self.save_annotations(annovar_output)
-        sampleinfo_mongo.change_sample_field(sample, "FULLY_ANNOTATED", True)
 
     def annotate_sample(self, sample, type):
         """
