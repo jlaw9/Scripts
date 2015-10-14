@@ -100,17 +100,16 @@ class Annotate:
                 header = line.strip().strip("#").split("\t")
 
                 for line in annov_in:
-
-                    chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
-                    print chrom, pos, ref, alt, annotations
-                    annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
+                    if line != "":
+                        chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
+                        annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
             else:
 
                 header = line.strip().strip("#").split("\t")
                 for line in annov_in:
-
-                    chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
-                    annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
+                    if line != "":
+                        chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
+                        annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
 
         client.close()
 
