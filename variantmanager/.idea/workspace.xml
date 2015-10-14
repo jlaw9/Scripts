@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b51ea2b3-3d87-4e38-ba70-d9a0899b52fd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py" afterPath="$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/varman2/output.py" afterPath="$PROJECT_DIR$/varman2/output.py" />
     </list>
     <ignored path="variantmanager.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="output.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="output.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/varman2/output.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="130" column="68" selection-start-line="130" selection-start-column="68" selection-end-line="130" selection-end-column="68" />
+            <state vertical-scroll-proportion="0.1295938">
+              <caret line="118" column="40" selection-start-line="118" selection-start-column="40" selection-end-line="118" selection-end-column="40" />
               <folding>
                 <element signature="e#0#99#0" expanded="true" />
               </folding>
@@ -73,10 +73,20 @@
         <entry file="file://$PROJECT_DIR$/varman2/annotate.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="51" column="18" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vcftools.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/varman2/vcftools.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -91,10 +101,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="annovar_bash.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="annovar_bash.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.116054155">
+            <state vertical-scroll-proportion="0.0">
               <caret line="4" column="28" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
@@ -166,7 +176,6 @@
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/varman2/mongotools/mongo.py" />
         <option value="&lt;47862727-eb5f-4dc7-beca-f4d47acbc3cf&gt;/rawdata/scripts/TRI_Scripts/QC/varman_wrapper.py" />
-        <option value="$PROJECT_DIR$/varman2/vcftools.py" />
         <option value="$PROJECT_DIR$/v1/annotate_tools.py" />
         <option value="$PROJECT_DIR$/v1/bash_commands.py" />
         <option value="$PROJECT_DIR$/varman2/bashcommands/output_bash.py" />
@@ -182,14 +191,15 @@
         <option value="$PROJECT_DIR$/varman2/add.py" />
         <option value="&lt;7551c1bd-54ce-4acb-b504-9c72c91f1d85&gt;/rawdata/scripts/TRI_Scripts/Somatic_Variants/tmp/misctools.py" />
         <option value="&lt;7551c1bd-54ce-4acb-b504-9c72c91f1d85&gt;/rawdata/scripts/TRI_Scripts/Somatic_Variants/tmp/updateAnnovarTable_MD.py" />
-        <option value="$PROJECT_DIR$/varman2/annotate.py" />
         <option value="$PROJECT_DIR$/varman2/create_3x3.py" />
         <option value="$PROJECT_DIR$/create_3x3.py" />
         <option value="$PROJECT_DIR$/launch_varman.py" />
         <option value="$PROJECT_DIR$/varman2/argexecutor.py" />
         <option value="$PROJECT_DIR$/varman2/mongotools/variants_mongo.py" />
-        <option value="$PROJECT_DIR$/varman2/output.py" />
         <option value="$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py" />
+        <option value="$PROJECT_DIR$/varman2/vcftools.py" />
+        <option value="$PROJECT_DIR$/varman2/annotate.py" />
+        <option value="$PROJECT_DIR$/varman2/output.py" />
       </list>
     </option>
   </component>
@@ -263,24 +273,6 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="variantmanager">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="varman2">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="mongotools">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -862,13 +854,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/vcftools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="74" selection-start-line="42" selection-start-column="74" selection-end-line="42" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/v1/annotate_tools.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1025,32 +1010,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/argexecutor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.9259257">
-          <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-          <folding>
-            <element signature="e#113#174#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/output.py">
+    <entry file="file://$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="130" column="68" selection-start-line="130" selection-start-column="68" selection-end-line="130" selection-end-column="68" />
+          <caret line="4" column="28" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
           <folding>
-            <element signature="e#0#99#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/annotate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1063,12 +1028,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/varman2/bashcommands/annovar_bash.py">
+    <entry file="file://$PROJECT_DIR$/varman2/argexecutor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.116054155">
-          <caret line="4" column="28" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
+        <state vertical-scroll-proportion="-4.9259257">
+          <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
           <folding>
-            <element signature="e#0#17#0" expanded="true" />
+            <element signature="e#113#174#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/varman2/vcftools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/varman2/annotate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="51" column="18" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/varman2/output.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1295938">
+          <caret line="118" column="40" selection-start-line="118" selection-start-column="40" selection-end-line="118" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#99#0" expanded="true" />
           </folding>
         </state>
       </provider>

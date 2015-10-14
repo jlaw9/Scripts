@@ -2,7 +2,7 @@ from glob import glob
 from varman2.mongotools import config_mongo, annotate_mongo, mongo, sampleinfo_mongo
 from bashcommands import annovar_bash, bash
 from varman2 import Logger
-import os
+import os, sys
 from varman2 import misctools, vcftools
 
 class Annotate:
@@ -35,6 +35,29 @@ class Annotate:
             annovar_output = glob('%s/*multianno.vcf' % os.path.dirname(annov_in))[0]
 
         return annovar_output
+
+    def annotate_all_variants(self):
+        """
+        This will annotate a sample and load it into the database.
+
+        :param sample: This is the name of the snmple to be annotated.
+        :type sample: str
+        :param type: This is the type of the sample to be annotated, either hotspot or orig.
+        :type type: str
+        :return:
+        """
+
+        # This creates a vcf for annotation based on the sample and returns the vcf path.
+        vcf_path = vcftools.create_vcf_for_annotation_all_samples(self.annotations_dir)
+        sys.exit()
+
+        self.__log_performing_sample_annotation()
+
+        # annotates the file, saves the annotations to the mongodb, and changes status of the sample in the
+        # sample info collection to "FULLY ANNOTATED"
+        annovar_output = annovar_bash.annotate_annovar(vcf_path, vcf_path)
+        self.save_annotations(annovar_output)
+        sampleinfo_mongo.change_sample_field(sample, "FULLY_ANNOTATED", True)
 
     def annotate_sample(self, sample, type):
         """

@@ -1,6 +1,7 @@
 from varman2.mongotools import config_mongo, hotspot_mongo, variants_mongo, sampleinfo_mongo, mongo
 from varman2.bashcommands import bash
-from varman2 import Logger
+from varman2 import Logger, vcftools
+from annotate import Annotate
 import os, csv
 import genotypetools
 import sys
@@ -114,6 +115,8 @@ class Output:
         return out_path
 
     def output_all_variants(self):
+        annotate = Annotate()
+        annotate.annotate_all_variants()
 
         out_path = "%s/%s.csv" % ( self.output_files_dir, "all_variants")
 
