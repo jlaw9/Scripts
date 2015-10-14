@@ -58,7 +58,7 @@ def create_vcf_for_annotation_all_samples(out_dir):
     vcf_header = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tALL\n"
 
     hotspot_vars = hotspot_mongo.get_hotspot_vars()
-    print hotspot_vars.count()
+
     with open(out_vcf, "a") as out_file:
         out_file.write(vcf_header)
         client, db = mongo.get_connection()
