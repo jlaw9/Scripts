@@ -128,7 +128,7 @@ class ArgExecutor:
     def output(self):
         # The output option handler that will write the sample_variants_csv containing important information about
         # the sample variants.
-        print self.args
+
         if self.args['type'] == 'sample':
 
             if self.args['name'] == "all":

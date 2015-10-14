@@ -116,52 +116,50 @@ class Output:
     def output_all_variants(self):
 
         out_path = "%s/%s.csv" % ( self.output_files_dir, "all_variants")
-        print out_path
 
-        for sample in sampleinfo_mongo.get_samples():
-            print sample
-        sys.exit()
         csv_writer = csv.writer(open(out_path, "w"), delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
 
         header = ['CHROM', 'POS', 'REF', 'ALT', 'GT', 'RSID', 'Gene',
-                  'ExonicFunc', 'AAChange', 'FREQ', 'QC_Final', 'QC_Cov', 'QC_AF', 'In_Hotspot']
+                      'ExonicFunc', 'AAChange', 'FREQ', 'QC_Final', 'QC_Cov', 'QC_AF', 'In_Hotspot']
         csv_writer.writerow(header)
 
-        client, db = mongo.get_connection()
-        total_loaded_samples = variants_mongo.count_samples()
+        for sample in sampleinfo_mongo.get_samples():
 
-        for var in variants_mongo.get_sample_vars(sample, type, db):
-            new_variant = {}
-            chrom, pos, ref, alt = var['CHROM'], var['POS'], var['REF'], var['ALT']
-            al1, al2 = genotypetools.get_genotype_alleles(ref, alt, var['GT_calc'])
-            new_variant.update({'CHROM': chrom, 'POS': pos, 'REF': ref, 'ALT': ",".join(alt),
-                                'GT': "/".join([al1, al2])})
+            client, db = mongo.get_connection()
+            total_loaded_samples = variants_mongo.count_samples()
 
-            hotspot = hotspot_mongo.get_variant(chrom, pos, ref, alt, db)
+            for var in variants_mongo.get_sample_vars(sample, type, db):
+                new_variant = {}
+                chrom, pos, ref, alt = var['CHROM'], var['POS'], var['REF'], var['ALT']
+                al1, al2 = genotypetools.get_genotype_alleles(ref, alt, var['GT_calc'])
+                new_variant.update({'CHROM': chrom, 'POS': pos, 'REF': ref, 'ALT': ",".join(alt),
+                                    'GT': "/".join([al1, al2])})
 
-            annot = hotspot['ANNOTATION'][0]
+                hotspot = hotspot_mongo.get_variant(chrom, pos, ref, alt, db)
 
-            new_variant.update({'RSID': annot['snp137NonFlagged'],
-                                'Gene': annot['Gene_refGene'], 'ExonicFunc': annot['ExonicFunc_refGene'],
-                                'AAChange': annot['AAChange_refGene']})
-            if 'p.' in new_variant['AAChange']:
-                    new_variant['AAChange'] = new_variant['AAChange'].split('p.')[1].split(",")[0]
+                annot = hotspot['ANNOTATION'][0]
 
-            zygosity = hotspot['orig_stats']['zygosity']
-            freq = sum([zygosity['het_count'], zygosity['het_alt_count'], zygosity['hom_count']]) / float(total_loaded_samples)
-            final_qc, qc_cov, qc_af = var['FINAL_QC'], var['COV_QC'], var['AF_QC']
+                new_variant.update({'RSID': annot['snp137NonFlagged'],
+                                    'Gene': annot['Gene_refGene'], 'ExonicFunc': annot['ExonicFunc_refGene'],
+                                    'AAChange': annot['AAChange_refGene']})
+                if 'p.' in new_variant['AAChange']:
+                        new_variant['AAChange'] = new_variant['AAChange'].split('p.')[1].split(",")[0]
 
-            if hotspot['orig_stats']['qc']['final_qc_count'] > 0:
-                in_hotspot = "TRUE"
-            else:
-                in_hotspot = "FALSE"
+                zygosity = hotspot['orig_stats']['zygosity']
+                freq = sum([zygosity['het_count'], zygosity['het_alt_count'], zygosity['hom_count']]) / float(total_loaded_samples)
+                final_qc, qc_cov, qc_af = var['FINAL_QC'], var['COV_QC'], var['AF_QC']
 
-            new_variant.update({"FREQ": freq, "QC_Final": final_qc, "QC_Cov": qc_cov, "QC_AF": qc_af,
-                                "In_Hotspot": in_hotspot})
+                if hotspot['orig_stats']['qc']['final_qc_count'] > 0:
+                    in_hotspot = "TRUE"
+                else:
+                    in_hotspot = "FALSE"
 
-            out_row = [str(new_variant[field]) for field in header]
-            csv_writer.writerow(out_row)
-            #print "\t".join(out_row)
+                new_variant.update({"FREQ": freq, "QC_Final": final_qc, "QC_Cov": qc_cov, "QC_AF": qc_af,
+                                    "In_Hotspot": in_hotspot})
+
+                out_row = [str(new_variant[field]) for field in header]
+                csv_writer.writerow(out_row)
+                #print "\t".join(out_row)
 
         return out_path
 
