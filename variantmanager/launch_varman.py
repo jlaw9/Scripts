@@ -60,6 +60,7 @@ class VariantManager:
             argexecute.stats()
 
         elif self.args['which'] == 'output':
+            print "OUTPUT"
             argexecute.output()
 
         elif self.args['which'] == 'nothing':

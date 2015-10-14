@@ -131,7 +131,6 @@ class ArgExecutor:
         print self.args
         if self.args['type'] == 'sample':
 
-
             if self.args['name'] == "all":
                 output_files = Output()
                 output_files.output_all_variants()
