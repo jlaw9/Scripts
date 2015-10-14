@@ -67,7 +67,7 @@ def create_vcf_for_annotation_all_samples(out_dir):
 
             if not hotspot_mongo.has_annotation(chrom, pos, ref, alt, db):
                 chrom, pos, ref, alt = str(chrom), str(pos), ref, ",".join(alt)
-                gt = var['GT_orig']
+                gt = './.'
                 if gt is None:
                     gt = './.'
 
