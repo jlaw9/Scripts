@@ -129,16 +129,20 @@ class ArgExecutor:
         # The output option handler that will write the sample_variants_csv containing important information about
         # the sample variants.
         if self.args['type'] == 'sample':
-            if not sampleinfo_mongo.is_fully_annotated(self.args['name']):
-                annotate = Annotate()
-                annotate.annotate_sample(self.args['name'], 'orig')
-
-            output_files = Output()
-
             if self.args['name'] == "all":
+                output_files = Output()
                 output_files.output_all_variants()
             else:
-                output_files.sample_variants_csv(self.args['name'], 'orig')
+
+                if not sampleinfo_mongo.is_fully_annotated(self.args['name']):
+                    annotate = Annotate()
+                    annotate.annotate_sample(self.args['name'], 'orig')
+
+                output_files = Output()
+
+
+                else:
+                    output_files.sample_variants_csv(self.args['name'], 'orig')
 
     def nothing(self):
         """
