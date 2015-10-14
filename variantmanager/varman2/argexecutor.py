@@ -141,9 +141,9 @@ class ArgExecutor:
 
                 output_files = Output()
 
+                output_files.sample_variants_csv(self.args['name'], 'orig')
 
-                else:
-                    output_files.sample_variants_csv(self.args['name'], 'orig')
+
 
     def nothing(self):
         """
