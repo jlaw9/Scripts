@@ -92,7 +92,7 @@ class Annotate:
 
         with open(annovar_vcf, "r") as annov_in:
             line = annov_in.readline()
-            print line
+
             if not line.startswith("#CHROM"):
 
                 while line.startswith('##'):  # this reads through the junk lines
@@ -100,6 +100,7 @@ class Annotate:
                 header = line.strip().strip("#").split("\t")
 
                 for line in annov_in:
+                    print line, len(line)
                     if line != "":
                         chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
                         annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
@@ -107,6 +108,7 @@ class Annotate:
 
                 header = line.strip().strip("#").split("\t")
                 for line in annov_in:
+                    print line, len(line)
                     if line != "":
                         chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
                         annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
