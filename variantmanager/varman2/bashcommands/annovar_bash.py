@@ -2,7 +2,7 @@ import subprocess
 from glob import glob
 
 def annotate_annovar(vcf_path, out_file, err_out="err.log"):
-
+    print vcf_path, out_file
     command = 'varman2/annovar/table_annovar.pl %s /rawdata/software/annovar/humandb_ucsc/ ' \
               '-outfile %s ' \
               '-buildver hg19 ' \
