@@ -55,7 +55,7 @@ def create_vcf_for_annotation(sample, type, out_dir):
 def create_vcf_for_annotation_all_samples(out_dir):
 
     out_vcf = '%s/%s.vcf' % (out_dir, 'all_samples')
-    vcf_header = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tALL"
+    vcf_header = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tALL\n"
 
     sample_vars = hotspot_mongo.get_hotspot_vars()
 
