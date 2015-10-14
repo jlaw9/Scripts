@@ -60,6 +60,7 @@ def is_sample_loaded(sample, type, db=None):
 
 def get_sample_vars(sample, type, db=None):
     global variants_name
+    print sample
     if db is None:
         client, db = mongo.get_connection()
 
