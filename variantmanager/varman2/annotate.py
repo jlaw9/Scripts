@@ -98,17 +98,15 @@ class Annotate:
                 while line.startswith('##'):  # this reads through the junk lines
                     line = annov_in.readline()
                 header = line.strip().strip("#").split("\t")
-                print header
 
                 for line in annov_in:
-                    print line
 
                     chrom, pos, ref, alt, annotations = self.__process_annovar_line(line, header)
                     print chrom, pos, ref, alt, annotations
                     annotate_mongo.save_annotation(chrom, pos, ref, alt, annotations, db)
             else:
 
-                header = line
+                header = line.strip().strip("#").split("\t")
                 for line in annov_in:
                     print line
 
