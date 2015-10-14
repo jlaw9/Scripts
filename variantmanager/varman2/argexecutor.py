@@ -129,6 +129,7 @@ class ArgExecutor:
         # The output option handler that will write the sample_variants_csv containing important information about
         # the sample variants.
         if self.args['type'] == 'sample':
+            print self.args['name']
             if self.args['name'] == "all":
                 output_files = Output()
                 output_files.output_all_variants()
