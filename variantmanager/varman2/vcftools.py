@@ -59,7 +59,7 @@ def create_vcf_for_annotation_all_samples(out_dir):
 
     hotspot_vars = hotspot_mongo.get_hotspot_vars()
 
-    with open(out_vcf, "a") as out_file:
+    with open(out_vcf, "w") as out_file:
         out_file.write(vcf_header)
         client, db = mongo.get_connection()
         for var in hotspot_vars:
