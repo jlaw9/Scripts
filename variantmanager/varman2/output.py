@@ -139,7 +139,7 @@ class Output:
                                     'GT': "/".join([al1, al2])})
 
                 hotspot = hotspot_mongo.get_variant(chrom, pos, ref, alt, db)
-                print hotspot
+                g
                 annot = hotspot['ANNOTATION'][0]
 
                 new_variant.update({'RSID': annot['snp137NonFlagged'],
