@@ -64,11 +64,10 @@ def get_sample_vars(sample, type, db=None):
     if db is None:
         client, db = mongo.get_connection()
 
-    print sample
     variants_coll = db[variants_name]
 
     sample_vars = variants_coll.find({'TYPE': type, 'SAMPLE': sample})
-
+    print sample_vars
     return sample_vars
 
 def count_samples(db=None):
