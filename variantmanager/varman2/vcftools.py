@@ -57,12 +57,12 @@ def create_vcf_for_annotation_all_samples(out_dir):
     out_vcf = '%s/%s.vcf' % (out_dir, 'all_samples')
     vcf_header = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tALL\n"
 
-    sample_vars = hotspot_mongo.get_hotspot_vars()
-
+    hotspot_vars = hotspot_mongo.get_hotspot_vars()
+    print hotspot_vars.count()
     with open(out_vcf, "a") as out_file:
         out_file.write(vcf_header)
         client, db = mongo.get_connection()
-        for var in sample_vars:
+        for var in hotspot_vars:
             chrom, pos, ref, alt = var['CHROM'], var['POS'], var['REF'], var['ALT']
 
             if not hotspot_mongo.has_annotation(chrom, pos, ref, alt, db):
