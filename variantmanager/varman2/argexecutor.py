@@ -134,7 +134,11 @@ class ArgExecutor:
                 annotate.annotate_sample(self.args['name'], 'orig')
 
             output_files = Output()
-            output_files.sample_variants_csv(self.args['name'], 'orig')
+
+            if self.args['name'] == "all":
+                output_files.output_all_variants()
+            else:
+                output_files.sample_variants_csv(self.args['name'], 'orig')
 
     def nothing(self):
         """

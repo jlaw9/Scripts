@@ -7,7 +7,6 @@ class Create3x3:
         self.run_depths = run_depths
         self.matched_variants = matched_variants
 
-
     def run(self):
         for file_path in [self.run_depths, self.matched_variants]:
             if not os.path.isfile(file_path):
