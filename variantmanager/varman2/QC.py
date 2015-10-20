@@ -30,9 +30,11 @@ class QC:
 
             if multi_allele_check == 'FAIL':
                 af_check = 'FAIL'
+                tostp = "NA"
+                ttestp = "NA"
             else:
                 fao, read_depth = genotypetools.get_two_alleles(alleles)
-                af_check = self.af_check(gt, fao, read_depth)
+                af_check, tostp, ttestp = self.af_check(gt, fao, read_depth)
 
         else:
             # SINGLE ALTERNATE ALLELE VARIANTS
