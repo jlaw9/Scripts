@@ -128,7 +128,7 @@ class Output:
             var_info = [variant['CHROM'], variant['POS'], variant['REF'], variant['ALT'], variant['GT_calc'],
                         variant['AF_calc'], variant['READ_DEPTH'], variant['FINAL_QC'], variant['COV_QC'],
                         variant['AF_QC']]
-            print "\t".join(var_info)
+            print "\t".join([str(val) for val in var_info])
 
         return out_path
 
