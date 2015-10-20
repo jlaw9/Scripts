@@ -127,7 +127,7 @@ class Output:
         csv_writer.writerow(header)
 
         for variant in variants_mongo.get_all_vars('orig'):
-            var_info = [variant['CHROM'], variant['POS'], variant['REF'], [str(val) for val in variant['ALT']], variant['GT_calc'],
+            var_info = [variant['CHROM'], variant['POS'], variant['REF'], ",".join(variant['ALT']), variant['GT_calc'],
                         variant['AF_calc'], variant['READ_DEPTH'], variant['FINAL_QC'], variant['COV_QC'],
                         variant['AF_QC'], variant['TTEST_P'], variant['TOST_P']]
             print "\t".join([str(val) for val in var_info])
