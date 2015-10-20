@@ -120,12 +120,15 @@ class Output:
 
         csv_writer = csv.writer(open(out_path, "w"), delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
 
-        header = ['CHROM', 'POS', 'REF', 'ALT', 'GT', 'FREQ', 'QC_Final', 'QC_Cov', 'QC_AF', 'In_Hotspot']
+        header = ['CHROM', 'POS', 'REF', 'ALT', 'GT', 'FREQ', 'READ_DEPTH', 'QC_Final',
+                  'QC_Cov', 'QC_AF', 'QC_MULTI_ALLELE']
         csv_writer.writerow(header)
 
         for variant in variants_mongo.get_all_vars('orig'):
-
-            print variant
+            var_info = [variant['CHROM'], variant['POS'], variant['REF'], variant['ALT'], variant['GT_calc'],
+                        variant['AF_calc'], variant['READ_DEPTH'], variant['FINAL_QC'], variant['COV_QC'],
+                        variant['AF_QC']]
+            print "\t".join(var_info)
 
         return out_path
 
