@@ -37,14 +37,14 @@ class QC:
         else:
             # SINGLE ALTERNATE ALLELE VARIANTS
             multi_allele_check = "PASS"
-            af_check = self.af_check(gt, fao, read_depth)
+            af_check, tostp, ttestp = self.af_check(gt, fao, read_depth)
 
         if [coverage_check, af_check, multi_allele_check] == ['PASS','PASS','PASS']:
             final_qc_status = 'PASS'
         else:
             final_qc_status = 'FAIL'
 
-        return coverage_check, af_check, multi_allele_check, final_qc_status
+        return coverage_check, af_check, multi_allele_check, final_qc_status, tostp, ttestp
 
     def coverage_check(self, read_depth):
 
@@ -80,9 +80,9 @@ class QC:
 
         if pass_fail[-1] == 'PASS':
 
-            return 'PASS'
+            return 'PASS', tost_result, ttest_result
         else:
 
-            return 'FAIL'
+            return 'FAIL', tost_result, ttest_result
 
 

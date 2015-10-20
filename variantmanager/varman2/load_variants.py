@@ -179,9 +179,10 @@ class LoadVariants:
 
             # Perform Quality Control Calculations
             quality_checker = QC()
-            coverage_check, af_check, multi_allele_check, final_qc = quality_checker.variant_QC(new_var_entry)
+            coverage_check, af_check, multi_allele_check, final_qc, tost_p, ttest_p = quality_checker.variant_QC(new_var_entry)
             new_var_entry.update({'COV_QC': coverage_check, 'AF_QC': af_check,
-                                  'MULTI_ALLELE_QC': multi_allele_check, 'FINAL_QC': final_qc})
+                                  'MULTI_ALLELE_QC': multi_allele_check, 'FINAL_QC': final_qc, "TOST_P": tost_p,
+                                  "TTEST_P": ttest_p})
 
             # Set the type of variant uploaded
             new_var_entry.update({'TYPE': self.variant_type})
