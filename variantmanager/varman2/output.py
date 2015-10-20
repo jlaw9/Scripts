@@ -129,7 +129,7 @@ class Output:
         for variant in variants_mongo.get_all_vars('orig'):
             var_info = [variant['CHROM'], variant['POS'], variant['REF'], ",".join(variant['ALT']), variant['GT_calc'],
                         variant['AF_calc'], variant['READ_DEPTH'], variant['FINAL_QC'], variant['COV_QC'],
-                        variant['AF_QC'], variant['TTEST_P'], variant['TOST_P']]
+                        variant['AF_QC'], variant['MULTI_ALLELE_QC'], variant['TTEST_P'], variant['TOST_P']]
             print "\t".join([str(val) for val in var_info])
 
         return out_path
