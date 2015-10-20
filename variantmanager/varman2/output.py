@@ -123,7 +123,7 @@ class Output:
         header = ['CHROM', 'POS', 'REF', 'ALT', 'GT', 'FREQ', 'QC_Final', 'QC_Cov', 'QC_AF', 'In_Hotspot']
         csv_writer.writerow(header)
 
-        for variant in variants_mongo.get_collection():
+        for variant in variants_mongo.get_all_vars('orig'):
 
             print variant
 
