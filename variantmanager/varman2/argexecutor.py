@@ -92,7 +92,7 @@ class ArgExecutor:
         """
         self.logger.info("Loading the variants into the database and performing filtering to generate hotspot list.")
         load_vars = LoadVariants('orig')
-        load_vars.load_all()
+        load_vars.load_all(self.args['equiv_margin'])
 
     def hotspot(self):
         """

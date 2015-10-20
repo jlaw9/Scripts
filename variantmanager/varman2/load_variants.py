@@ -29,7 +29,7 @@ class LoadVariants:
         self.variant_type = var_type
         self.affected_dict = sampleinfo_mongo.get_affected_dict()
 
-    def load_all(self):
+    def load_all(self, equiv_margin):
 
         if self.variant_type == 'orig':
             client, db = mongo.get_connection()
@@ -62,7 +62,7 @@ class LoadVariants:
             pending_vcf_files = self.__get_unsaved_hotspot_vcf_files()
 
         num_processors = 10
-        self.__parallel_process_vcf_files(pending_vcf_files, num_processors)
+        self.__parallel_process_vcf_files(pending_vcf_files, num_processors, equiv_margin)
 
         self.__log_successfully_loaded()
 
@@ -76,7 +76,7 @@ class LoadVariants:
 
         self.__log_single_successfully_loaded(sample)
 
-    def __parallel_process_vcf_files(self, vcf_files, num_processors):
+    def __parallel_process_vcf_files(self, vcf_files, num_processors, equiv_margin):
 
         client, db = mongo.get_connection()
         variants_mongo.drop_variants_index(db)
@@ -88,7 +88,7 @@ class LoadVariants:
             sample = args[0]
             vcf_file = args[1]
 
-            p = Process(target=self.__load_sample_variants, args=(sample, vcf_file))
+            p = Process(target=self.__load_sample_variants, args=(sample, vcf_file, equiv_margin))
             jobs.add(p)
             p.start()
 
@@ -124,14 +124,14 @@ class LoadVariants:
 
         return final_vcf_files
 
-    def __load_sample_variants(self, sample, vcf_file):
+    def __load_sample_variants(self, sample, vcf_file, equiv_margin):
         self.__log_loading_new_sample(sample, vcf_file)
 
         vcf_reader = vcf.Reader(open(vcf_file, 'r'))
 
         client, db = mongo.get_connection()
         for record in vcf_reader:
-            variant_doc = self.get_variant_doc(record, sample, vcf_file)
+            variant_doc = self.get_variant_doc(record, sample, vcf_file, equiv_margin)
 
             variants_mongo.add_variant(variant_doc, db)
 
@@ -142,7 +142,7 @@ class LoadVariants:
 
         client.close()
 
-    def get_variant_doc(self, record, sample, vcf_file):
+    def get_variant_doc(self, record, sample, vcf_file, equiv_margin):
 
         if len(record.samples) > 1:
             self.__log_multisample_vcf(sample, vcf_file)
@@ -179,7 +179,7 @@ class LoadVariants:
 
             # Perform Quality Control Calculations
             quality_checker = QC()
-            coverage_check, af_check, multi_allele_check, final_qc, tost_p, ttest_p = quality_checker.variant_QC(new_var_entry)
+            coverage_check, af_check, multi_allele_check, final_qc, tost_p, ttest_p = quality_checker.variant_QC(new_var_entry, equiv_margin)
             new_var_entry.update({'COV_QC': coverage_check, 'AF_QC': af_check,
                                   'MULTI_ALLELE_QC': multi_allele_check, 'FINAL_QC': final_qc, "TOST_P": tost_p,
                                   "TTEST_P": ttest_p})

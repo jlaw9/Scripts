@@ -12,9 +12,8 @@ class QC:
 
     def __init__(self):
         self.read_depth_cutoff = 30
-        self.equiv_margin = 0.15
 
-    def variant_QC(self, new_variant_entry):
+    def variant_QC(self, new_variant_entry, equiv_margin):
 
         read_depth = new_variant_entry['READ_DEPTH']
         fro = new_variant_entry['FRO']
@@ -34,12 +33,12 @@ class QC:
                 ttestp = "NA"
             else:
                 fao, read_depth = genotypetools.get_two_alleles(alleles)
-                af_check, tostp, ttestp = self.af_check(gt, fao, read_depth)
+                af_check, tostp, ttestp = self.af_check(gt, fao, read_depth, equiv_margin)
 
         else:
             # SINGLE ALTERNATE ALLELE VARIANTS
             multi_allele_check = "PASS"
-            af_check, tostp, ttestp = self.af_check(gt, fao, read_depth)
+            af_check, tostp, ttestp = self.af_check(gt, fao, read_depth, equiv_margin)
 
         if [coverage_check, af_check, multi_allele_check] == ['PASS','PASS','PASS']:
             final_qc_status = 'PASS'
@@ -72,11 +71,11 @@ class QC:
         else:
             return "PASS"
 
-    def af_check(self, gt, fao, read_depth):
+    def af_check(self, gt, fao, read_depth, equiv_margin):
         zygos = genotypetools.get_zygosity(gt)
 
         ttest_result = stats.performTTest(fao, read_depth, zygos)
-        tost_result = stats.performTOST(fao, read_depth, self.equiv_margin, zygos)
+        tost_result = stats.performTOST(fao, read_depth, equiv_margin, zygos)
 
         pass_fail = stats.pass_fail_stats(ttest_result, tost_result)
 

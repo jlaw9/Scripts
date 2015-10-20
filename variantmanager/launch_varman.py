@@ -197,6 +197,8 @@ if __name__ == "__main__":
 
     # Specifying options for the parser_load
     parser_load.set_defaults(which="load")
+    parser_load.add_argument('-em', '--equiv_margin', help='The equivalence margin to use for loading variants',
+                            default=0.15, type=float)
 
     # Specify the options for the parser_hotspot
     parser_hotspot.set_defaults(which="hotspot")
