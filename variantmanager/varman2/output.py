@@ -121,7 +121,7 @@ class Output:
         csv_writer = csv.writer(open(out_path, "w"), delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
 
         header = ['CHROM', 'POS', 'REF', 'ALT', 'GT', 'FREQ', 'READ_DEPTH', 'QC_Final',
-                  'QC_Cov', 'QC_AF', 'QC_MULTI_ALLELE', 'TOST_P','TTEST_P']
+                  'QC_Cov', 'QC_AF', 'QC_MULTI_ALLELE', 'TTEST_P','TOST_P']
         print "\t".join(header)
 
         csv_writer.writerow(header)
