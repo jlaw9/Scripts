@@ -46,9 +46,38 @@ This is the format of the input to _start\_Push.py_. If no barcodes are provided
 
 
 ### Push the Files
-**Step 1:** Run _start\_Push.py_ giving the new server IP address, the destination path where the files should be placed on the new server, the CSV, and the log file. _start\_Push.py_ will run all of the next steps 
+**Step 1:** Run _start\_Push.py_ giving the new server IP address, the destination path where the files should be placed on the new server, the CSV, and the log file. **_start\_Push.py_ will run all of the next steps.**
 
-    TODO USAGE: python start_Push.py 
+	python start_Push.py --help
+	Options:
+	  -h, --help            show this help message and exit
+	  -s SERVER, --server=SERVER
+	                        Required. The server to push data to.
+	                        <ionadmin@ipaddress>
+	  -d DESTINATION, --destination=DESTINATION
+	                        Required. The destination path where the sample will
+	                        be copied to.
+	  -i INPUT, --input=INPUT
+	                        Required. The input csv file containing the metadata
+	                        about each sample to be pushed.
+	  -j EX_JSON, --ex_json=EX_JSON
+	                        Required. The example json file containing the
+	                        settings necessary for this project. Should be
+	                        different for every project. For help of how to create
+	                        the example json file, see the protocls
+	  -p PROTON, --proton=PROTON
+	                        Required. The name of the proton or pgm from which you
+	                        are pushing the files. Options: "PLU", "MER", "NEP,
+	                        "ROT"
+	  -H, --header          use this option if the CSV has a header line.
+	  -o OUTPUT_CSV, --output_csv=OUTPUT_CSV
+	                        The results of copying will be placed in this file.
+	                        Default: [Push_Results.csv]
+	  -l LOG, --log=LOG     Default: [Push.log]
+	  -R RUN_ANYWAY, --run_anyway=RUN_ANYWAY
+	                        if the server is not in the list of "accepted
+	                        servers", push the data anyway
+
 
 **Step 2:** Parse the input file line by line and will store the info of each column separated by a comma. _start\_Push.sh_ will then call _push_Data.sh_ for each line of the CSV to actually transfer the files.
 
