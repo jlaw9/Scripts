@@ -10,23 +10,34 @@ The script *start_Push.py* takes as input a CSV (See example below) which has al
 ### Prepare the CSV
 Here is an example excel document from the Wales project used to push the data from the Yale PGM to TRI's triton:
 
-| **ID** | **Plate Name** | **Plate Cell** | **Case/Control** | **Run ID** | **Barcode No** | **Status** |
-| --- | --- | --- | --- | --- | --- | --- |
-| 50890-3 | case1 | A01 | 1 | 291 | IonXpress_001 | Pass |
-| 50930-3 | case1 | A02 | 1 | 327 | IonXpress_002 | Pass |
-| 50201-3 | case1 | A03 | 1 | 18 | IonXpress_003 | Pass |
+**Germline only project exapmle:**
 
-Here is that same file after exporting it as a CSV from excel:
+| Sample    | Run ID | Run # | Barcode       | Sequencing Machine |
+|-----------|--------|-------|---------------|--------------------|
+| case1_A01 |      1 |   291 | IonXpress_001 | ROT                |
+| case1_A02 |      1 |   327 | IonXpress_002 | ROT                |
+| case1_A03 |      1 |    18 | IonXpress_003 | ROT                |
 
-ID,Plate Name,Plate Cell,Case/Control,ROT ID,Barcode No,Status
+Here is that same file after exporting it as a CSV from excel:  
+Sample,Run ID, Run #, Barcode,Sequencing Machine  
+case1_A01,1,291,IonXpress_001,ROT  
+case1_A02,1,327,IonXpress_002,ROT  
+case1_A03,1,18,IonXpress_003,ROT  
 
-50890-3,Case1,A01,1,291,IonXpress_001,Pass
+**Tumor/Normal example:**
 
-50930-3,Case1,A02,1,327,IonXpress_002,Pass
+| Sample # | Normal (N) vs Tumor(T) | Run ID  | Run # | Barcode       |
+|----------|------------------------|---------|-------|---------------|
+| A_286    | N                      | PLU-338 |     1 | -             |
+| A_286    | N                      | MER-207 |     5 | -             |
+| A_286    | T                      | PLU-515 |     3 | IonXpress_078 |
 
-50201-3,Case1,A03,1,18,IonXpress_003,Pass
+Sample #,Normal (N) vs Tumor(T),Run ID,Run #,Barcode Used  
+A_286,N,PLU-338,1,-  
+A_286,N,MER-207,5,-  
+A_286,T,PLU-515,3,IonXpress_078  
 
-This is the format of the input to _start\_Push.py_. If no barcodes are provided, then the script will adapt accordingly.
+This is the format of the input to _start\_Push.py_. If no barcodes are provided, then the script will adapt accordingly. If the "Sequencing Machine" three letter code is in the Run ID, it will be parsed from there. Otherwise, it will be parsed from the last column. Three letter codes we use: PLU, NEP, MER, ROT.
 
 > Important Note:  If using a mac, excel will add a funny character to the end of the line on a CSV. This will cause linux to read the file incorrectly. To prep the CSV for linux, open the CSV in [_vim_](file:///tmp/d20150412-3-m06vk1/Bioinformatics_Glossary.docx#Vim) and type the following two commands:
 > `:set fileformat=unix` and `:%s/\r/\r/g`
@@ -39,7 +50,7 @@ This is the format of the input to _start\_Push.py_. If no barcodes are provided
 
     TODO USAGE: python start_Push.py 
 
-**Step 2:** Parse the input file line by line and will store the info of each column separated by a comma. _start\_Push.sh _will then call push_Data.sh for each line of the CSV to actually transfer the files.
+**Step 2:** Parse the input file line by line and will store the info of each column separated by a comma. _start\_Push.sh_ will then call _push_Data.sh_ for each line of the CSV to actually transfer the files.
 
 	bash push_Data.sh
 		--user_server ionadmin@ipaddress
